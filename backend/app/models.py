@@ -14,5 +14,7 @@ class Vehicle(Base):
     price = Column(Integer)
     mileage = Column(Integer)
     year = Column(Integer)
+    vin = Column(String, unique=True, index=True)
+    images = Column(JSON)
     source_ids = Column(JSON)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)

@@ -1,0 +1,14 @@
+:root{--bg:#f7f7f8}
+*{box-sizing:border-box}
+body{font-family:Inter, Arial, sans-serif;margin:0;background:var(--bg);color:#111}
+.app-header{background:#fff;padding:12px 20px;border-bottom:1px solid #eee}
+.logo{font-weight:700;text-decoration:none;color:#111}
+.app-main{padding:20px}
+.search-bar{display:flex;gap:8px}
+.search-bar input{flex:1;padding:10px;border:1px solid #ddd;border-radius:6px}
+.search-bar button{padding:10px 12px}
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
+.result-card{display:block;padding:12px;background:#fff;border-radius:8px;text-decoration:none;color:inherit;border:1px solid #eee}
+.result-title{font-weight:600}
+.pagination{display:flex;gap:8px;align-items:center;margin-top:12px}
+.vehicle-detail img{max-width:200px;margin-right:8px}
