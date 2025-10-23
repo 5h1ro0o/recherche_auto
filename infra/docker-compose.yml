@@ -99,16 +99,18 @@ services:
       - "127.0.0.1:8000:8000"   # <-- bind explicite sur localhost de l'hôte
     restart: unless-stopped
 
-  frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    image: voiture-frontend:latest
-    ports:
-      - "127.0.0.1:5173:80"     # <-- bind frontend sur localhost de l'hôte (nginx inside:80)
-    depends_on:
-      - backend
-    restart: unless-stopped
+frontend:
+  build:
+    context: ../frontend
+    dockerfile: Dockerfile
+  image: voiture-frontend:latest
+  environment:
+    - VITE_API_BASE=http://backend:8000/api  # Important!
+  ports:
+    - "127.0.0.1:5173:80"
+  depends_on:
+    - backend
+  restart: unless-stopped
 
 volumes:
   pgdata:
