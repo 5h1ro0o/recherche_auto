@@ -10,3 +10,8 @@ python-multipart
 python-dotenv
 minio
 httpx
+
+# Nouvelles dépendances pour l'authentification
+python-jose[cryptography]
+passlib[bcrypt]
+pydantic[email]
