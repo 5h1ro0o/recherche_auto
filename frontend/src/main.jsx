@@ -13,6 +13,7 @@ import LoginPage from './Pages/LoginPage'
 import RegisterPage from './Pages/RegisterPage'
 import ProfilePage from './Pages/ProfilePage'
 import './styles.css'
+import FavoritesPage from './Pages/FavoritesPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,6 +42,14 @@ createRoot(document.getElementById('root')).render(
                 element={
                   <ProtectedRoute>
                     <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/favorites"
+                element={
+                  <ProtectedRoute>
+                    <FavoritesPage />
                   </ProtectedRoute>
                 }
               />
