@@ -19,13 +19,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger("voiture-search")
 
-# import routers (ensure these modules exist)
-from app.routes import vehicles, search, auth  # noqa: E402
+# import routers
+from app.routes import vehicles, search, auth, alerts, search_history  # noqa: E402
+from app.routes.favorites import router as favorites_router  # noqa: E402
 
-app = FastAPI(title="Voiture Search API", version="0.1.0")
+app = FastAPI(title="Voiture Search API", version="0.2.0")
 
 
-# CORS - allow frontend local and production origins (adjust if needed)
+# CORS - allow frontend local and production origins
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
@@ -59,11 +60,13 @@ app.add_middleware(RequestLoggingMiddleware)
 app.include_router(vehicles.router)
 app.include_router(search.router)
 app.include_router(auth.router)
+app.include_router(alerts.router)
+app.include_router(search_history.router)
+app.include_router(favorites_router)
 
 # Exception handlers for nicer JSON errors
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    # This returns a clear structure the frontend can rely on
     logger.warning("Validation error: %s %s", request.url.path, exc.errors())
     return JSONResponse(
         status_code=422,
@@ -82,4 +85,4 @@ async def generic_exception_handler(request: Request, exc: Exception):
 
 @app.get("/")
 async def root():
-    return {"message": "API ok"}
+    return {"message": "API ok", "version": "0.2.0"}
