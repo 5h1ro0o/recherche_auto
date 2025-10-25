@@ -345,3 +345,140 @@ button[type="submit"]:disabled {
   border-radius: 50%;
   background: #ccc;
 }
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ccc;
+  animation: typing 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% { opacity: 0.3; }
+  30% { opacity: 1; }
+}
+
+.chatbot-input {
+  padding: 12px;
+  border-top: 1px solid #e1e4e8;
+  background: white;
+  display: flex;
+  gap: 8px;
+}
+
+.chatbot-input textarea {
+  flex: 1;
+  border: 1px solid #e1e4e8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  resize: none;
+  font-family: inherit;
+}
+
+.chatbot-input textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.chatbot-input button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0 16px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: transform 0.2s;
+}
+
+.chatbot-input button:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.chatbot-input button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Cartes véhicules dans le chat */
+.chat-vehicles {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-vehicle-card {
+  background: #f8f9fa;
+  border: 1px solid #e1e4e8;
+  border-radius: 8px;
+  padding: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+}
+
+.chat-vehicle-card:hover {
+  background: #fff;
+  border-color: #667eea;
+  transform: translateX(4px);
+}
+
+.vehicle-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: #24292e;
+}
+
+.vehicle-price {
+  font-size: 14px;
+  color: #28a745;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.vehicle-details {
+  font-size: 12px;
+  color: #6a737d;
+}
+
+.see-more {
+  text-align: center;
+  padding: 8px;
+  font-size: 12px;
+  color: #667eea;
+  font-weight: 500;
+}
+
+/* Suggestions */
+.chat-suggestions {
+  margin-top: 12px;
+  padding: 10px;
+  background: #fff3cd;
+  border-radius: 8px;
+  border: 1px solid #ffc107;
+}
+
+.suggestions-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #856404;
+}
+
+.suggestion-item {
+  font-size: 12px;
+  color: #856404;
+  padding: 2px 0;
+}

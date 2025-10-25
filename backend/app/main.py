@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 
 
+
 # configure logging
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 logging.basicConfig(
@@ -20,7 +21,7 @@ logging.basicConfig(
 logger = logging.getLogger("voiture-search")
 
 # import routers
-from app.routes import vehicles, search, auth, alerts, search_history  # noqa: E402
+from app.routes import vehicles, search, auth, alerts, search_history, chatbot, similar  # noqa: E402
 from app.routes.favorites import router as favorites_router  # noqa: E402
 
 app = FastAPI(title="Voiture Search API", version="0.2.0")
@@ -63,6 +64,8 @@ app.include_router(auth.router)
 app.include_router(alerts.router)
 app.include_router(search_history.router)
 app.include_router(favorites_router)
+app.include_router(chatbot.router)
+app.include_router(similar.router)
 
 # Exception handlers for nicer JSON errors
 @app.exception_handler(RequestValidationError)

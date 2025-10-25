@@ -1,6 +1,6 @@
-
 import React, { useState, useRef, useEffect } from 'react'
-import { chatParse, chatSearch } from '../services/chatbot'
+import { chatSearch } from '../services/chatbot'
+import { Link } from 'react-router-dom'
 
 export default function ChatBot({ onFiltersDetected, onSearchResults }) {
   const [isOpen, setIsOpen] = useState(false)
