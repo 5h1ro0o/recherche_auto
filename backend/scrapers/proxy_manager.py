@@ -2,13 +2,30 @@
 """
 Gestionnaire de rotation de proxies pour éviter les blocages
 """
-
 import random
 import logging
 from typing import List, Optional
 import os
 
 logger = logging.getLogger(__name__)
+
+# Import avec gestion d'erreur
+try:
+    import httpx
+    HTTPX_AVAILABLE = True
+except ImportError:
+    print("⚠️ httpx n'est pas installé. Installer avec: pip install httpx")
+    HTTPX_AVAILABLE = False
+    httpx = None
+
+try:
+    from bs4 import BeautifulSoup
+    BS4_AVAILABLE = True
+except ImportError:
+    print("⚠️ beautifulsoup4 n'est pas installé. Installer avec: pip install beautifulsoup4")
+    BS4_AVAILABLE = False
+    BeautifulSoup = None
+
 
 class ProxyManager:
     """
@@ -38,7 +55,7 @@ class ProxyManager:
         self.working_proxies = proxy_list.copy()
         self.failed_proxies = []
         
-        logger.info(f"ProxyManager initialisé avec {len(self.all_proxies)} proxies")
+        logger.info(f"✅ ProxyManager initialisé avec {len(self.all_proxies)} proxies")
     
     def get_proxy(self) -> Optional[str]:
         """
@@ -48,18 +65,18 @@ class ProxyManager:
             Proxy au format "http://ip:port" ou None si aucun dispo
         """
         if not self.working_proxies:
-            logger.warning("Aucun proxy fonctionnel disponible")
+            logger.warning("⚠️ Aucun proxy fonctionnel disponible")
             
             # Si tous ont échoué, réinitialiser (donner une 2ème chance)
             if self.failed_proxies:
-                logger.info("Réinitialisation des proxies échoués")
+                logger.info("🔄 Réinitialisation des proxies échoués")
                 self.working_proxies = self.failed_proxies.copy()
                 self.failed_proxies = []
             else:
                 return None
         
         proxy = random.choice(self.working_proxies)
-        logger.debug(f"Proxy sélectionné: {proxy}")
+        logger.debug(f"🎯 Proxy sélectionné: {proxy}")
         return proxy
     
     def mark_proxy_working(self, proxy: str):
@@ -74,7 +91,7 @@ class ProxyManager:
             if proxy in self.failed_proxies:
                 self.failed_proxies.remove(proxy)
         
-        logger.debug(f"Proxy {proxy} marqué comme fonctionnel")
+        logger.debug(f"✅ Proxy {proxy} marqué comme fonctionnel")
     
     def mark_proxy_failed(self, proxy: str):
         """
@@ -89,7 +106,7 @@ class ProxyManager:
         if proxy not in self.failed_proxies:
             self.failed_proxies.append(proxy)
         
-        logger.warning(f"Proxy {proxy} marqué comme défaillant")
+        logger.warning(f"❌ Proxy {proxy} marqué comme défaillant")
     
     def get_stats(self) -> dict:
         """
@@ -117,7 +134,9 @@ class ProxyManager:
         Returns:
             True si le proxy fonctionne, False sinon
         """
-        import httpx
+        if not HTTPX_AVAILABLE:
+            logger.error("❌ httpx non disponible pour tester les proxies")
+            return False
         
         try:
             proxies = {"http://": proxy, "https://": proxy}
@@ -125,7 +144,7 @@ class ProxyManager:
                 response = client.get(test_url)
                 return response.status_code == 200
         except Exception as e:
-            logger.debug(f"Proxy {proxy} échoué au test: {e}")
+            logger.debug(f"❌ Proxy {proxy} échoué au test: {e}")
             return False
 
 
@@ -147,12 +166,14 @@ def get_free_proxies() -> List[str]:
     Returns:
         Liste de proxies au format "http://ip:port"
     """
-    import httpx
-    from bs4 import BeautifulSoup
+    if not HTTPX_AVAILABLE or not BS4_AVAILABLE:
+        logger.error("❌ httpx ou beautifulsoup4 non disponibles")
+        return []
     
     proxies = []
     
     try:
+        logger.info("🔍 Récupération de proxies gratuits...")
         response = httpx.get("https://free-proxy-list.net/", timeout=10)
         soup = BeautifulSoup(response.text, 'html.parser')
         
@@ -171,10 +192,10 @@ def get_free_proxies() -> List[str]:
                     proxy = f"{protocol}://{ip}:{port}"
                     proxies.append(proxy)
         
-        logger.info(f"Récupéré {len(proxies)} proxies gratuits")
+        logger.info(f"✅ Récupéré {len(proxies)} proxies gratuits")
         
     except Exception as e:
-        logger.error(f"Erreur lors de la récupération des proxies gratuits: {e}")
+        logger.error(f"❌ Erreur lors de la récupération des proxies gratuits: {e}")
     
     return proxies
 
@@ -182,17 +203,22 @@ def get_free_proxies() -> List[str]:
 # Exemple d'utilisation
 if __name__ == "__main__":
     # Configuration logging
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
+    
+    print("=== Test ProxyManager ===\n")
     
     # Test 1 : Avec liste manuelle
+    print("📋 Test avec liste manuelle...")
     manual_proxies = [
         "http://proxy1.example.com:8080",
         "http://proxy2.example.com:8080",
     ]
     
     pm = ProxyManager(manual_proxies)
-    
-    print("Stats initiales:", pm.get_stats())
+    print(f"Stats initiales: {pm.get_stats()}")
     
     # Simuler utilisation
     proxy = pm.get_proxy()
@@ -200,14 +226,28 @@ if __name__ == "__main__":
     
     # Marquer comme défaillant
     pm.mark_proxy_failed(proxy)
-    print("Stats après échec:", pm.get_stats())
+    print(f"Stats après échec: {pm.get_stats()}")
     
-    # Test 2 : Avec proxies gratuits (décommenter pour tester)
-    # free_proxies = get_free_proxies()
-    # pm2 = ProxyManager(free_proxies)
-    # 
-    # for proxy in free_proxies[:5]:
-    #     if ProxyManager.test_proxy(proxy):
-    #         print(f"✓ {proxy} fonctionne")
-    #     else:
-    #         print(f"✗ {proxy} ne fonctionne pas")
+    print("\n" + "="*50 + "\n")
+    
+    # Test 2 : Avec proxies gratuits (optionnel)
+    if HTTPX_AVAILABLE and BS4_AVAILABLE:
+        print("🌐 Test avec proxies gratuits (peut prendre du temps)...")
+        free_proxies = get_free_proxies()
+        
+        if free_proxies:
+            pm2 = ProxyManager(free_proxies)
+            print(f"Stats proxies gratuits: {pm2.get_stats()}")
+            
+            # Tester les 3 premiers
+            print("\n🧪 Test des 3 premiers proxies...")
+            for proxy in free_proxies[:3]:
+                is_working = ProxyManager.test_proxy(proxy, timeout=5)
+                status = "✅ fonctionne" if is_working else "❌ ne fonctionne pas"
+                print(f"  {proxy}: {status}")
+        else:
+            print("❌ Aucun proxy gratuit récupéré")
+    else:
+        print("⚠️ httpx ou beautifulsoup4 manquant, skip test proxies gratuits")
+    
+    print("\n✅ Tests terminés")

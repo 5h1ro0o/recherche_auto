@@ -1,0 +1,20 @@
+# Database
+DATABASE_URL=postgresql+psycopg2://app:changeme@localhost:5432/vehicles
+
+# Elasticsearch
+ELASTIC_HOST=http://localhost:9200
+ES_INDEX=vehicles
+
+# Redis
+REDIS_URL=redis://localhost:6379/0
+
+# JWT Authentication
+SECRET_KEY=your-secret-key-change-in-production
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
+REFRESH_TOKEN_EXPIRE_DAYS=30
+
+# OpenAI (optionnel - pour le chatbot IA)
+OPENAI_API_KEY=sk-your-key-here
+
+# Proxies (optionnel - pour le scraping)
+PROXY_LIST=http://proxy1:8080,http://proxy2:8080
