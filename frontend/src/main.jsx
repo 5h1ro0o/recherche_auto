@@ -1,4 +1,4 @@
-// frontend/src/main.jsx
+// frontend/src/main.jsx - VERSION MISE À JOUR
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -12,8 +12,10 @@ import VehiclePage from './Pages/VehiclePage'
 import LoginPage from './Pages/LoginPage'
 import RegisterPage from './Pages/RegisterPage'
 import ProfilePage from './Pages/ProfilePage'
-import './styles.css'
 import FavoritesPage from './Pages/FavoritesPage'
+import AssistedRequestPage from './Pages/AssistedRequestPage'
+import ExpertDashboard from './Pages/ExpertDashboard'
+import './styles.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,12 +33,13 @@ createRoot(document.getElementById('root')).render(
         <AuthProvider>
           <Routes>
             <Route path="/" element={<App />}>
+              {/* Routes publiques */}
               <Route index element={<SearchPage />} />
               <Route path="/vehicle/:id" element={<VehiclePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               
-              {/* Routes protégées */}
+              {/* Routes protégées - Utilisateur connecté */}
               <Route
                 path="/profile"
                 element={
@@ -50,6 +53,26 @@ createRoot(document.getElementById('root')).render(
                 element={
                   <ProtectedRoute>
                     <FavoritesPage />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Routes protégées - Mode Assisté Client */}
+              <Route
+                path="/assisted"
+                element={
+                  <ProtectedRoute>
+                    <AssistedRequestPage />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Routes protégées - Expert uniquement */}
+              <Route
+                path="/expert"
+                element={
+                  <ProtectedRoute requiredRole="EXPERT">
+                    <ExpertDashboard />
                   </ProtectedRoute>
                 }
               />
