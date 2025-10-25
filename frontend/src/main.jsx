@@ -1,4 +1,4 @@
-// frontend/src/main.jsx - VERSION MISE À JOUR
+// frontend/src/main.jsx - VERSION MISE À JOUR AVEC MESSAGERIE
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -15,6 +15,8 @@ import ProfilePage from './Pages/ProfilePage'
 import FavoritesPage from './Pages/FavoritesPage'
 import AssistedRequestPage from './Pages/AssistedRequestPage'
 import ExpertDashboard from './Pages/ExpertDashboard'
+import MessagesPage from './Pages/MessagesPage'
+import ConversationPage from './Pages/ConversationPage'
 import './styles.css'
 
 const queryClient = new QueryClient({
@@ -53,6 +55,24 @@ createRoot(document.getElementById('root')).render(
                 element={
                   <ProtectedRoute>
                     <FavoritesPage />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Routes protégées - Messagerie */}
+              <Route
+                path="/messages"
+                element={
+                  <ProtectedRoute>
+                    <MessagesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/messages/:conversationId"
+                element={
+                  <ProtectedRoute>
+                    <ConversationPage />
                   </ProtectedRoute>
                 }
               />

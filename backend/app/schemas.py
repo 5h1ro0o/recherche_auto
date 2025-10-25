@@ -65,3 +65,117 @@ class VehicleOut(VehicleBase):
     updated_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
+
+class MessageCreate(BaseModel):
+    recipient_id: str
+    content: str
+    attachments: Optional[List[str]] = []
+
+class MessageOut(BaseModel):
+    id: str
+    conversation_id: str
+    sender_id: str
+    recipient_id: str
+    content: str
+    attachments: List[str]
+    is_read: bool
+    read_at: Optional[datetime]
+    created_at: datetime
+    
+    model_config = {"from_attributes": True}
+
+class ConversationOut(BaseModel):
+    conversation_id: str
+    other_user: dict  # {id, email, full_name, role}
+    last_message: dict  # {content, created_at, is_read, sender_id}
+    unread_count: int
+
+class AlertCreate(BaseModel):
+    name: str
+    criteria: dict
+    frequency: str = 'daily'
+
+class AlertUpdate(BaseModel):
+    name: Optional[str] = None
+    criteria: Optional[dict] = None
+    frequency: Optional[str] = None
+    is_active: Optional[bool] = None
+
+class AlertOut(BaseModel):
+    id: str
+    user_id: str
+    name: str
+    criteria: dict
+    frequency: str
+    is_active: bool
+    last_sent_at: Optional[datetime]
+    created_at: datetime
+    
+    model_config = {"from_attributes": True}
+
+class SearchHistoryOut(BaseModel):
+    id: str
+    user_id: str
+    query: Optional[str]
+    filters: dict
+    results_count: int
+    created_at: datetime
+    
+    model_config = {"from_attributes": True}
+
+class MessageCreate(BaseModel):
+    recipient_id: str
+    content: str
+    attachments: Optional[List[str]] = []
+
+class MessageOut(BaseModel):
+    id: str
+    conversation_id: str
+    sender_id: str
+    recipient_id: str
+    content: str
+    attachments: List[str]
+    is_read: bool
+    read_at: Optional[datetime]
+    created_at: datetime
+    
+    model_config = {"from_attributes": True}
+
+class ConversationOut(BaseModel):
+    conversation_id: str
+    other_user: dict  # {id, email, full_name, role}
+    last_message: dict  # {content, created_at, is_read, sender_id}
+    unread_count: int
+
+class AlertCreate(BaseModel):
+    name: str
+    criteria: dict
+    frequency: str = 'daily'
+
+class AlertUpdate(BaseModel):
+    name: Optional[str] = None
+    criteria: Optional[dict] = None
+    frequency: Optional[str] = None
+    is_active: Optional[bool] = None
+
+class AlertOut(BaseModel):
+    id: str
+    user_id: str
+    name: str
+    criteria: dict
+    frequency: str
+    is_active: bool
+    last_sent_at: Optional[datetime]
+    created_at: datetime
+    
+    model_config = {"from_attributes": True}
+
+class SearchHistoryOut(BaseModel):
+    id: str
+    user_id: str
+    query: Optional[str]
+    filters: dict
+    results_count: int
+    created_at: datetime
+    
+    model_config = {"from_attributes": True}
