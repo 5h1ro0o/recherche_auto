@@ -93,6 +93,7 @@ services:
       DATABASE_URL: "postgresql+psycopg2://app:changeme@postgres:5432/vehicles"
       ELASTIC_HOST: "http://elasticsearch:9200"
       REDIS_URL: "redis://redis:6379/0"
+      ALLOW_ORIGNS: "*"
       SECRET_KEY: "changeme_dev_secret_change_this"   # <--- nom attendu par app/config.py
     ports:
       - "8000:8000"

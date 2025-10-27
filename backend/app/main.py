@@ -35,6 +35,12 @@ origins = [
     "http://127.0.0.1:3000",
 ]
 
+allow_origins_env = os.getenv("ALLOW_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000")
+if allow_origins_env.strip() == "*":
+    origins = ["*"]
+else:
+    origins = [o.strip() for o in allow_origins_env.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
