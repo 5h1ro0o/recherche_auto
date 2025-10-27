@@ -206,3 +206,13 @@ if __name__ == "__main__":
         process_listing(sample)
     else:
         print("👉 Utilise --run-worker ou --process-file ou --test-single")
+
+
+# === PROMETHEUS METRICS ===
+try:
+    from prometheus_client import Counter, Histogram, Gauge, start_http_server
+    PROMETHEUS_AVAILABLE = True
+except ImportError:
+    print("⚠️ prometheus_client non installé. Installer avec: pip install prometheus-client")
+    PROMETHEUS_AVAILABLE = False
+    Counter = Histogram = Gauge = None

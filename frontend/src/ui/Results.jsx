@@ -1,33 +1,38 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import FavoriteButton from '../components/FavoriteButton'
 
-export default function Results({ loading, results, total, page=1, onPageChange }){
+// Composant principal Results enrichi
+export default function EnrichedResults({ loading, results = [], total = 0, page = 1, onPageChange }) {
+  const [quickViewVehicle, setQuickViewVehicle] = useState(null)
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔄</div>
+        <p style={{ color: '#6a737d' }}>Chargement des résultats...</p>
+      </div>
+    )
+  }
+
+  if (!results || results.length === 0) {
+    return (
+      <div style={{ textAlign: 'center', padding: '80px 20px' }}>
+        <div style={{ fontSize: '64px', marginBottom: '20px' }}>🔍</div>
+        <h3 style={{ fontSize: '24px', color: '#24292e', marginBottom: '12px' }}>
+          Aucun résultat trouvé
+        </h3>
+        <p style={{ color: '#6a737d', fontSize: '16px' }}>
+          Essayez d'élargir vos critères de recherche
+        </p>
+      </div>
+    )
+  }
   return (
     <div>
-      <div className="results-meta">{total} résultat(s)</div>
-      {loading && <div>Chargement...</div>}
-      {!loading && results.length === 0 && <div>Aucun résultat</div>}
-      <div className="results-grid">
-        {results.map(r => (
-          <div key={r.id} className="result-card-wrapper">
-            <Link to={`/vehicle/${encodeURIComponent(r.id)}`} className="result-card">
-              <div className="result-title">
-                {r.source?.title || `${r.source?.make || ''} ${r.source?.model || ''}`}
-              </div>
-              <div className="result-sub">
-                {r.source?.price ? r.source.price + ' €' : ''}
-              </div>
-            </Link>
-            <FavoriteButton vehicleId={r.id} />
-          </div>
-        ))}
+      <div style={{ marginBottom: '16px', color: '#586069' }}>
+        {total} résultat{total > 1 ? 's' : ''} trouvé{total > 1 ? 's' : ''}.
       </div>
-      <div className="pagination">
-        {page > 1 && <button onClick={()=>onPageChange(page-1)}>Préc.</button>}
-        <span>Page {page}</span>
-        {results.length > 0 && <button onClick={()=>onPageChange(page+1)}>Suiv.</button>}
-      </div>
-    </div>
-  )
-}
+      <div>
+        {results.map((vehicle) => (
+          <div
+          

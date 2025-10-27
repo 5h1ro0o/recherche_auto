@@ -40,6 +40,8 @@ createRoot(document.getElementById('root')).render(
               <Route path="/vehicle/:id" element={<VehiclePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+
               
               {/* Routes protégées - Utilisateur connecté */}
               <Route 
