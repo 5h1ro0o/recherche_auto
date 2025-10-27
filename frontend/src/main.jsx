@@ -42,6 +42,14 @@ createRoot(document.getElementById('root')).render(
               <Route path="/register" element={<RegisterPage />} />
               
               {/* Routes protégées - Utilisateur connecté */}
+              <Route 
+                path="/expert/request/:requestId" 
+                element={
+                  <ProtectedRoute requiredRole="EXPERT">
+                    <ExpertRequestDetailPage />
+                  </ProtectedRoute>
+                } 
+              />
               <Route
                 path="/profile"
                 element={
