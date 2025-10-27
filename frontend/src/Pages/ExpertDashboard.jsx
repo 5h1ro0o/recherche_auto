@@ -211,4 +211,26 @@ function AssignmentsTab({ assignments, onComplete, onPropose }) {
     return <div className="loading">Chargement...</div>
   }
 
-  if (
+  if ( assignments.length === 0) {
+    return (
+      <div className="empty-state">
+        <div className="empty-icon">🎉</div>
+        <h3>Pas de missions en cours</h3>
+        <p>Acceptez des demandes pour commencer à aider des clients</p>
+      </div>
+    )
+  }
+    return (
+    <div className="requests-grid">
+        {assignments.map(assignment => (
+        <RequestCard
+            key={assignment.id}
+            request={assignment}
+            onComplete={() => onComplete(assignment.id)}
+            onPropose={() => onPropose(assignment)}
+            showProposeButton
+        />
+        ))}
+    </div>
+  )
+}
