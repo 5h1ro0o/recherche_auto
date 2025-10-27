@@ -93,7 +93,7 @@ services:
       DATABASE_URL: "postgresql+psycopg2://app:changeme@postgres:5432/vehicles"
       ELASTIC_HOST: "http://elasticsearch:9200"
       REDIS_URL: "redis://redis:6379/0"
-      JWT_SECRET: "changeme_dev_secret_change_this"
+      SECRET_KEY: "changeme_dev_secret_change_this"   # <--- nom attendu par app/config.py
     ports:
       - "8000:8000"
     depends_on:
@@ -111,9 +111,11 @@ services:
     build:
       context: ../frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API_BASE: "http://localhost:8000/api"   # <-- injecté AU BUILD
     image: voiture-frontend:latest
     environment:
-      - VITE_API_BASE=http://backend:8000/api
+      - VITE_API_BASE=http://localhost:8000/api     # runtime fallback si besoin
     ports:
       - "127.0.0.1:5173:80"
     depends_on:
