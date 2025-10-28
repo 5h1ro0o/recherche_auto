@@ -45,7 +45,7 @@ try {
     Write-Host "  - Mot de passe: $DB_PASSWORD" -ForegroundColor White
     Write-Host ""
     Write-Host "URL de connexion:" -ForegroundColor Cyan
-    Write-Host "  postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@localhost:5432/$DB_NAME" -ForegroundColor White
+    Write-Host "  postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}?client_encoding=utf8" -ForegroundColor White
     Write-Host ""
 
     # Creer le fichier .env
@@ -54,7 +54,7 @@ try {
     # Utiliser une here-string avec des guillemets simples pour eviter l'interpolation
     $ENV_CONTENT = @'
 # Configuration pour PostgreSQL 17 en local
-DATABASE_URL=postgresql+psycopg2://app:changeme@localhost:5432/recherche_auto
+DATABASE_URL=postgresql+psycopg2://app:changeme@localhost:5432/recherche_auto?client_encoding=utf8
 
 # Elasticsearch (optionnel)
 ELASTIC_HOST=http://localhost:9200
