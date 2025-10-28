@@ -1,5 +1,5 @@
 """
-Script pour tester la connexion à PostgreSQL
+Script pour tester la connexion a PostgreSQL
 """
 import os
 import sys
@@ -11,21 +11,27 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/recherche_auto")
 
-print(f"🔍 Test de connexion à la base de données...")
-print(f"📍 URL: {DATABASE_URL.replace(DATABASE_URL.split('@')[0].split('//')[1], '***:***')}")
+print("Test de connexion a la base de donnees...")
+# Masquer le mot de passe dans l'affichage
+url_parts = DATABASE_URL.split('@')
+if len(url_parts) == 2:
+    masked_url = "postgresql+psycopg2://***:***@" + url_parts[1]
+else:
+    masked_url = DATABASE_URL
+print(f"URL: {masked_url}")
 
 try:
-    # Créer un engine
+    # Creer un engine
     engine = create_engine(DATABASE_URL, echo=False)
 
     # Tester la connexion
     with engine.connect() as conn:
         result = conn.execute(text("SELECT version();"))
         version = result.fetchone()[0]
-        print(f"✅ Connexion réussie !")
-        print(f"📊 PostgreSQL version: {version}")
+        print("Connexion reussie !")
+        print(f"PostgreSQL version: {version}")
 
-        # Vérifier les tables existantes
+        # Verifier les tables existantes
         result = conn.execute(text("""
             SELECT tablename
             FROM pg_catalog.pg_tables
@@ -35,26 +41,26 @@ try:
         tables = [row[0] for row in result.fetchall()]
 
         if tables:
-            print(f"\n📋 Tables existantes ({len(tables)}):")
+            print(f"\nTables existantes ({len(tables)}):")
             for table in tables:
                 print(f"  - {table}")
         else:
-            print(f"\n⚠️  Aucune table trouvée. Vous devez exécuter les migrations Alembic.")
-            print(f"   Commande: alembic upgrade head")
+            print("\nAucune table trouvee. Vous devez executer les migrations Alembic.")
+            print("   Commande: alembic upgrade head")
 
         sys.exit(0)
 
 except Exception as e:
-    print(f"❌ Erreur de connexion !")
-    print(f"💥 {type(e).__name__}: {e}")
-    print(f"\n📝 Solutions possibles:")
-    print(f"  1. Vérifier que PostgreSQL est installé et démarré")
-    print(f"  2. Vérifier les identifiants dans le fichier .env")
-    print(f"  3. Créer la base de données 'recherche_auto' si elle n'existe pas")
-    print(f"\n🔧 Pour installer PostgreSQL sur Windows:")
-    print(f"  - Télécharger: https://www.postgresql.org/download/windows/")
-    print(f"  - Ou utiliser: winget install PostgreSQL.PostgreSQL")
-    print(f"\n🔧 Pour créer la base de données:")
-    print(f"  psql -U postgres")
-    print(f"  CREATE DATABASE recherche_auto;")
+    print("Erreur de connexion !")
+    print(f"{type(e).__name__}: {e}")
+    print("\nSolutions possibles:")
+    print("  1. Verifier que PostgreSQL est installe et demarre")
+    print("  2. Verifier les identifiants dans le fichier .env")
+    print("  3. Creer la base de donnees 'recherche_auto' si elle n'existe pas")
+    print("\nPour installer PostgreSQL sur Windows:")
+    print("  - Telecharger: https://www.postgresql.org/download/windows/")
+    print("  - Ou utiliser: winget install PostgreSQL.PostgreSQL")
+    print("\nPour creer la base de donnees:")
+    print("  psql -U postgres")
+    print("  CREATE DATABASE recherche_auto;")
     sys.exit(1)
