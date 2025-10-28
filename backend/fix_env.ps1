@@ -2,7 +2,8 @@
 
 Write-Host "Recreation du fichier .env..." -ForegroundColor Cyan
 
-$ENV_CONTENT = @"
+# Utiliser une here-string avec guillemets simples pour eviter l'interpolation
+$ENV_CONTENT = @'
 # Configuration pour PostgreSQL 17 en local
 DATABASE_URL=postgresql+psycopg2://app:changeme@localhost:5432/recherche_auto
 
@@ -26,7 +27,7 @@ LOG_LEVEL=INFO
 
 # Application
 APP_NAME=Voiture Search
-"@
+'@
 
 $ENV_CONTENT | Out-File -FilePath ".env" -Encoding UTF8 -Force
 Write-Host "Fichier .env recree avec succes!" -ForegroundColor Green

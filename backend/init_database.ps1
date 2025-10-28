@@ -45,14 +45,16 @@ try {
     Write-Host "  - Mot de passe: $DB_PASSWORD" -ForegroundColor White
     Write-Host ""
     Write-Host "URL de connexion:" -ForegroundColor Cyan
-    Write-Host "  postgresql+psycopg2://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME" -ForegroundColor White
+    Write-Host "  postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@localhost:5432/$DB_NAME" -ForegroundColor White
     Write-Host ""
 
     # Creer le fichier .env
     Write-Host "Creation du fichier .env..." -ForegroundColor Cyan
-    $ENV_CONTENT = @"
+
+    # Utiliser une here-string avec des guillemets simples pour eviter l'interpolation
+    $ENV_CONTENT = @'
 # Configuration pour PostgreSQL 17 en local
-DATABASE_URL=postgresql+psycopg2://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME
+DATABASE_URL=postgresql+psycopg2://app:changeme@localhost:5432/recherche_auto
 
 # Elasticsearch (optionnel)
 ELASTIC_HOST=http://localhost:9200
@@ -61,7 +63,7 @@ ELASTIC_HOST=http://localhost:9200
 REDIS_URL=redis://localhost:6379/0
 
 # JWT Authentication
-SECRET_KEY=dev-secret-key-$(Get-Random)-change-in-production
+SECRET_KEY=dev-secret-key-CHANGE-THIS-IN-PRODUCTION
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
 REFRESH_TOKEN_EXPIRE_DAYS=30
@@ -74,7 +76,7 @@ LOG_LEVEL=INFO
 
 # Application
 APP_NAME=Voiture Search
-"@
+'@
 
     $ENV_CONTENT | Out-File -FilePath ".env" -Encoding UTF8
     Write-Host "Fichier .env cree!" -ForegroundColor Green
