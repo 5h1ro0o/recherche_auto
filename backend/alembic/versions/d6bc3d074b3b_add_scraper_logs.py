@@ -1,8 +1,15 @@
-# backend/alembic/versions/xxx_add_scraper_logs.py
+"""add scraper_logs table
 
+Revision ID: add_scraper_logs
+Revises: add_assisted_requests
+Create Date: 2025-01-27 10:00:00.000000
+"""
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+
+revision = 'add_scraper_logs'
+down_revision = 'add_assisted_requests'
 
 def upgrade():
     op.create_table(
