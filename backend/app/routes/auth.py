@@ -4,6 +4,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import timedelta
+from pydantic import BaseModel
 
 from app.db import SessionLocal
 from app import models, schemas, auth
@@ -94,12 +95,15 @@ async def login(credentials: schemas.UserLogin, db: Session = Depends(get_db)):
         "token_type": "bearer"
     }
 
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
+
 @router.post("/refresh", response_model=schemas.Token)
-async def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
+async def refresh_token(request: RefreshTokenRequest, db: Session = Depends(get_db)):
     """
     Rafraîchir l'access token avec un refresh token
     """
-    payload = auth.decode_token(refresh_token)
+    payload = auth.decode_token(request.refresh_token)
     
     if payload is None or payload.get("type") != "refresh":
         raise HTTPException(

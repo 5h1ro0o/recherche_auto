@@ -16,15 +16,77 @@ client.interceptors.request.use((config) => {
   return config
 })
 
-// Intercepteur pour gérer les erreurs 401
+// Intercepteur pour gérer les erreurs 401 et refresh token
+let isRefreshing = false
+let failedQueue = []
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error)
+    } else {
+      prom.resolve(token)
+    }
+  })
+  failedQueue = []
+}
+
 client.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('access_token')
-      localStorage.removeItem('refresh_token')
-      window.location.href = '/login'
+    const originalRequest = error.config
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject })
+        })
+          .then(token => {
+            originalRequest.headers.Authorization = `Bearer ${token}`
+            return client(originalRequest)
+          })
+          .catch(err => Promise.reject(err))
+      }
+
+      originalRequest._retry = true
+      isRefreshing = true
+
+      const refreshToken = localStorage.getItem('refresh_token')
+
+      if (!refreshToken) {
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
+        window.location.href = '/login'
+        return Promise.reject(error)
+      }
+
+      try {
+        const response = await axios.post(`${API_BASE}/auth/refresh`, {
+          refresh_token: refreshToken
+        })
+
+        const { access_token, refresh_token: newRefreshToken } = response.data
+
+        localStorage.setItem('access_token', access_token)
+        localStorage.setItem('refresh_token', newRefreshToken)
+
+        client.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
+        originalRequest.headers.Authorization = `Bearer ${access_token}`
+
+        processQueue(null, access_token)
+
+        return client(originalRequest)
+      } catch (err) {
+        processQueue(err, null)
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
+        window.location.href = '/login'
+        return Promise.reject(err)
+      } finally {
+        isRefreshing = false
+      }
     }
+
     return Promise.reject(error)
   }
 )
