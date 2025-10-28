@@ -10,15 +10,23 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Vérifie si le mot de passe correspond au hash"""
-    # Bcrypt a une limite de 72 bytes, on tronque si nécessaire
-    password_bytes = plain_password.encode('utf-8')[:72]
-    return pwd_context.verify(password_bytes.decode('utf-8', errors='ignore'), hashed_password)
+    # Bcrypt a une limite de 72 bytes
+    # Tronquer intelligemment pour ne pas dépasser 72 bytes en UTF-8
+    password_bytes = plain_password.encode('utf-8')
+    if len(password_bytes) > 72:
+        # Tronquer et retirer les bytes incomplets à la fin
+        plain_password = password_bytes[:72].decode('utf-8', errors='ignore')
+    return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password: str) -> str:
     """Hash un mot de passe"""
-    # Bcrypt a une limite de 72 bytes, on tronque si nécessaire
-    password_bytes = password.encode('utf-8')[:72]
-    return pwd_context.hash(password_bytes.decode('utf-8', errors='ignore'))
+    # Bcrypt a une limite de 72 bytes
+    # Tronquer intelligemment pour ne pas dépasser 72 bytes en UTF-8
+    password_bytes = password.encode('utf-8')
+    if len(password_bytes) > 72:
+        # Tronquer et retirer les bytes incomplets à la fin
+        password = password_bytes[:72].decode('utf-8', errors='ignore')
+    return pwd_context.hash(password)
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Créer un token JWT d'accès"""
