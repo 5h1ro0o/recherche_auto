@@ -44,6 +44,12 @@ export default function App() {
                   </Link>
                 )}
 
+                {user?.role === 'PRO' && (
+                  <Link to="/pro" className="nav-link pro-link">
+                    💼 Espace Pro
+                  </Link>
+                )}
+
                 <MessageNotification />
 
                 <div className="user-menu">

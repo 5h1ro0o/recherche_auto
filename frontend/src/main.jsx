@@ -17,6 +17,9 @@ import AssistedRequestPage from './Pages/AssistedRequestPage'
 import ExpertDashboard from './Pages/ExpertDashboard'
 import MessagesPage from './Pages/MessagesPage'
 import ConversationPage from './Pages/ConversationPage'
+import AdminDashboard from './Pages/AdminDashboard'
+import ExpertRequestDetailPage from './Pages/ExpertRequestDetailPage'
+import ProDashboard from './Pages/ProDashboard'
 import './styles.css'
 
 const queryClient = new QueryClient({
@@ -103,6 +106,16 @@ createRoot(document.getElementById('root')).render(
                 element={
                   <ProtectedRoute requiredRole="EXPERT">
                     <ExpertDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Routes protégées - Professionnels uniquement */}
+              <Route
+                path="/pro"
+                element={
+                  <ProtectedRoute requiredRole="PRO">
+                    <ProDashboard />
                   </ProtectedRoute>
                 }
               />
