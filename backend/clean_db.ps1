@@ -24,6 +24,7 @@ try {
     & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS scraper_logs CASCADE;" 2>$null
     & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS messages CASCADE;" 2>$null
     & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS conversations CASCADE;" 2>$null
+    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS favorites CASCADE;" 2>$null
     & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS alerts CASCADE;" 2>$null
     & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS search_history CASCADE;" 2>$null
     & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS vehicles CASCADE;" 2>$null

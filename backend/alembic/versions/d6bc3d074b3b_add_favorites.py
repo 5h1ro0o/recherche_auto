@@ -11,18 +11,23 @@ revision = 'add_favorites'
 down_revision = 'add_users_roles'
 
 def upgrade():
-    op.create_table('favorites',
-        sa.Column('id', sa.String(), nullable=False),
-        sa.Column('user_id', sa.String(), nullable=False),
-        sa.Column('vehicle_id', sa.String(), nullable=False),
-        sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('now()')),
-        sa.PrimaryKeyConstraint('id'),
-        sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
-        sa.ForeignKeyConstraint(['vehicle_id'], ['vehicles.id'], ondelete='CASCADE'),
-        sa.UniqueConstraint('user_id', 'vehicle_id', name='unique_user_vehicle_favorite')
-    )
-    op.create_index('ix_favorites_user_id', 'favorites', ['user_id'])
-    op.create_index('ix_favorites_vehicle_id', 'favorites', ['vehicle_id'])
+    # Check if favorites table already exists
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+
+    if 'favorites' not in inspector.get_table_names():
+        op.create_table('favorites',
+            sa.Column('id', sa.String(), nullable=False),
+            sa.Column('user_id', sa.String(), nullable=False),
+            sa.Column('vehicle_id', sa.String(), nullable=False),
+            sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('now()')),
+            sa.PrimaryKeyConstraint('id'),
+            sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+            sa.ForeignKeyConstraint(['vehicle_id'], ['vehicles.id'], ondelete='CASCADE'),
+            sa.UniqueConstraint('user_id', 'vehicle_id', name='unique_user_vehicle_favorite')
+        )
+        op.create_index('ix_favorites_user_id', 'favorites', ['user_id'])
+        op.create_index('ix_favorites_vehicle_id', 'favorites', ['vehicle_id'])
 
 def downgrade():
     op.drop_index('ix_favorites_vehicle_id', 'favorites')
