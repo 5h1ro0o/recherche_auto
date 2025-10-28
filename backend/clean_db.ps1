@@ -12,26 +12,29 @@ $POSTGRES_PASSWORD = Read-Host -AsSecureString
 $POSTGRES_PASSWORD_TEXT = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($POSTGRES_PASSWORD))
 
 Write-Host ""
-Write-Host "Nettoyage des types ENUM orphelins..." -ForegroundColor Green
+Write-Host "Nettoyage complet de la base de donnees..." -ForegroundColor Green
 
 try {
     $env:PGPASSWORD = $POSTGRES_PASSWORD_TEXT
 
-    # Supprimer le type userrole s'il existe
-    Write-Host "Suppression du type userrole..." -ForegroundColor Cyan
-    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TYPE IF EXISTS userrole CASCADE;" 2>$null
+    # Supprimer toutes les tables en cascade
+    Write-Host "Suppression de toutes les tables..." -ForegroundColor Cyan
+    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS proposed_vehicles CASCADE;" 2>$null
+    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS assisted_requests CASCADE;" 2>$null
+    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS scraper_logs CASCADE;" 2>$null
+    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS messages CASCADE;" 2>$null
+    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS conversations CASCADE;" 2>$null
+    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS alerts CASCADE;" 2>$null
+    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS search_history CASCADE;" 2>$null
+    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS vehicles CASCADE;" 2>$null
+    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS users CASCADE;" 2>$null
+    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TABLE IF EXISTS alembic_version CASCADE;" 2>$null
 
-    # Supprimer le type requeststatus s'il existe
-    Write-Host "Suppression du type requeststatus..." -ForegroundColor Cyan
-    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TYPE IF EXISTS requeststatus CASCADE;" 2>$null
-
-    # Supprimer le type proposalstatus s'il existe
-    Write-Host "Suppression du type proposalstatus..." -ForegroundColor Cyan
+    # Supprimer tous les types ENUM
+    Write-Host "Suppression des types ENUM..." -ForegroundColor Cyan
     & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TYPE IF EXISTS proposalstatus CASCADE;" 2>$null
-
-    # Remettre la table alembic_version a zero
-    Write-Host "Reinitialisation d'Alembic..." -ForegroundColor Cyan
-    & psql -U $POSTGRES_USER -d $DB_NAME -c "DELETE FROM alembic_version;" 2>$null
+    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TYPE IF EXISTS requeststatus CASCADE;" 2>$null
+    & psql -U $POSTGRES_USER -d $DB_NAME -c "DROP TYPE IF EXISTS userrole CASCADE;" 2>$null
 
     Remove-Item env:PGPASSWORD
 

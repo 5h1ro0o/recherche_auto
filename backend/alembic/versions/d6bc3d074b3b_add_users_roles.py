@@ -19,7 +19,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    # Create UserRole enum type if it doesn't exist
+    # Create UserRole enum type if it doesn't exist using raw SQL
     conn = op.get_bind()
 
     # Check if the enum type already exists
@@ -29,27 +29,30 @@ def upgrade() -> None:
     enum_exists = result.scalar()
 
     if not enum_exists:
-        user_role_enum = postgresql.ENUM('ADMIN', 'PRO', 'PARTICULAR', 'EXPERT', name='userrole', create_type=True)
-        user_role_enum.create(conn, checkfirst=False)
-    else:
-        # If it exists, just reference it
-        user_role_enum = postgresql.ENUM('ADMIN', 'PRO', 'PARTICULAR', 'EXPERT', name='userrole', create_type=False)
+        # Create the enum type using raw SQL to avoid SQLAlchemy automatic creation
+        conn.execute(sa.text(
+            "CREATE TYPE userrole AS ENUM ('ADMIN', 'PRO', 'PARTICULAR', 'EXPERT')"
+        ))
+        conn.commit()
 
-    # Create users table
-    op.create_table('users',
-        sa.Column('id', sa.String(), nullable=False),
-        sa.Column('email', sa.String(), nullable=False),
-        sa.Column('hashed_password', sa.String(), nullable=False),
-        sa.Column('full_name', sa.String(), nullable=True),
-        sa.Column('phone', sa.String(), nullable=True),
-        sa.Column('role', user_role_enum, nullable=False, server_default='PARTICULAR'),
-        sa.Column('is_active', sa.Boolean(), nullable=False, server_default='true'),
-        sa.Column('is_verified', sa.Boolean(), nullable=False, server_default='false'),
-        sa.Column('created_at', sa.TIMESTAMP(), nullable=True, server_default=sa.text('now()')),
-        sa.Column('updated_at', sa.TIMESTAMP(), nullable=True, server_default=sa.text('now()')),
-        sa.PrimaryKeyConstraint('id'),
-        sa.UniqueConstraint('email')
-    )
+    # Create users table without using SQLAlchemy ENUM object
+    # This prevents SQLAlchemy from trying to create the enum automatically
+    op.execute("""
+        CREATE TABLE users (
+            id VARCHAR NOT NULL,
+            email VARCHAR NOT NULL,
+            hashed_password VARCHAR NOT NULL,
+            full_name VARCHAR,
+            phone VARCHAR,
+            role userrole NOT NULL DEFAULT 'PARTICULAR',
+            is_active BOOLEAN NOT NULL DEFAULT true,
+            is_verified BOOLEAN NOT NULL DEFAULT false,
+            created_at TIMESTAMP DEFAULT now(),
+            updated_at TIMESTAMP DEFAULT now(),
+            PRIMARY KEY (id),
+            UNIQUE (email)
+        )
+    """)
 
     # Create indexes
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
