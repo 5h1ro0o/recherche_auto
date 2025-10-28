@@ -8,8 +8,19 @@ DATABASE_URL = os.getenv(
     "postgresql+psycopg2://app:changeme@127.0.0.1:5432/vehicles"
 )
 
-# create engine
-engine = create_engine(DATABASE_URL, echo=False, future=True)
+# Connection arguments to force UTF-8 encoding
+connect_args = {
+    "client_encoding": "utf8",
+    "options": "-c client_encoding=utf8"
+}
+
+# create engine with UTF-8 encoding
+engine = create_engine(
+    DATABASE_URL,
+    echo=False,
+    future=True,
+    connect_args=connect_args
+)
 
 # Session factory
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
