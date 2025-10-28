@@ -333,7 +333,7 @@ function PhotoGallery({ images, currentIndex, onPrev, onNext, onImageClick }) {
           {images.map((img, idx) => (
             <div
               key={idx}
-              onClick={() => onImageClick(idx)}
+              onClick={() => setCurrentImageIndex(idx)}
               style={{
                 width: '80px',
                 height: '60px',
@@ -913,13 +913,23 @@ function Lightbox({ images, currentIndex, onClose, onPrev, onNext }) {
             }}
             onMouseEnter={(e) => e.target.style.background = 'rgba(255,255,255,0.3)'}
             onMouseLeave={(e) => e.target.style.background = 'rgba(255,255,255,0.2)'}
-          />
+          >
+            ›
+          </button>
         </>
       )}
     </div>
   )
 }
 function ContactModal({ seller, vehicle, onClose }) {
+  const [message, setMessage] = useState('')
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    alert('Message envoyé ! (Simulation)')
+    onClose()
+  }
+
   return (
     <div
       style={{
@@ -937,15 +947,170 @@ function ContactModal({ seller, vehicle, onClose }) {
       }}
       onClick={onClose}
     >
-    <div
+      <div
         style={{
           background: 'white',
           borderRadius: '16px',
-          padding: '24px',
+          padding: '32px',
           maxWidth: '500px',
           width: '100%',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.2)'
+          boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
         }}
         onClick={(e) => e.stopPropagation()}
-    >
-  )}
+      >
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '24px'
+        }}>
+          <h2 style={{
+            margin: 0,
+            fontSize: '24px',
+            fontWeight: 700
+          }}>
+            Contacter le vendeur
+          </h2>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '28px',
+              color: '#6a737d',
+              cursor: 'pointer',
+              width: '36px',
+              height: '36px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '8px',
+              transition: 'background 0.2s'
+            }}
+            onMouseEnter={(e) => e.target.style.background = '#f8f9fa'}
+            onMouseLeave={(e) => e.target.style.background = 'none'}
+          >
+            ✕
+          </button>
+        </div>
+
+        <div style={{
+          padding: '16px',
+          background: '#f8f9fa',
+          borderRadius: '12px',
+          marginBottom: '24px'
+        }}>
+          <div style={{
+            fontWeight: 600,
+            fontSize: '16px',
+            marginBottom: '8px'
+          }}>
+            {seller.name}
+          </div>
+          <div style={{
+            fontSize: '14px',
+            color: '#6a737d',
+            marginBottom: '8px'
+          }}>
+            À propos de : {vehicle.title}
+          </div>
+          <div style={{
+            fontSize: '18px',
+            fontWeight: 700,
+            color: '#28a745'
+          }}>
+            {vehicle.price.toLocaleString()} €
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '14px',
+              fontWeight: 600,
+              marginBottom: '8px',
+              color: '#24292e'
+            }}>
+              Votre message
+            </label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Bonjour, je suis intéressé(e) par ce véhicule..."
+              required
+              rows={6}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '2px solid #e1e4e8',
+                borderRadius: '10px',
+                fontSize: '14px',
+                fontFamily: 'inherit',
+                resize: 'vertical'
+              }}
+            />
+          </div>
+
+          <div style={{
+            display: 'flex',
+            gap: '12px'
+          }}>
+            <button
+              type="button"
+              onClick={onClose}
+              style={{
+                flex: 1,
+                padding: '12px 24px',
+                background: 'white',
+                border: '2px solid #e1e4e8',
+                color: '#24292e',
+                borderRadius: '10px',
+                fontSize: '15px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = '#f8f9fa'
+                e.target.style.borderColor = '#d1d5da'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'white'
+                e.target.style.borderColor = '#e1e4e8'
+              }}
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              style={{
+                flex: 1,
+                padding: '12px 24px',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                fontSize: '15px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                boxShadow: '0 4px 12px rgba(102,126,234,0.25)'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'translateY(-2px)'
+                e.target.style.boxShadow = '0 6px 20px rgba(102,126,234,0.35)'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0)'
+                e.target.style.boxShadow = '0 4px 12px rgba(102,126,234,0.25)'
+              }}
+            >
+              Envoyer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
