@@ -937,7 +937,7 @@ function ContactModal({ seller, vehicle, onClose }) {
       }}
       onClick={onClose}
     >
-    <div
+      <div
         style={{
           background: 'white',
           borderRadius: '16px',
@@ -947,5 +947,116 @@ function ContactModal({ seller, vehicle, onClose }) {
           boxShadow: '0 2px 12px rgba(0,0,0,0.2)'
         }}
         onClick={(e) => e.stopPropagation()}
-    >
-  )}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h2 style={{ margin: 0, fontSize: '24px', fontWeight: '600' }}>Informations de contact</h2>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '28px',
+              cursor: 'pointer',
+              color: '#666',
+              padding: '0',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            &times;
+          </button>
+        </div>
+
+        <div style={{ marginBottom: '20px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '12px', color: '#333' }}>
+            {vehicle?.title || 'Véhicule'}
+          </h3>
+          <p style={{ color: '#666', fontSize: '16px', fontWeight: '600' }}>
+            {vehicle?.price ? `${vehicle.price.toLocaleString()} €` : 'Prix non disponible'}
+          </p>
+        </div>
+
+        <div style={{ borderTop: '1px solid #eee', paddingTop: '20px' }}>
+          <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>Vendeur</h4>
+
+          {seller?.full_name && (
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+              <span style={{ fontWeight: '500', marginRight: '8px' }}>Nom:</span>
+              <span>{seller.full_name}</span>
+            </div>
+          )}
+
+          {seller?.phone && (
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+              <span style={{ fontWeight: '500', marginRight: '8px' }}>Téléphone:</span>
+              <a href={`tel:${seller.phone}`} style={{ color: '#3b82f6', textDecoration: 'none' }}>
+                {seller.phone}
+              </a>
+            </div>
+          )}
+
+          {seller?.email && (
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+              <span style={{ fontWeight: '500', marginRight: '8px' }}>Email:</span>
+              <a href={`mailto:${seller.email}`} style={{ color: '#3b82f6', textDecoration: 'none' }}>
+                {seller.email}
+              </a>
+            </div>
+          )}
+
+          {(!seller?.phone && !seller?.email) && (
+            <p style={{ color: '#666', fontStyle: 'italic' }}>
+              Informations de contact non disponibles
+            </p>
+          )}
+        </div>
+
+        <div style={{ marginTop: '24px', display: 'flex', gap: '12px' }}>
+          {seller?.phone && (
+            <a
+              href={`tel:${seller.phone}`}
+              style={{
+                flex: 1,
+                padding: '12px',
+                background: '#3b82f6',
+                color: 'white',
+                textAlign: 'center',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                fontWeight: '500',
+                transition: 'background 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.background = '#2563eb'}
+              onMouseLeave={(e) => e.target.style.background = '#3b82f6'}
+            >
+              Appeler
+            </a>
+          )}
+          {seller?.email && (
+            <a
+              href={`mailto:${seller.email}`}
+              style={{
+                flex: 1,
+                padding: '12px',
+                background: '#10b981',
+                color: 'white',
+                textAlign: 'center',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                fontWeight: '500',
+                transition: 'background 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.background = '#059669'}
+              onMouseLeave={(e) => e.target.style.background = '#10b981'}
+            >
+              Envoyer un email
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
