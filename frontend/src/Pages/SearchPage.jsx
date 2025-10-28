@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import SearchBar from '../ui/SearchBar'
 import Results from '../ui/Results'
 import ChatBot from '../components/ChatBot'
-import { useSearch } from '../services/useSearch'
+import { useSearch } from '../services/UseSearch'
 
 export default function SearchPage() {
   const [q, setQ] = useState('')

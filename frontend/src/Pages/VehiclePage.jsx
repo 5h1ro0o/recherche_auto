@@ -177,6 +177,7 @@ export default function EnhancedVehiclePage() {
             onPrev={prevImage}
             onNext={nextImage}
             onImageClick={() => setShowLightbox(true)}
+            setCurrentImageIndex={setCurrentImageIndex}
           />
 
           <PriceSection vehicle={vehicle} />
@@ -239,7 +240,7 @@ export default function EnhancedVehiclePage() {
   )
 }
 
-function PhotoGallery({ images, currentIndex, onPrev, onNext, onImageClick }) {
+function PhotoGallery({ images, currentIndex, onPrev, onNext, onImageClick, setCurrentImageIndex }) {
   return (
     <div style={{
       background: 'white',
