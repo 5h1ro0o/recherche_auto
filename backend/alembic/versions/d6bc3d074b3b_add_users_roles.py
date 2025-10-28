@@ -19,9 +19,21 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    # Create UserRole enum type
-    user_role_enum = postgresql.ENUM('ADMIN', 'PRO', 'PARTICULAR', 'EXPERT', name='userrole', create_type=True)
-    user_role_enum.create(op.get_bind(), checkfirst=True)
+    # Create UserRole enum type if it doesn't exist
+    conn = op.get_bind()
+
+    # Check if the enum type already exists
+    result = conn.execute(sa.text(
+        "SELECT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'userrole');"
+    ))
+    enum_exists = result.scalar()
+
+    if not enum_exists:
+        user_role_enum = postgresql.ENUM('ADMIN', 'PRO', 'PARTICULAR', 'EXPERT', name='userrole', create_type=True)
+        user_role_enum.create(conn, checkfirst=False)
+    else:
+        # If it exists, just reference it
+        user_role_enum = postgresql.ENUM('ADMIN', 'PRO', 'PARTICULAR', 'EXPERT', name='userrole', create_type=False)
 
     # Create users table
     op.create_table('users',
