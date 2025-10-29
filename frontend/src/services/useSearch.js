@@ -26,8 +26,11 @@ export function useSearch(
       setLoading(true);
       setError(null);
 
+      // Si scraping activé et pas de query, utiliser une recherche générale
+      const searchQuery = query || (enableScraping ? 'voiture' : '');
+
       const response = await client.post('/search', {
-        q: query || '',
+        q: searchQuery,
         filters: filters,
         page: page,
         enable_scraping: enableScraping,
@@ -47,8 +50,8 @@ export function useSearch(
 
   // Déclencher la recherche automatiquement quand les paramètres changent
   useEffect(() => {
-    // Ne déclencher que si on a une query OU des filtres
-    if (query || Object.keys(filters).length > 0) {
+    // Déclencher si: query OU filtres OU scraping activé
+    if (query || Object.keys(filters).length > 0 || enableScraping) {
       fetchSearch();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
