@@ -6,12 +6,30 @@ import subprocess
 import sys
 import os
 
-# Configuration de la connexion
-DB_HOST = "127.0.0.1"
-DB_PORT = "5432"
-DB_NAME = "vehicles"
-DB_USER = "app"
-DB_PASSWORD = "changeme"
+# Configurations possibles à essayer
+DB_CONFIGS = [
+    {
+        "host": "127.0.0.1",
+        "port": "5432",
+        "dbname": "recherche_auto",
+        "user": "postgres",
+        "password": "postgres"
+    },
+    {
+        "host": "127.0.0.1",
+        "port": "5432",
+        "dbname": "vehicles",
+        "user": "app",
+        "password": "password"
+    },
+    {
+        "host": "127.0.0.1",
+        "port": "5432",
+        "dbname": "vehicles",
+        "user": "app",
+        "password": "changeme"
+    }
+]
 
 # Forcer l'encodage UTF-8 pour la sortie Python sur Windows
 if sys.platform == 'win32' and sys.stdout.encoding != 'utf-8':
@@ -20,18 +38,18 @@ if sys.platform == 'win32' and sys.stdout.encoding != 'utf-8':
     except:
         pass
 
-def run_psql_query(query):
+def run_psql_query(query, config):
     """Exécute une requête via psql et retourne le résultat"""
     env = os.environ.copy()
-    env['PGPASSWORD'] = DB_PASSWORD
+    env['PGPASSWORD'] = config['password']
     env['PGCLIENTENCODING'] = 'UTF8'
 
     cmd = [
         'psql',
-        '-h', DB_HOST,
-        '-p', DB_PORT,
-        '-U', DB_USER,
-        '-d', DB_NAME,
+        '-h', config['host'],
+        '-p', config['port'],
+        '-U', config['user'],
+        '-d', config['dbname'],
         '-t',  # Tuple only (pas de headers)
         '-A',  # Unaligned (pas de formatting)
         '-c', query
@@ -57,20 +75,45 @@ def run_psql_query(query):
         print("Assurez-vous que PostgreSQL client est installé et dans le PATH")
         return None
 
+def test_connection(config):
+    """Teste si une configuration fonctionne"""
+    result = run_psql_query("SELECT 1;", config)
+    return result is not None
+
 def main():
     try:
         print("Vérification de l'encodage de la base de données PostgreSQL...\n")
 
+        # Trouver une configuration qui fonctionne
+        working_config = None
+        for i, config in enumerate(DB_CONFIGS):
+            print(f"Test de la configuration {i+1}: {config['user']}@{config['host']}:{config['port']}/{config['dbname']}")
+            if test_connection(config):
+                working_config = config
+                print(f"✓ Connexion réussie avec cette configuration\n")
+                break
+            else:
+                print(f"✗ Échec de connexion\n")
+
+        if not working_config:
+            print("Erreur: Aucune configuration ne fonctionne.")
+            print("\nConfigurations essayées:")
+            for config in DB_CONFIGS:
+                print(f"  - {config['user']}@{config['host']}:{config['port']}/{config['dbname']}")
+            sys.exit(1)
+
         # Vérifier l'encodage de la base de données
         encoding = run_psql_query(
-            "SELECT pg_encoding_to_char(encoding) FROM pg_database WHERE datname = current_database();"
+            "SELECT pg_encoding_to_char(encoding) FROM pg_database WHERE datname = current_database();",
+            working_config
         )
         if encoding:
             print(f"Encodage de la base de données: {encoding}")
 
         # Vérifier LC_COLLATE et LC_CTYPE
         collate_ctype = run_psql_query(
-            "SELECT datcollate || '|' || datctype FROM pg_database WHERE datname = current_database();"
+            "SELECT datcollate || '|' || datctype FROM pg_database WHERE datname = current_database();",
+            working_config
         )
         if collate_ctype:
             parts = collate_ctype.split('|')
@@ -79,12 +122,12 @@ def main():
                 print(f"LC_CTYPE: {parts[1]}")
 
         # Vérifier l'encodage client
-        client_encoding = run_psql_query("SHOW client_encoding;")
+        client_encoding = run_psql_query("SHOW client_encoding;", working_config)
         if client_encoding:
             print(f"Encodage client: {client_encoding}")
 
         # Vérifier l'encodage serveur
-        server_encoding = run_psql_query("SHOW server_encoding;")
+        server_encoding = run_psql_query("SHOW server_encoding;", working_config)
         if server_encoding:
             print(f"Encodage serveur: {server_encoding}")
 
