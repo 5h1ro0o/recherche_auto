@@ -3,11 +3,17 @@
 """Script pour vérifier l'encodage de la base de données PostgreSQL"""
 
 import psycopg2
+import os
+import sys
+
+# Sur Windows, forcer l'encodage UTF-8 pour la communication avec PostgreSQL
+if sys.platform == 'win32':
+    os.environ['PGCLIENTENCODING'] = 'UTF8'
 
 try:
-    # Connexion à la base de données
+    # Connexion à la base de données avec encodage UTF-8 explicite
     conn = psycopg2.connect(
-        "host=127.0.0.1 port=5432 dbname=vehicles user=app password=changeme"
+        "host=127.0.0.1 port=5432 dbname=vehicles user=app password=changeme client_encoding=utf8"
     )
     cur = conn.cursor()
 
