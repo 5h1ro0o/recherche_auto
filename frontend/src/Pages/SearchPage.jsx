@@ -9,30 +9,34 @@ export default function SearchPage() {
   const [q, setQ] = useState('')
   const [filters, setFilters] = useState({})
   const [page, setPage] = useState(1)
-  const [results, setResults] = useState([])
-  const [total, setTotal] = useState(0)
-  const [isLoading, setIsLoading] = useState(false)
+  const [enableScraping, setEnableScraping] = useState(true)
+  const [scrapingMode, setScrapingMode] = useState('always') // 'always' pour toujours scraper
 
-  const { refetch } = useSearch(q, page)
+  // Utiliser le hook useSearch pour récupérer les résultats
+  const { data, loading, error, refetch } = useSearch(q, page, filters, enableScraping, scrapingMode)
+
+  // Extraire les résultats et le total des données
+  const results = data?.results || []
+  const total = data?.total || 0
 
   function onSearch(term) {
     setQ(term)
     setPage(1)
-    setIsLoading(true)
-    refetch().finally(() => setIsLoading(false))
+    refetch()
   }
 
   // Callback quand le chatbot détecte des filtres
   function handleFiltersDetected(detectedFilters) {
     console.log('Filtres détectés par IA:', detectedFilters)
     setFilters(detectedFilters)
+    setPage(1)
   }
 
   // Callback quand le chatbot retourne des résultats
   function handleSearchResults(hits, totalResults) {
-    setResults(hits)
-    setTotal(totalResults)
-    setIsLoading(false)
+    // Le chatbot peut aussi retourner des résultats directement
+    // Dans ce cas, on pourrait les afficher
+    console.log('Résultats du chatbot:', hits, totalResults)
   }
 
   return (
@@ -60,9 +64,28 @@ export default function SearchPage() {
         </div>
       )}
 
+      {/* Affichage d'erreur si nécessaire */}
+      {error && (
+        <div className="search-error" style={{ padding: '20px', margin: '20px', backgroundColor: '#fee', borderRadius: '8px' }}>
+          <p style={{ color: '#c00' }}>❌ Erreur: {error}</p>
+        </div>
+      )}
+
+      {/* Statistiques de scraping */}
+      {data && data.sources && (
+        <div className="scraping-stats" style={{ padding: '10px', margin: '10px 0', backgroundColor: '#e8f5e9', borderRadius: '8px' }}>
+          <p>
+            📊 Résultats: {data.from_db || 0} de la base de données + {data.from_scraping || 0} du scraping
+            {data.sources && Object.keys(data.sources).length > 0 && (
+              <span> (Sources: {Object.keys(data.sources).filter(k => data.sources[k].success).join(', ')})</span>
+            )}
+          </p>
+        </div>
+      )}
+
       <Results
-        loading={isLoading}
-        results={results.length > 0 ? results : []}
+        loading={loading}
+        results={results}
         total={total}
         page={page}
         onPageChange={setPage}
