@@ -3,18 +3,69 @@
 """Script pour vérifier l'encodage de la base de données PostgreSQL"""
 
 import psycopg2
+import psycopg2.extensions
 import os
 import sys
+import locale
 
-# Sur Windows, forcer l'encodage UTF-8 pour la communication avec PostgreSQL
+# Sur Windows, forcer l'encodage UTF-8 à tous les niveaux
 if sys.platform == 'win32':
+    # Forcer l'encodage UTF-8 pour Python
+    if sys.stdout.encoding != 'utf-8':
+        sys.stdout.reconfigure(encoding='utf-8')
+    if sys.stderr.encoding != 'utf-8':
+        sys.stderr.reconfigure(encoding='utf-8')
+
+    # Variables d'environnement PostgreSQL
     os.environ['PGCLIENTENCODING'] = 'UTF8'
 
+    # Définir la locale en UTF-8
+    try:
+        locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+    except:
+        try:
+            locale.setlocale(locale.LC_ALL, 'C.UTF-8')
+        except:
+            pass  # Ignorer si ça ne fonctionne pas
+
+# Forcer psycopg2 à utiliser UTF-8 pour décoder les messages du serveur
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
+
+# Fonction pour tenter la connexion avec différents encodages
+def connect_with_encoding_fallback():
+    encodings = ['UTF8', 'LATIN1', 'WIN1252', 'ISO-8859-1']
+
+    for encoding in encodings:
+        try:
+            if sys.platform == 'win32':
+                os.environ['PGCLIENTENCODING'] = encoding
+
+            conn = psycopg2.connect(
+                host="127.0.0.1",
+                port=5432,
+                dbname="vehicles",
+                user="app",
+                password="changeme"
+            )
+
+            # Si la connexion réussit, forcer UTF-8 après connexion
+            conn.set_client_encoding('UTF8')
+            return conn
+
+        except UnicodeDecodeError:
+            if encoding == encodings[-1]:
+                raise
+            continue
+        except Exception as e:
+            # Si c'est une autre erreur que UnicodeDecodeError, la relancer
+            raise
+
+    return None
+
 try:
-    # Connexion à la base de données avec encodage UTF-8 explicite
-    conn = psycopg2.connect(
-        "host=127.0.0.1 port=5432 dbname=vehicles user=app password=changeme client_encoding=utf8"
-    )
+    # Tenter la connexion avec gestion des encodages
+    conn = connect_with_encoding_fallback()
     cur = conn.cursor()
 
     # Vérifier l'encodage de la base de données
