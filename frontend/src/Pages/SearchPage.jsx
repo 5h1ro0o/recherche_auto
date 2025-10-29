@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import SearchFiltersForm from '../ui/SearchFiltersForm'
 import Results from '../ui/Results'
 import ChatBot from '../components/ChatBot'
+import URLImport from '../components/URLImport'
 import client from '../services/api'
 
 export default function SearchPage() {
@@ -28,13 +29,13 @@ export default function SearchPage() {
         }
       }
 
-      // Appeler l'API de recherche avec scraping activé
+      // Appeler l'API de recherche SANS scraping (DB uniquement)
       const response = await client.post('/search', {
-        q: query || 'voiture',
+        q: query || '',
         filters: criteriaFilters,
         page: page,
-        enable_scraping: true,
-        scraping_mode: 'always'
+        enable_scraping: false,  // DÉSACTIVÉ - recherche DB uniquement
+        scraping_mode: 'never'
       });
 
       setResults(response.data.results || []);
@@ -69,9 +70,15 @@ export default function SearchPage() {
       <div className="search-header">
         <h1>Recherche de véhicules</h1>
         <p className="search-subtitle">
-          🚗 Recherchez parmi LeBonCoin, La Centrale et AutoScout24 en temps réel
+          🔍 Recherchez dans notre base de données ou importez une annonce depuis une URL
         </p>
       </div>
+
+      {/* Import d'URL */}
+      <URLImport onImportSuccess={(data) => {
+        // Après import, recharger la recherche
+        handleSearch({});
+      }} />
 
       {/* Formulaire de recherche par critères */}
       <SearchFiltersForm onSearch={handleSearch} loading={loading} />

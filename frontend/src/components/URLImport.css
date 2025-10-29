@@ -1,0 +1,264 @@
+/* frontend/src/components/URLImport.css */
+
+.url-import-container {
+  margin-bottom: 30px;
+}
+
+.url-import-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  color: white;
+}
+
+.url-import-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.import-subtitle {
+  margin: 0 0 24px 0;
+  opacity: 0.9;
+  font-size: 14px;
+}
+
+.import-form {
+  margin-bottom: 16px;
+}
+
+.input-group {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.url-input {
+  flex: 1;
+  padding: 14px 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  font-size: 15px;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.url-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.url-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.url-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.import-button {
+  padding: 14px 32px;
+  border: none;
+  border-radius: 10px;
+  background: white;
+  color: #667eea;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.import-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.import-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.supported-sites {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sites-label {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-right: 4px;
+}
+
+.site-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.site-badge.leboncoin {
+  background: rgba(255, 107, 107, 0.3);
+}
+
+.site-badge.lacentrale {
+  background: rgba(72, 187, 120, 0.3);
+}
+
+.site-badge.autoscout {
+  background: rgba(66, 153, 225, 0.3);
+}
+
+.alert {
+  padding: 16px;
+  border-radius: 10px;
+  margin-top: 16px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-error {
+  background: rgba(239, 68, 68, 0.2);
+  border-left: 4px solid #ef4444;
+}
+
+.alert-success {
+  background: rgba(255, 255, 255, 0.95);
+  color: #2c3e50;
+  border-left: 4px solid #10b981;
+}
+
+.success-header {
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #10b981;
+}
+
+.imported-vehicle-preview {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.imported-vehicle-preview img {
+  width: 100px;
+  height: 75px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.vehicle-info h4 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  color: #1f2937;
+}
+
+.vehicle-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: #667eea;
+  margin: 4px 0;
+}
+
+.vehicle-details {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.url-examples {
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  border-radius: 10px;
+}
+
+.url-examples summary {
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 12px;
+  user-select: none;
+}
+
+.url-examples summary:hover {
+  opacity: 0.8;
+}
+
+.url-examples ul {
+  margin: 12px 0 0 0;
+  padding-left: 20px;
+}
+
+.url-examples li {
+  margin-bottom: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.url-examples code {
+  display: block;
+  margin-top: 4px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  font-size: 12px;
+  word-break: break-all;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .input-group {
+    flex-direction: column;
+  }
+
+  .import-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .imported-vehicle-preview {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .imported-vehicle-preview img {
+    width: 100%;
+    height: 150px;
+  }
+}
