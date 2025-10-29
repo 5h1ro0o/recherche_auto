@@ -90,7 +90,7 @@ class HybridSearchService:
                 query=scraping_query,
                 filters=filters or {},
                 max_pages=2,
-                save_to_db=True,  # Sauvegarder pour futures recherches
+                save_to_db=False,  # Ne PAS sauvegarder automatiquement - seulement via favoris
                 timeout=45
             )
 

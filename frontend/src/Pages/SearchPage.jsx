@@ -1,41 +1,66 @@
 // frontend/src/Pages/SearchPage.jsx
 import React, { useState } from 'react'
-import SearchBar from '../ui/SearchBar'
+import SearchFiltersForm from '../ui/SearchFiltersForm'
 import Results from '../ui/Results'
 import ChatBot from '../components/ChatBot'
-import { useSearch } from '../services/useSearch'
+import client from '../services/api'
 
 export default function SearchPage() {
-  const [q, setQ] = useState('')
-  const [filters, setFilters] = useState({})
+  const [results, setResults] = useState([])
+  const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
-  const [enableScraping, setEnableScraping] = useState(true) // ACTIVÉ pour scraper les plateformes
-  const [scrapingMode, setScrapingMode] = useState('always') // 'always' = toujours scraper
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [scrapingStats, setScrapingStats] = useState(null)
 
-  // Utiliser le hook useSearch pour récupérer les résultats
-  const { data, loading, error, refetch } = useSearch(q, page, filters, enableScraping, scrapingMode)
+  async function handleSearch(criteriaFilters) {
+    setLoading(true)
+    setError(null)
 
-  // Extraire les résultats et le total des données
-  const results = data?.results || []
-  const total = data?.total || 0
+    try {
+      // Construire la query à partir des filtres
+      // Si une marque et modèle sont fournis, créer une query
+      let query = '';
+      if (criteriaFilters.make) {
+        query = criteriaFilters.make;
+        if (criteriaFilters.model) {
+          query += ' ' + criteriaFilters.model;
+        }
+      }
 
-  function onSearch(term) {
-    setQ(term)
-    setPage(1)
-    refetch()
+      // Appeler l'API de recherche avec scraping activé
+      const response = await client.post('/search', {
+        q: query || 'voiture',
+        filters: criteriaFilters,
+        page: page,
+        enable_scraping: true,
+        scraping_mode: 'always'
+      });
+
+      setResults(response.data.results || []);
+      setTotal(response.data.total || 0);
+      setScrapingStats({
+        from_db: response.data.from_db || 0,
+        from_scraping: response.data.from_scraping || 0,
+        sources: response.data.sources || {}
+      });
+
+    } catch (err) {
+      console.error('Erreur lors de la recherche:', err);
+      setError(err.response?.data?.detail || 'Erreur lors de la recherche');
+    } finally {
+      setLoading(false);
+    }
   }
 
   // Callback quand le chatbot détecte des filtres
   function handleFiltersDetected(detectedFilters) {
     console.log('Filtres détectés par IA:', detectedFilters)
-    setFilters(detectedFilters)
-    setPage(1)
+    handleSearch(detectedFilters)
   }
 
   // Callback quand le chatbot retourne des résultats
   function handleSearchResults(hits, totalResults) {
-    // Le chatbot peut aussi retourner des résultats directement
-    // Dans ce cas, on pourrait les afficher
     console.log('Résultats du chatbot:', hits, totalResults)
   }
 
@@ -44,25 +69,12 @@ export default function SearchPage() {
       <div className="search-header">
         <h1>Recherche de véhicules</h1>
         <p className="search-subtitle">
-          🎯 Utilisez la barre de recherche ou le chatbot pour trouver votre véhicule
+          🚗 Recherchez parmi LeBonCoin, La Centrale et AutoScout24 en temps réel
         </p>
       </div>
 
-      <SearchBar onSearch={onSearch} defaultValue={q} />
-
-      {/* Affichage des filtres détectés */}
-      {Object.keys(filters).length > 0 && (
-        <div className="detected-filters">
-          <h4>🔍 Filtres actifs :</h4>
-          <div className="filters-list">
-            {Object.entries(filters).map(([key, value]) => (
-              <span key={key} className="filter-chip">
-                <strong>{key}:</strong> {value}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Formulaire de recherche par critères */}
+      <SearchFiltersForm onSearch={handleSearch} loading={loading} />
 
       {/* Affichage d'erreur si nécessaire */}
       {error && (
@@ -72,17 +84,33 @@ export default function SearchPage() {
       )}
 
       {/* Statistiques de scraping */}
-      {data && data.sources && (
-        <div className="scraping-stats" style={{ padding: '10px', margin: '10px 0', backgroundColor: '#e8f5e9', borderRadius: '8px' }}>
-          <p>
-            📊 Résultats: {data.from_db || 0} de la base de données + {data.from_scraping || 0} du scraping
-            {data.sources && Object.keys(data.sources).length > 0 && (
-              <span> (Sources: {Object.keys(data.sources).filter(k => data.sources[k].success).join(', ')})</span>
-            )}
+      {scrapingStats && (
+        <div className="scraping-stats" style={{ padding: '15px', margin: '20px 0', backgroundColor: '#e8f5e9', borderRadius: '8px' }}>
+          <h4 style={{ margin: '0 0 10px 0', color: '#2e7d32' }}>📊 Statistiques de recherche</h4>
+          <p style={{ margin: '5px 0' }}>
+            <strong>Résultats trouvés:</strong> {total} annonces
           </p>
+          <p style={{ margin: '5px 0' }}>
+            <strong>Base de données:</strong> {scrapingStats.from_db} annonces
+          </p>
+          <p style={{ margin: '5px 0' }}>
+            <strong>Scraping en temps réel:</strong> {scrapingStats.from_scraping} annonces
+          </p>
+          {scrapingStats.sources && Object.keys(scrapingStats.sources).length > 0 && (
+            <p style={{ margin: '10px 0 0 0' }}>
+              <strong>Sources:</strong>
+              {Object.entries(scrapingStats.sources).map(([source, info]) => (
+                <span key={source} style={{ marginLeft: '8px', padding: '4px 8px', background: info.success ? '#c8e6c9' : '#ffcdd2', borderRadius: '4px', fontSize: '12px' }}>
+                  {source}: {info.count || 0}
+                  {!info.success && ' (échec)'}
+                </span>
+              ))}
+            </p>
+          )}
         </div>
       )}
 
+      {/* Résultats */}
       <Results
         loading={loading}
         results={results}
