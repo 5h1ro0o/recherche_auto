@@ -5,31 +5,54 @@
 import subprocess
 import sys
 import os
+import getpass
+import re
+from urllib.parse import urlparse
 
-# Configurations possibles à essayer
-DB_CONFIGS = [
-    {
+def parse_database_url(url):
+    """Parse une DATABASE_URL PostgreSQL"""
+    # Format: postgresql://user:password@host:port/dbname
+    # ou postgresql+psycopg2://user:password@host:port/dbname
+    parsed = urlparse(url)
+    return {
+        "host": parsed.hostname or "127.0.0.1",
+        "port": str(parsed.port or 5432),
+        "dbname": parsed.path.lstrip('/') if parsed.path else "recherche_auto",
+        "user": parsed.username or "postgres",
+        "password": parsed.password or ""
+    }
+
+def get_db_configs():
+    """Récupère les configurations de base de données à essayer"""
+    configs = []
+
+    # 1. Essayer depuis DATABASE_URL
+    database_url = os.getenv("DATABASE_URL")
+    if database_url:
+        try:
+            config = parse_database_url(database_url)
+            configs.append(config)
+            print(f"Configuration trouvée depuis DATABASE_URL")
+        except:
+            pass
+
+    # 2. Configuration par défaut basée sur les fichiers du projet
+    # La base de données est 'recherche_auto' avec l'utilisateur 'app'
+    default_config = {
         "host": "127.0.0.1",
         "port": "5432",
         "dbname": "recherche_auto",
-        "user": "postgres",
-        "password": "postgres"
-    },
-    {
-        "host": "127.0.0.1",
-        "port": "5432",
-        "dbname": "vehicles",
         "user": "app",
-        "password": "password"
-    },
-    {
-        "host": "127.0.0.1",
-        "port": "5432",
-        "dbname": "vehicles",
-        "user": "app",
-        "password": "changeme"
+        "password": None  # Sera demandé si nécessaire
     }
-]
+
+    # 3. Essayer quelques mots de passe courants
+    for password in ["password", "changeme", "postgres", "app"]:
+        config = default_config.copy()
+        config["password"] = password
+        configs.append(config)
+
+    return configs
 
 # Forcer l'encodage UTF-8 pour la sortie Python sur Windows
 if sys.platform == 'win32' and sys.stdout.encoding != 'utf-8':
@@ -84,23 +107,41 @@ def main():
     try:
         print("Vérification de l'encodage de la base de données PostgreSQL...\n")
 
+        # Obtenir les configurations à essayer
+        configs = get_db_configs()
+
         # Trouver une configuration qui fonctionne
         working_config = None
-        for i, config in enumerate(DB_CONFIGS):
+        for i, config in enumerate(configs):
             print(f"Test de la configuration {i+1}: {config['user']}@{config['host']}:{config['port']}/{config['dbname']}")
             if test_connection(config):
                 working_config = config
                 print(f"✓ Connexion réussie avec cette configuration\n")
                 break
             else:
-                print(f"✗ Échec de connexion\n")
+                print(f"✗ Échec de connexion")
 
+        # Si aucune configuration n'a fonctionné, demander le mot de passe
         if not working_config:
-            print("Erreur: Aucune configuration ne fonctionne.")
-            print("\nConfigurations essayées:")
-            for config in DB_CONFIGS:
-                print(f"  - {config['user']}@{config['host']}:{config['port']}/{config['dbname']}")
-            sys.exit(1)
+            print("\n⚠ Aucune configuration automatique n'a fonctionné.")
+            print("Veuillez entrer les informations de connexion manuellement.\n")
+
+            config = {
+                "host": input("Hôte [127.0.0.1]: ").strip() or "127.0.0.1",
+                "port": input("Port [5432]: ").strip() or "5432",
+                "dbname": input("Base de données [recherche_auto]: ").strip() or "recherche_auto",
+                "user": input("Utilisateur [app]: ").strip() or "app",
+                "password": getpass.getpass("Mot de passe: ")
+            }
+
+            print(f"\nTest de la connexion avec {config['user']}@{config['host']}:{config['port']}/{config['dbname']}...")
+            if test_connection(config):
+                working_config = config
+                print("✓ Connexion réussie!\n")
+            else:
+                print("✗ Échec de connexion")
+                print("\nImpossible de se connecter à la base de données.")
+                sys.exit(1)
 
         # Vérifier l'encodage de la base de données
         encoding = run_psql_query(
