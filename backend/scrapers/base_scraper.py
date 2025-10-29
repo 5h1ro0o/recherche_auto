@@ -112,3 +112,104 @@ class BaseScraper(ABC):
                     '--disable-blink-features=AutomationControlled',
                     '--exclude-switches=enable-automation',
                     '--disable-extensions'
+                ]
+            }
+
+            # Ajouter proxy si configuré
+            if proxy:
+                launch_options['proxy'] = {
+                    'server': proxy
+                }
+                logger.info(f"🔒 Utilisation du proxy: {proxy}")
+
+            # Lancer le navigateur
+            self.browser = self.playwright.chromium.launch(**launch_options)
+
+            # Créer un contexte avec user-agent personnalisé
+            context_options = {
+                'user_agent': self.get_random_user_agent(),
+                'viewport': {'width': 1920, 'height': 1080},
+                'locale': 'fr-FR',
+                'timezone_id': 'Europe/Paris',
+            }
+
+            context = self.browser.new_context(**context_options)
+
+            # Injection de scripts anti-détection
+            context.add_init_script("""
+                // Masquer webdriver
+                Object.defineProperty(navigator, 'webdriver', {
+                    get: () => undefined
+                });
+
+                // Masquer plugins
+                Object.defineProperty(navigator, 'plugins', {
+                    get: () => [1, 2, 3, 4, 5]
+                });
+
+                // Masquer languages
+                Object.defineProperty(navigator, 'languages', {
+                    get: () => ['fr-FR', 'fr', 'en-US', 'en']
+                });
+            """)
+
+            self.page = context.new_page()
+
+            logger.info(f"✅ Browser initialisé (headless={headless})")
+
+        except Exception as e:
+            logger.error(f"❌ Erreur init browser: {e}")
+            self.close_browser()
+            raise
+
+    def close_browser(self):
+        """Ferme proprement le browser"""
+        try:
+            if self.page:
+                self.page.close()
+            if self.browser:
+                self.browser.close()
+            if self.playwright:
+                self.playwright.stop()
+            logger.debug("🔒 Browser fermé")
+        except Exception as e:
+            logger.warning(f"⚠️ Erreur fermeture browser: {e}")
+
+    def simulate_human_behavior(self):
+        """Simule un comportement humain sur la page"""
+        if not self.page:
+            return
+
+        try:
+            # Scroll aléatoire
+            scroll_amount = random.randint(100, 500)
+            self.page.evaluate(f"window.scrollBy(0, {scroll_amount})")
+            self.random_delay(0.3, 0.8)
+
+            # Mouvement de souris aléatoire
+            self.page.mouse.move(
+                random.randint(100, 800),
+                random.randint(100, 600)
+            )
+            self.random_delay(0.2, 0.5)
+
+        except Exception as e:
+            logger.debug(f"⚠️ Erreur simulation comportement: {e}")
+
+    @abstractmethod
+    def scrape(self, params: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Méthode abstraite à implémenter par chaque scraper
+
+        Args:
+            params: Dictionnaire de paramètres de recherche
+
+        Returns:
+            Liste de dictionnaires contenant les données extraites
+        """
+        pass
+
+    @abstractmethod
+    def get_source_name(self) -> str:
+        """Retourne le nom de la source (ex: 'leboncoin', 'lacentrale')"""
+        pass
