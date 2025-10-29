@@ -37,10 +37,16 @@ class LaCentraleScraperSimple(BaseScraper):
 
             logger.info(f"📍 URL: {url}")
 
-            # Naviguer
+            # Naviguer avec délai plus long (comportement humain)
             try:
                 self.page.goto(url, wait_until='networkidle', timeout=30000)
+                # Délai plus long pour imiter un humain
+                self.random_delay(5, 8)
+
+                # Simuler comportement humain
+                self.simulate_human_behavior()
                 self.random_delay(2, 4)
+
             except Exception as e:
                 logger.error(f"❌ Impossible de charger La Centrale: {e}")
                 return []

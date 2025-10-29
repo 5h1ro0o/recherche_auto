@@ -39,10 +39,16 @@ class AutoScout24ScraperSimple(BaseScraper):
 
             logger.info(f"📍 URL: {url}")
 
-            # Naviguer avec timeout plus long
+            # Naviguer avec timeout plus long et comportement humain
             try:
                 self.page.goto(url, wait_until='domcontentloaded', timeout=40000)
+                # Délai plus long pour imiter un humain
+                self.random_delay(5, 8)
+
+                # Simuler comportement humain
+                self.simulate_human_behavior()
                 self.random_delay(3, 5)
+
             except Exception as e:
                 logger.error(f"❌ Timeout AutoScout24: {e}")
                 return []

@@ -25,6 +25,14 @@ except ImportError:
     FAKE_UA_AVAILABLE = False
     logger.warning("⚠️ fake_useragent non disponible. Installez avec: pip install fake-useragent")
 
+# Gestion optionnelle de playwright-stealth
+try:
+    from playwright_stealth import stealth_sync
+    STEALTH_AVAILABLE = True
+except ImportError:
+    STEALTH_AVAILABLE = False
+    logger.warning("⚠️ playwright-stealth non disponible. Installez avec: pip install playwright-stealth")
+
 class BaseScraper(ABC):
     """
     Classe abstraite pour tous les scrapers
@@ -154,6 +162,11 @@ class BaseScraper(ABC):
             """)
 
             self.page = context.new_page()
+
+            # Appliquer stealth mode si disponible
+            if STEALTH_AVAILABLE:
+                stealth_sync(self.page)
+                logger.info("🛡️ Mode stealth activé")
 
             logger.info(f"✅ Browser initialisé (headless={headless})")
 
