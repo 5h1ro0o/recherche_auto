@@ -1,50 +1,32 @@
-import axios from 'axios'
-
-const API_BASE = import.meta.env.VITE_API_BASE || '/api'
-
-const client = axios.create({
-  baseURL: API_BASE,
-  timeout: 8000
-})
-
-// Intercepteur pour ajouter le token
-client.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
-
-// Intercepteur pour gérer les erreurs 401
-client.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('access_token')
-      localStorage.removeItem('refresh_token')
-      window.location.href = '/login'
-    }
-    return Promise.reject(error)
-  }
-)
+import { apiPost, apiGet, apiPatch } from './api'
 
 export async function login(email, password) {
-  const response = await client.post('/auth/login', { email, password })
-  return response.data
+  return await apiPost('/auth/login', { email, password })
 }
 
 export async function register(userData) {
-  const response = await client.post('/auth/register', userData)
-  return response.data
+  return await apiPost('/auth/register', userData)
 }
 
 export async function getCurrentUser() {
-  const response = await client.get('/auth/me')
-  return response.data
+  return await apiGet('/auth/me')
 }
 
 export async function updateProfile(data) {
-  const response = await client.patch('/auth/me', data)
-  return response.data
+  return await apiPatch('/auth/me', data)
+}
+
+export async function logout() {
+  // Côté client, on supprime juste les tokens
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('refresh_token')
+  localStorage.removeItem('user')
+
+  // On pourrait aussi appeler l'API si on veut invalider le token côté serveur
+  try {
+    await apiPost('/auth/logout', {})
+  } catch (error) {
+    // Ignorer les erreurs de logout
+    console.log('Logout API call failed:', error)
+  }
 }
