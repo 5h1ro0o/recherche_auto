@@ -9,8 +9,8 @@ export default function SearchPage() {
   const [q, setQ] = useState('')
   const [filters, setFilters] = useState({})
   const [page, setPage] = useState(1)
-  const [enableScraping, setEnableScraping] = useState(true)
-  const [scrapingMode, setScrapingMode] = useState('always') // 'always' pour toujours scraper
+  const [enableScraping, setEnableScraping] = useState(false) // DÉSACTIVÉ par défaut
+  const [scrapingMode, setScrapingMode] = useState('never') // 'never' = recherche DB uniquement
 
   // Utiliser le hook useSearch pour récupérer les résultats
   const { data, loading, error, refetch } = useSearch(q, page, filters, enableScraping, scrapingMode)

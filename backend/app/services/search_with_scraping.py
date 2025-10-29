@@ -76,18 +76,12 @@ class HybridSearchService:
             # Scraper uniquement si aucun résultat en DB
             should_scrape = len(db_results) == 0
 
-        # Scraping si nécessaire
-        if enable_scraping and should_scrape:
-            # Si pas de query, utiliser une recherche générale par défaut
-            scraping_query = q if q else 'voiture'
-
-            if not q:
-                logger.info(f"⚠️ Recherche sans query, utilisation de '{scraping_query}' pour le scraping")
-
-            logger.info(f"🕷️ Démarrage du scraping (mode: {scraping_mode}, query: {scraping_query})")
+        # Scraping si nécessaire ET si on a une query
+        if enable_scraping and should_scrape and q:
+            logger.info(f"🕷️ Démarrage du scraping (mode: {scraping_mode}, query: {q})")
 
             scraping_response = unified_scraper.scrape_all_sources(
-                query=scraping_query,
+                query=q,
                 filters=filters or {},
                 max_pages=2,
                 save_to_db=True,  # Sauvegarder pour futures recherches
@@ -98,6 +92,8 @@ class HybridSearchService:
             sources_info = scraping_response.get('sources', {})
 
             logger.info(f"🕷️ Scraping terminé: {len(scraping_results)} résultats")
+        elif enable_scraping and should_scrape and not q:
+            logger.info(f"⚠️ Scraping demandé mais pas de query fournie - scraping ignoré")
 
         # Combiner et dédupliquer les résultats
         all_results = HybridSearchService._merge_results(db_results, scraping_results)
