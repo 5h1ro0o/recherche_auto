@@ -3,11 +3,13 @@ from fastapi import APIRouter, HTTPException, Query, Request, Depends
 from typing import Optional, Dict, Any
 from sqlalchemy.orm import Session
 import uuid
-from app.services.search import SearchService
+import logging
+
+# Utiliser le nouveau service de recherche hybride
+from app.services.search_with_scraping import hybrid_search
 from app.models import SearchHistory, User
 from app.db import SessionLocal
 from app.dependencies import get_current_user
-import logging
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api", tags=["search"])
@@ -42,29 +44,54 @@ async def search_post(
     current_user: Optional[User] = Depends(lambda: get_current_user if False else None)
 ):
     """
-    Accept generic JSON body. Expected shape:
-    { "q": "...", "filters": {...}, "page": 1, "size": 20 }
+    Recherche hybride avec scraping en temps réel
+
+    Body JSON:
+    {
+        "q": "peugeot 308",
+        "filters": {
+            "price_min": 5000,
+            "price_max": 15000,
+            "year_min": 2015
+        },
+        "page": 1,
+        "size": 20,
+        "enable_scraping": true,  // Activer le scraping (défaut: true)
+        "scraping_mode": "auto"   // 'auto', 'always', 'never', 'db_first'
+    }
     """
     try:
         q = payload.get("q")
         filters = payload.get("filters", {}) or {}
         page = int(payload.get("page", 1) or 1)
         size = int(payload.get("size", 20) or 20)
+        enable_scraping = payload.get("enable_scraping", True)
+        scraping_mode = payload.get("scraping_mode", "auto")
+
     except Exception as e:
         logger.exception("Malformed search payload")
         raise HTTPException(status_code=422, detail="Malformed search payload")
 
     try:
-        res = SearchService.search(q=q, filters=filters, page=page, size=size)
-        
+        # Utiliser le service de recherche hybride
+        res = hybrid_search.search(
+            q=q,
+            filters=filters,
+            page=page,
+            size=size,
+            enable_scraping=enable_scraping,
+            scraping_mode=scraping_mode
+        )
+
         # Enregistrer dans l'historique si l'utilisateur est connecté
         if current_user:
             save_search_history(current_user.id, q, filters, res.get('total', 0), db)
-        
+
         return res
+
     except Exception as e:
-        logger.exception("SearchService error")
-        raise HTTPException(status_code=500, detail="Search error")
+        logger.exception("Hybrid search error")
+        raise HTTPException(status_code=500, detail=f"Search error: {str(e)}")
 
 @router.get("/search")
 async def search_get(
@@ -75,30 +102,56 @@ async def search_get(
     model: Optional[str] = Query(None),
     price_min: Optional[int] = Query(None),
     price_max: Optional[int] = Query(None),
+    enable_scraping: bool = Query(True, description="Activer le scraping en temps réel"),
+    scraping_mode: str = Query("auto", description="Mode de scraping: auto, always, never, db_first"),
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(lambda: get_current_user if False else None)
 ):
+    """
+    Recherche GET avec scraping en temps réel
+
+    Paramètres:
+    - q: Terme de recherche
+    - page: Numéro de page (défaut: 1)
+    - size: Taille de la page (défaut: 20, max: 200)
+    - make: Marque du véhicule
+    - model: Modèle du véhicule
+    - price_min: Prix minimum
+    - price_max: Prix maximum
+    - enable_scraping: Activer le scraping (défaut: true)
+    - scraping_mode: Mode de scraping (défaut: auto)
+        - 'auto': Scraper si moins de 5 résultats en DB
+        - 'always': Toujours scraper
+        - 'never': Jamais scraper (DB uniquement)
+        - 'db_first': Scraper uniquement si aucun résultat en DB
+    """
     filters = {}
     if make:
         filters["make"] = make
     if model:
         filters["model"] = model
-    if price_min is not None or price_max is not None:
-        rng = {}
-        if price_min is not None:
-            rng["price_min"] = price_min
-        if price_max is not None:
-            rng["price_max"] = price_max
-        filters.update(rng)
-    
+    if price_min is not None:
+        filters["price_min"] = price_min
+    if price_max is not None:
+        filters["price_max"] = price_max
+
     try:
-        res = SearchService.search(q=q, filters=filters, page=page, size=size)
-        
+        # Utiliser le service de recherche hybride
+        res = hybrid_search.search(
+            q=q,
+            filters=filters,
+            page=page,
+            size=size,
+            enable_scraping=enable_scraping,
+            scraping_mode=scraping_mode
+        )
+
         # Enregistrer dans l'historique si l'utilisateur est connecté
         if current_user:
             save_search_history(current_user.id, q, filters, res.get('total', 0), db)
-        
+
         return res
+
     except Exception:
-        logger.exception("SearchService error (GET)")
+        logger.exception("Hybrid search error (GET)")
         raise HTTPException(status_code=500, detail="Search error")
