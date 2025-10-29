@@ -6,7 +6,7 @@ class Settings:
     # Database
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
-        "postgresql+psycopg2://app:changeme@127.0.0.1:5432/vehicles"
+        "postgresql+psycopg2://app:changeme@127.0.0.1:5432/recherche_auto"
     )
     
     # Elasticsearch
