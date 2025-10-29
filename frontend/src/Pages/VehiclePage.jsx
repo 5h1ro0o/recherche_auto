@@ -919,7 +919,21 @@ function Lightbox({ images, currentIndex, onClose, onPrev, onNext }) {
     </div>
   )
 }
+
 function ContactModal({ seller, vehicle, onClose }) {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: `Bonjour, je suis intéressé par le véhicule ${vehicle.title} (réf: ${vehicle.id}). Pourriez-vous me donner plus d'informations ?`
+  })
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    alert('Message envoyé ! Le vendeur vous contactera bientôt.')
+    onClose()
+  }
+
   return (
     <div
       style={{
@@ -937,15 +951,186 @@ function ContactModal({ seller, vehicle, onClose }) {
       }}
       onClick={onClose}
     >
-    <div
+      <div
         style={{
           background: 'white',
           borderRadius: '16px',
-          padding: '24px',
-          maxWidth: '500px',
+          padding: '32px',
+          maxWidth: '600px',
           width: '100%',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.2)'
+          maxHeight: '90vh',
+          overflow: 'auto',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
         }}
         onClick={(e) => e.stopPropagation()}
-    >
-  )}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <h2 style={{ margin: 0, fontSize: '24px', color: '#24292e' }}>Contacter le vendeur</h2>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '28px',
+              cursor: 'pointer',
+              color: '#6a737d',
+              padding: '0',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Informations du vendeur */}
+        <div style={{
+          background: '#f6f8fa',
+          borderRadius: '8px',
+          padding: '16px',
+          marginBottom: '24px'
+        }}>
+          <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', color: '#24292e' }}>
+            {seller.is_pro && '🏢 '}{seller.name}
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {seller.phone && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#586069' }}>
+                📞 <strong>{seller.phone}</strong>
+              </div>
+            )}
+            {seller.email && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#586069' }}>
+                ✉️ {seller.email}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Formulaire de contact */}
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#24292e' }}>
+              Votre nom *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #d1d5da',
+                borderRadius: '6px',
+                fontSize: '14px',
+                boxSizing: 'border-box'
+              }}
+              placeholder="Jean Dupont"
+            />
+          </div>
+
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#24292e' }}>
+              Votre email *
+            </label>
+            <input
+              type="email"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #d1d5da',
+                borderRadius: '6px',
+                fontSize: '14px',
+                boxSizing: 'border-box'
+              }}
+              placeholder="jean.dupont@example.com"
+            />
+          </div>
+
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#24292e' }}>
+              Votre téléphone
+            </label>
+            <input
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #d1d5da',
+                borderRadius: '6px',
+                fontSize: '14px',
+                boxSizing: 'border-box'
+              }}
+              placeholder="06 12 34 56 78"
+            />
+          </div>
+
+          <div style={{ marginBottom: '24px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#24292e' }}>
+              Votre message *
+            </label>
+            <textarea
+              required
+              value={formData.message}
+              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              rows={6}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #d1d5da',
+                borderRadius: '6px',
+                fontSize: '14px',
+                resize: 'vertical',
+                fontFamily: 'inherit',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              onClick={onClose}
+              style={{
+                padding: '12px 24px',
+                border: '1px solid #d1d5da',
+                borderRadius: '6px',
+                background: 'white',
+                color: '#24292e',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              style={{
+                padding: '12px 24px',
+                border: 'none',
+                borderRadius: '6px',
+                background: '#0366d6',
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              Envoyer le message
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
