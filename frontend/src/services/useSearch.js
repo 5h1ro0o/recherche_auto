@@ -1,6 +1,6 @@
 // frontend/src/services/useSearch.js
 import { useState, useEffect } from 'react';
-import { client } from './api';
+import client from './api';
 
 /**
  * Hook personnalisé pour la recherche de véhicules avec scraping
