@@ -25,8 +25,7 @@ def add_test_vehicles():
             'transmission': 'manuelle',
             'description': 'Peugeot 308 en excellent état, entretien suivi, GPS, radar de recul, climatisation automatique.',
             'images': ['https://example.com/peugeot308.jpg'],
-            'location_city': 'Paris',
-            'seller_type': 'particulier'
+            'location_city': 'Paris'
         },
         {
             'id': str(uuid.uuid4()),
@@ -40,8 +39,7 @@ def add_test_vehicles():
             'transmission': 'manuelle',
             'description': 'Renault Clio récente, première main, carnet d\'entretien à jour, écran tactile.',
             'images': ['https://example.com/clio.jpg'],
-            'location_city': 'Lyon',
-            'seller_type': 'particulier'
+            'location_city': 'Lyon'
         },
         {
             'id': str(uuid.uuid4()),
@@ -55,8 +53,7 @@ def add_test_vehicles():
             'transmission': 'manuelle',
             'description': 'Volkswagen Golf 7 très bien équipée, intérieur impeccable, GPS, caméra de recul.',
             'images': ['https://example.com/golf.jpg'],
-            'location_city': 'Marseille',
-            'seller_type': 'professionnel'
+            'location_city': 'Marseille'
         },
         {
             'id': str(uuid.uuid4()),
@@ -70,8 +67,7 @@ def add_test_vehicles():
             'transmission': 'manuelle',
             'description': 'Citroën C3 économique et fiable, parfait pour la ville, climatisation, Bluetooth.',
             'images': ['https://example.com/c3.jpg'],
-            'location_city': 'Toulouse',
-            'seller_type': 'particulier'
+            'location_city': 'Toulouse'
         },
         {
             'id': str(uuid.uuid4()),
@@ -85,8 +81,7 @@ def add_test_vehicles():
             'transmission': 'automatique',
             'description': 'BMW Série 3 M Sport, configuration haut de gamme, cuir, toit ouvrant, GPS.',
             'images': ['https://example.com/bmw3.jpg'],
-            'location_city': 'Bordeaux',
-            'seller_type': 'professionnel'
+            'location_city': 'Bordeaux'
         },
         {
             'id': str(uuid.uuid4()),
@@ -100,8 +95,7 @@ def add_test_vehicles():
             'transmission': 'automatique',
             'description': 'Audi A4 S line comme neuve, équipements premium, sièges chauffants, LED.',
             'images': ['https://example.com/audia4.jpg'],
-            'location_city': 'Nantes',
-            'seller_type': 'professionnel'
+            'location_city': 'Nantes'
         },
         {
             'id': str(uuid.uuid4()),
@@ -115,8 +109,7 @@ def add_test_vehicles():
             'transmission': 'automatique',
             'description': 'Peugeot 208 récente, boîte automatique, GPS 3D, caméra de recul, garantie constructeur.',
             'images': ['https://example.com/208.jpg'],
-            'location_city': 'Lille',
-            'seller_type': 'professionnel'
+            'location_city': 'Lille'
         },
         {
             'id': str(uuid.uuid4()),
@@ -130,8 +123,7 @@ def add_test_vehicles():
             'transmission': 'automatique',
             'description': 'Mercedes Classe A AMG Line, pack Premium, écran MBUX, sièges sport.',
             'images': ['https://example.com/mercedes.jpg'],
-            'location_city': 'Nice',
-            'seller_type': 'professionnel'
+            'location_city': 'Nice'
         },
     ]
 
