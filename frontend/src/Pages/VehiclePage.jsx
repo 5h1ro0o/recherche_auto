@@ -1059,7 +1059,3 @@ function ContactModal({ seller, vehicle, onClose }) {
     </div>
   )
 }
-
-export default function VehiclePage() {
-  return <div>VehiclePage component placeholder</div>
-}
