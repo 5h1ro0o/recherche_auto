@@ -199,10 +199,16 @@ class AutoScout24Scraper(BaseScraper):
         try:
             # Trouver le lien principal (plusieurs méthodes)
             link = None
-            if element.tag_name == 'a':
-                link = element
-            else:
-                # Chercher le premier lien dans l'élément
+            # Vérifier si l'élément lui-même est un lien <a>
+            try:
+                tag_name = element.evaluate('el => el.tagName.toLowerCase()')
+                if tag_name == 'a':
+                    link = element
+            except:
+                pass
+
+            # Si pas un lien, chercher un lien dans l'élément
+            if not link:
                 link = element.query_selector('a[href*="/annonces/"]') or element.query_selector('a')
 
             if not link:
@@ -220,7 +226,10 @@ class AutoScout24Scraper(BaseScraper):
             source_id = url.split('/')[-1] if '/' in url else 'unknown'
 
             # Extraction GÉNÉRIQUE du texte complet de l'élément
-            full_text = element.inner_text() if element else ""
+            try:
+                full_text = element.inner_text()
+            except:
+                full_text = ""
 
             # Titre - essayer plusieurs sélecteurs puis fallback sur premier h2/h3
             title = None
