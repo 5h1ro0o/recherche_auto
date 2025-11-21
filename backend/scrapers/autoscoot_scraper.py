@@ -26,7 +26,7 @@ class AutoScout24Scraper(BaseScraper):
             - max_price: int (optionnel)
             - fuel_type: str (optionnel: 'B' benzine, 'D' diesel, 'E' électrique)
         """
-        max_pages = search_params.get('max_pages', 5)
+        max_pages = search_params.get('max_pages', 20)
         results = []
 
         try:
@@ -38,7 +38,7 @@ class AutoScout24Scraper(BaseScraper):
 
             # Navigation initiale
             logger.info(f"🔗 URL: {base_search_url}")
-            self.page.goto(base_search_url, wait_until='domcontentloaded', timeout=30000)
+            self.page.goto(base_search_url, wait_until='domcontentloaded', timeout=300000)
             self.random_delay(3, 5)
 
             # Gérer les cookies si présents
@@ -50,7 +50,7 @@ class AutoScout24Scraper(BaseScraper):
                 if page_num > 0:
                     # Naviguer vers la page suivante
                     page_url = f"{base_search_url}&page={page_num + 1}"
-                    self.page.goto(page_url, wait_until='networkidle', timeout=45000)
+                    self.page.goto(page_url, wait_until='networkidle', timeout=300000)
                     # Scroll pour déclencher le lazy loading
                     self.page.evaluate('window.scrollTo(0, document.body.scrollHeight / 2)')
                     self.random_delay(2, 3)
@@ -161,7 +161,7 @@ class AutoScout24Scraper(BaseScraper):
             listings = []
             for selector in selectors:
                 try:
-                    self.page.wait_for_selector(selector, timeout=10000)
+                    self.page.wait_for_selector(selector, timeout=60000)
                     elements = self.page.query_selector_all(selector)
 
                     # Filtrer pour ne garder que les éléments pertinents

@@ -52,8 +52,8 @@ class AdvancedSearchRequest(BaseModel):
     nb_seats: Optional[int] = Field(None, ge=2, le=9, description="Nombre de places")
     color: Optional[str] = Field(None, description="Couleur")
 
-    # Contrôle pagination
-    max_pages: int = Field(5, ge=1, le=20, description="Nombre de pages par source")
+    # Contrôle pagination (pas de limite max)
+    max_pages: int = Field(20, ge=1, le=1000, description="Nombre de pages par source")
 
     # Sources à utiliser
     sources: List[str] = Field(["leboncoin", "autoscout24"], description="Sources à scraper")
@@ -231,7 +231,7 @@ async def advanced_search(request: AdvancedSearchRequest):
         for future in futures:
             source = futures[future]
             try:
-                result = future.result(timeout=120)  # Timeout de 2 minutes par source
+                result = future.result(timeout=3600)  # Timeout de 1 heure par source
 
                 sources_stats[source] = {
                     'count': result.get('count', 0),

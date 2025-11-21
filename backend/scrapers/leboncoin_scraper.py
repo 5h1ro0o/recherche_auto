@@ -62,7 +62,7 @@ class LeBonCoinScraper(BaseScraper):
         """
         query = search_params.get('query', 'voiture')
         max_price = search_params.get('max_price')
-        max_pages = search_params.get('max_pages', 5)
+        max_pages = search_params.get('max_pages', 20)
         location = search_params.get('location')
         deep_scrape = search_params.get('deep_scrape', True)
         
@@ -85,7 +85,7 @@ class LeBonCoinScraper(BaseScraper):
                 page_loaded = False
                 for attempt in range(max_retries):
                     try:
-                        self.page.goto(url, wait_until='domcontentloaded', timeout=30000)
+                        self.page.goto(url, wait_until='domcontentloaded', timeout=300000)
                         self.random_delay(2, 4)
                         
                         # Détecter captcha
@@ -107,7 +107,7 @@ class LeBonCoinScraper(BaseScraper):
                 
                 # Attendre les annonces
                 try:
-                    self.page.wait_for_selector('[data-qa-id="aditem_container"]', timeout=15000)
+                    self.page.wait_for_selector('[data-qa-id="aditem_container"]', timeout=60000)
                 except Exception as e:
                     logger.warning(f"⚠️ Pas d'annonces page {page_num}: {e}")
                     break
@@ -252,7 +252,7 @@ class LeBonCoinScraper(BaseScraper):
             logger.debug(f"  🔍 Scraping détails: {url}")
             
             # Navigation
-            self.page.goto(url, wait_until='domcontentloaded', timeout=20000)
+            self.page.goto(url, wait_until='domcontentloaded', timeout=300000)
             self.random_delay(1, 2)
             
             # Captcha check
