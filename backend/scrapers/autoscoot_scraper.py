@@ -209,13 +209,13 @@ class AutoScout24Scraper(BaseScraper):
 
             # Si pas un lien, chercher un lien dans l'élément
             if not link:
-                link = element.query_selector('a[href*="/annonces/"]') or element.query_selector('a')
+                link = element.query_selector('a[href*="/offre/"]') or element.query_selector('a')
 
             if not link:
                 return None
 
             url = link.get_attribute('href')
-            if not url or '/annonces/' not in url:
+            if not url or '/offre/' not in url:
                 return None
 
             # Construire l'URL complète
