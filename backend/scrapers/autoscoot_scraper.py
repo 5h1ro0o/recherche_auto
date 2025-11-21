@@ -26,7 +26,7 @@ class AutoScout24Scraper(BaseScraper):
             - max_price: int (optionnel)
             - fuel_type: str (optionnel: 'B' benzine, 'D' diesel, 'E' électrique)
         """
-        max_pages = search_params.get('max_pages', 3)
+        max_pages = search_params.get('max_pages', 5)
         results = []
 
         try:
@@ -50,8 +50,15 @@ class AutoScout24Scraper(BaseScraper):
                 if page_num > 0:
                     # Naviguer vers la page suivante
                     page_url = f"{base_search_url}&page={page_num + 1}"
-                    self.page.goto(page_url, wait_until='domcontentloaded', timeout=30000)
-                    self.random_delay(2, 4)
+                    self.page.goto(page_url, wait_until='networkidle', timeout=45000)
+                    # Scroll pour déclencher le lazy loading
+                    self.page.evaluate('window.scrollTo(0, document.body.scrollHeight / 2)')
+                    self.random_delay(2, 3)
+                    self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+                    self.random_delay(2, 3)
+                else:
+                    # Première page, délai court
+                    self.random_delay(2, 3)
 
                 # Attendre les résultats
                 page_results = self._scrape_page()
@@ -296,12 +303,24 @@ class AutoScout24Scraper(BaseScraper):
             elif 'manuelle' in full_text.lower():
                 transmission = 'Manuelle'
 
-            # Image
+            # Image - essayer plusieurs attributs et sources
             images = []
             img_elem = element.query_selector('img')
             if img_elem:
-                img_src = img_elem.get_attribute('src') or img_elem.get_attribute('data-src')
-                if img_src and not img_src.endswith('.svg') and 'placeholder' not in img_src:
+                # Essayer plusieurs attributs dans l'ordre
+                img_src = (
+                    img_elem.get_attribute('src') or
+                    img_elem.get_attribute('data-src') or
+                    img_elem.get_attribute('data-lazy-src') or
+                    img_elem.get_attribute('data-original')
+                )
+
+                if img_src and not img_src.endswith('.svg') and 'placeholder' not in img_src.lower():
+                    # Rendre l'URL absolue si nécessaire
+                    if img_src.startswith('//'):
+                        img_src = f"https:{img_src}"
+                    elif img_src.startswith('/'):
+                        img_src = f"{self.BASE_URL}{img_src}"
                     images.append(img_src)
 
             # Extraire marque et modèle du titre

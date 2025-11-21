@@ -53,7 +53,7 @@ class AdvancedSearchRequest(BaseModel):
     color: Optional[str] = Field(None, description="Couleur")
 
     # Contrôle pagination
-    max_pages: int = Field(3, ge=1, le=10, description="Nombre de pages par source")
+    max_pages: int = Field(5, ge=1, le=20, description="Nombre de pages par source")
 
     # Sources à utiliser
     sources: List[str] = Field(["leboncoin", "autoscout24"], description="Sources à scraper")
