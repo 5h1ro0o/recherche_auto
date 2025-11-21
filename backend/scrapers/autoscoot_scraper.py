@@ -181,8 +181,13 @@ class AutoScout24Scraper(BaseScraper):
                     if parsed:
                         normalized = self.normalize_data(parsed)
                         results.append(normalized)
+                        logger.debug(f"✓ Annonce {idx+1}: {parsed.get('title', 'N/A')[:50]}")
+                    else:
+                        logger.debug(f"✗ Annonce {idx+1}: Parsing retourné None")
                 except Exception as e:
-                    logger.debug(f"Erreur parsing annonce {idx}: {e}")
+                    logger.warning(f"✗ Annonce {idx+1}: {e}")
+
+            logger.info(f"📊 Parsé {len(results)}/{len(listings)} annonces avec succès")
 
         except Exception as e:
             logger.error(f"Erreur scraping page: {e}")
@@ -190,96 +195,98 @@ class AutoScout24Scraper(BaseScraper):
         return results
 
     def parse_listing(self, element) -> Optional[Dict[str, Any]]:
-        """Parse une annonce AutoScout24"""
+        """Parse une annonce AutoScout24 avec extraction générique et robuste"""
         try:
-            # Trouver le lien principal
-            link = element.query_selector('a') if element.tag_name != 'a' else element
+            # Trouver le lien principal (plusieurs méthodes)
+            link = None
+            if element.tag_name == 'a':
+                link = element
+            else:
+                # Chercher le premier lien dans l'élément
+                link = element.query_selector('a[href*="/annonces/"]') or element.query_selector('a')
+
             if not link:
                 return None
 
             url = link.get_attribute('href')
-            if not url:
+            if not url or '/annonces/' not in url:
                 return None
 
             # Construire l'URL complète
             if url.startswith('/'):
                 url = f"{self.BASE_URL}{url}"
 
-            # Extraire l'ID depuis l'URL (format: /annonces/.../{id})
-            source_id = None
-            id_match = re.search(r'/([a-z0-9-]+)$', url)
-            if id_match:
-                source_id = id_match.group(1)
+            # Extraire l'ID depuis l'URL
+            source_id = url.split('/')[-1] if '/' in url else 'unknown'
 
-            # Titre (marque + modèle)
+            # Extraction GÉNÉRIQUE du texte complet de l'élément
+            full_text = element.inner_text() if element else ""
+
+            # Titre - essayer plusieurs sélecteurs puis fallback sur premier h2/h3
             title = None
-            title_selectors = [
-                'h2',
-                '[data-testid="listing-title"]',
-                '.ListItem_title',
-                'span.ListItem_makeModelName'
-            ]
+            title_selectors = ['h2', 'h3', '[data-testid*="title"]', '[class*="title"]', '[class*="Title"]', 'a']
             for selector in title_selectors:
                 title_elem = element.query_selector(selector)
                 if title_elem:
                     title = title_elem.inner_text().strip()
-                    if title:
+                    if title and len(title) > 3:  # Au moins 3 caractères
                         break
 
-            # Prix
+            # Si pas de titre, essayer d'extraire de l'attribut du lien
+            if not title and link:
+                title = link.get_attribute('title') or link.get_attribute('aria-label')
+
+            # Prix - chercher pattern de prix dans le texte
             price = None
-            price_selectors = [
-                '[data-testid="listing-price"]',
-                '.Price_price',
-                'span.PriceAndSeals_current-price'
+            price_patterns = [
+                r'(\d{1,3}(?:\s?\d{3})*)\s*€',  # Ex: 15 000 €
+                r'€\s*(\d{1,3}(?:\s?\d{3})*)',  # Ex: € 15000
             ]
-            for selector in price_selectors:
-                price_elem = element.query_selector(selector)
-                if price_elem:
-                    price_text = price_elem.inner_text().strip()
-                    if price_text and price_text != '-':
-                        price = price_text
-                        break
+            for pattern in price_patterns:
+                match = re.search(pattern, full_text)
+                if match:
+                    price = match.group(1).replace(' ', '')
+                    break
 
-            # Année
+            # Année - chercher pattern 4 chiffres entre 1990 et 2030
             year = None
-            year_elem = element.query_selector('[data-testid="listing-year"]')
-            if year_elem:
-                year_text = year_elem.inner_text().strip()
-                year_match = re.search(r'\d{4}', year_text)
-                if year_match:
-                    year = int(year_match.group())
+            year_match = re.search(r'\b(19\d{2}|20[0-3]\d)\b', full_text)
+            if year_match:
+                year = int(year_match.group(1))
 
-            # Kilométrage
+            # Kilométrage - chercher pattern de km
             mileage = None
-            mileage_elem = element.query_selector('[data-testid="listing-mileage"]')
-            if mileage_elem:
-                mileage = mileage_elem.inner_text().strip()
+            km_patterns = [
+                r'(\d{1,3}(?:\s?\d{3})*)\s*km',
+                r'(\d{1,3}(?:\s?\d{3})*)\s*Kilomètres',
+            ]
+            for pattern in km_patterns:
+                match = re.search(pattern, full_text, re.IGNORECASE)
+                if match:
+                    mileage = match.group(1).replace(' ', '')
+                    break
 
-            # Carburant
+            # Carburant - chercher mots-clés
             fuel_type = None
-            fuel_elem = element.query_selector('[data-testid="listing-fuel"]')
-            if fuel_elem:
-                fuel_type = fuel_elem.inner_text().strip()
+            fuel_keywords = ['Diesel', 'Essence', 'Électrique', 'Hybride', 'GPL']
+            for keyword in fuel_keywords:
+                if keyword.lower() in full_text.lower():
+                    fuel_type = keyword
+                    break
 
             # Transmission
             transmission = None
-            trans_elem = element.query_selector('[data-testid="listing-transmission"]')
-            if trans_elem:
-                transmission = trans_elem.inner_text().strip()
-
-            # Localisation
-            location = None
-            location_elem = element.query_selector('[data-testid="listing-location"]')
-            if location_elem:
-                location = location_elem.inner_text().strip()
+            if 'automatique' in full_text.lower():
+                transmission = 'Automatique'
+            elif 'manuelle' in full_text.lower():
+                transmission = 'Manuelle'
 
             # Image
             images = []
             img_elem = element.query_selector('img')
             if img_elem:
-                img_src = img_elem.get_attribute('src')
-                if img_src and not img_src.endswith('.svg'):
+                img_src = img_elem.get_attribute('src') or img_elem.get_attribute('data-src')
+                if img_src and not img_src.endswith('.svg') and 'placeholder' not in img_src:
                     images.append(img_src)
 
             # Extraire marque et modèle du titre
@@ -287,13 +294,18 @@ class AutoScout24Scraper(BaseScraper):
             model = None
             if title:
                 parts = title.split()
-                if len(parts) >= 2:
+                if len(parts) >= 1:
                     make = parts[0]
-                    model = ' '.join(parts[1:])
+                if len(parts) >= 2:
+                    model = ' '.join(parts[1:3])  # 2 premiers mots après la marque
+
+            # Retourner au moins avec URL et titre
+            if not title or len(title) < 3:
+                return None  # Pas assez d'infos
 
             return {
                 'id': source_id,
-                'title': title or 'Sans titre',
+                'title': title,
                 'make': make,
                 'model': model,
                 'price': price,
@@ -301,11 +313,13 @@ class AutoScout24Scraper(BaseScraper):
                 'mileage': mileage,
                 'fuel_type': fuel_type,
                 'transmission': transmission,
-                'location': location,
+                'location': None,  # Pas extrait pour l'instant
                 'url': url,
                 'images': images
             }
 
         except Exception as e:
-            logger.debug(f"Erreur parse listing: {e}")
+            logger.warning(f"Erreur parse listing: {e}")
+            import traceback
+            logger.debug(traceback.format_exc())
             return None

@@ -105,29 +105,58 @@ class LeBonCoinScraper(BaseScraper):
                     logger.error(f"❌ Impossible de charger page {page_num}, skip")
                     continue
                 
+                # Attendre que la page charge complètement (LeBonCoin est lent)
+                self.random_delay(3, 5)
+
                 # Attendre les annonces avec plusieurs sélecteurs possibles
                 listings = []
                 selectors = [
                     '[data-qa-id="aditem_container"]',  # Ancien sélecteur
                     'article[data-qa-id]',  # Article avec data-qa-id
+                    'div[data-qa-id*="ad"]',  # Div avec data-qa-id contenant "ad"
                     'a[href*="/ad/"]',  # Liens vers annonces
+                    'a[href*="voitures"]',  # Liens vers voitures
                     'article',  # Tous les articles (générique)
+                    'li[data-qa-id]',  # Liste d'éléments avec data-qa-id
                 ]
 
                 for selector in selectors:
                     try:
-                        self.page.wait_for_selector(selector, timeout=10000)
-                        listings = self.page.query_selector_all(selector)
-                        if listings and len(listings) > 0:
+                        self.page.wait_for_selector(selector, timeout=8000)
+                        elements = self.page.query_selector_all(selector)
+
+                        # Filtrer pour ne garder que les liens d'annonces
+                        if selector in ['article', 'li[data-qa-id]', 'div[data-qa-id*="ad"]']:
+                            # Vérifier que l'élément contient un lien vers une annonce
+                            listings = [el for el in elements if el.query_selector('a[href*="/ad/"]') or el.query_selector('a[href*="voitures"]')]
+                        elif selector == 'a[href*="/ad/"]' or selector == 'a[href*="voitures"]':
+                            # Ne garder que les liens qui semblent être des annonces (pas footer, header, etc.)
+                            listings = [el for el in elements if 'footer' not in (el.get_attribute('class') or '').lower()]
+                        else:
+                            listings = elements
+
+                        if listings and len(listings) > 5:  # Au moins 5 éléments pour être sûr
                             logger.info(f"✅ Trouvé {len(listings)} annonces avec sélecteur: {selector}")
                             break
+                        elif listings:
+                            logger.debug(f"Sélecteur '{selector}': {len(listings)} éléments (trop peu)")
                     except Exception as e:
                         logger.debug(f"Sélecteur '{selector}' non trouvé: {e}")
                         continue
 
                 if not listings or len(listings) == 0:
                     logger.warning(f"⚠️ Aucune annonce trouvée page {page_num} avec tous les sélecteurs")
+                    # Sauvegarder la page HTML pour debug
+                    try:
+                        html_content = self.page.content()
+                        with open(f'leboncoin_page{page_num}_debug.html', 'w', encoding='utf-8') as f:
+                            f.write(html_content)
+                        logger.info(f"💾 Page HTML sauvegardée: leboncoin_page{page_num}_debug.html")
+                    except:
+                        pass
                     break
+
+                logger.info(f"📊 Traitement de {len(listings)} éléments...")
 
                 for idx, listing in enumerate(listings, 1):
                     try:
