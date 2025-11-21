@@ -254,7 +254,22 @@ async def advanced_search(request: AdvancedSearchRequest):
                 }
 
     # Trier les résultats par prix (croissant)
-    all_results.sort(key=lambda x: x.get('price', float('inf')))
+    def get_sort_price(item):
+        price = item.get('price')
+        if price is None:
+            return float('inf')
+        if isinstance(price, str):
+            # Enlever espaces et convertir
+            try:
+                return float(price.replace(' ', '').replace(',', ''))
+            except (ValueError, AttributeError):
+                return float('inf')
+        try:
+            return float(price)
+        except (ValueError, TypeError):
+            return float('inf')
+
+    all_results.sort(key=get_sort_price)
 
     # Calculer la durée
     duration = (datetime.utcnow() - start_time).total_seconds()
