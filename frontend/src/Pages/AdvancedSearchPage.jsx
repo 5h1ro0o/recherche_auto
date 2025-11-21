@@ -24,7 +24,7 @@ export default function AdvancedSearchPage() {
         },
         body: JSON.stringify({
           ...filters,
-          max_pages: 3
+          max_pages: 20
         })
       })
 

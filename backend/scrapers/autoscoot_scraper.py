@@ -50,12 +50,12 @@ class AutoScout24Scraper(BaseScraper):
                 if page_num > 0:
                     # Naviguer vers la page suivante
                     page_url = f"{base_search_url}&page={page_num + 1}"
-                    self.page.goto(page_url, wait_until='networkidle', timeout=300000)
+                    self.page.goto(page_url, wait_until='domcontentloaded', timeout=300000)
                     # Scroll pour déclencher le lazy loading
                     self.page.evaluate('window.scrollTo(0, document.body.scrollHeight / 2)')
-                    self.random_delay(2, 3)
+                    self.random_delay(3, 5)
                     self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
-                    self.random_delay(2, 3)
+                    self.random_delay(3, 5)
                 else:
                     # Première page, délai court
                     self.random_delay(2, 3)
