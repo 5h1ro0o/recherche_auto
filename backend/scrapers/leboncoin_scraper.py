@@ -105,20 +105,30 @@ class LeBonCoinScraper(BaseScraper):
                     logger.error(f"❌ Impossible de charger page {page_num}, skip")
                     continue
                 
-                # Attendre les annonces
-                try:
-                    self.page.wait_for_selector('[data-qa-id="aditem_container"]', timeout=15000)
-                except Exception as e:
-                    logger.warning(f"⚠️ Pas d'annonces page {page_num}: {e}")
+                # Attendre les annonces avec plusieurs sélecteurs possibles
+                listings = []
+                selectors = [
+                    '[data-qa-id="aditem_container"]',  # Ancien sélecteur
+                    'article[data-qa-id]',  # Article avec data-qa-id
+                    'a[href*="/ad/"]',  # Liens vers annonces
+                    'article',  # Tous les articles (générique)
+                ]
+
+                for selector in selectors:
+                    try:
+                        self.page.wait_for_selector(selector, timeout=10000)
+                        listings = self.page.query_selector_all(selector)
+                        if listings and len(listings) > 0:
+                            logger.info(f"✅ Trouvé {len(listings)} annonces avec sélecteur: {selector}")
+                            break
+                    except Exception as e:
+                        logger.debug(f"Sélecteur '{selector}' non trouvé: {e}")
+                        continue
+
+                if not listings or len(listings) == 0:
+                    logger.warning(f"⚠️ Aucune annonce trouvée page {page_num} avec tous les sélecteurs")
                     break
-                
-                # Parser les listings
-                listings = self.page.query_selector_all('[data-qa-id="aditem_container"]')
-                logger.info(f"✅ Trouvé {len(listings)} annonces")
-                
-                if len(listings) == 0:
-                    break
-                
+
                 for idx, listing in enumerate(listings, 1):
                     try:
                         # Extraction basique (liste)

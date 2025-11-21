@@ -141,28 +141,38 @@ class AutoScout24Scraper(BaseScraper):
         results = []
 
         try:
-            # Attendre que les annonces se chargent
-            # AutoScout24 utilise des articles avec classe ListItem_article
+            # Attendre que les annonces se chargent avec plusieurs sélecteurs possibles
             selectors = [
-                'article[data-testid="listing-item"]',
-                'article.ListItem_article',
-                'div[data-testid="search-listing"]',
-                'a.ListItem_title'
+                'article[data-testid="listing-item"]',  # Sélecteur spécifique
+                'article.ListItem_article',  # Avec classe
+                'article',  # Générique - tous les articles
+                'div[data-testid="search-listing"]',  # Container de recherche
+                'a[href*="/annonces/"]',  # Liens vers annonces
+                'div[class*="ListItem"]'  # Contient ListItem dans la classe
             ]
 
             listings = []
             for selector in selectors:
                 try:
-                    self.page.wait_for_selector(selector, timeout=15000)
-                    listings = self.page.query_selector_all(selector)
-                    if listings:
+                    self.page.wait_for_selector(selector, timeout=10000)
+                    elements = self.page.query_selector_all(selector)
+
+                    # Filtrer pour ne garder que les éléments pertinents
+                    if selector == 'article':
+                        # Pour le sélecteur générique, vérifier qu'il y a un lien d'annonce
+                        listings = [el for el in elements if el.query_selector('a[href*="/annonces/"]')]
+                    else:
+                        listings = elements
+
+                    if listings and len(listings) > 0:
                         logger.info(f"✅ Trouvé {len(listings)} annonces avec sélecteur: {selector}")
                         break
-                except:
+                except Exception as e:
+                    logger.debug(f"Sélecteur '{selector}' non trouvé: {e}")
                     continue
 
-            if not listings:
-                logger.warning("⚠️ Aucune annonce trouvée avec les sélecteurs")
+            if not listings or len(listings) == 0:
+                logger.warning("⚠️ Aucune annonce trouvée avec tous les sélecteurs")
                 return results
 
             for idx, listing in enumerate(listings):
