@@ -85,102 +85,40 @@ class LeBonCoinScraper(BaseScraper):
                 page_loaded = False
                 for attempt in range(max_retries):
                     try:
-                        # Essayer d'abord avec networkidle pour attendre que tout se charge
-                        try:
-                            self.page.goto(url, wait_until='networkidle', timeout=45000)
-                        except:
-                            # Fallback sur domcontentloaded si networkidle échoue
-                            self.page.goto(url, wait_until='domcontentloaded', timeout=30000)
-
-                        self.random_delay(3, 6)
-
-                        # Log du titre de page pour debug
-                        page_title = self.page.title()
-                        logger.info(f"📄 Titre de page: {page_title}")
-
+                        self.page.goto(url, wait_until='domcontentloaded', timeout=30000)
+                        self.random_delay(2, 4)
+                        
                         # Détecter captcha
                         if self._detect_captcha():
                             logger.warning("🤖 Captcha détecté! Pause de 60s...")
                             self.random_delay(60, 90)
                             continue
-
+                        
                         page_loaded = True
                         break
-
+                        
                     except Exception as e:
                         logger.warning(f"⚠️ Tentative {attempt + 1}/{max_retries} échouée: {e}")
                         self.random_delay(5, 10)
-
+                
                 if not page_loaded:
                     logger.error(f"❌ Impossible de charger page {page_num}, skip")
                     continue
-
-                # Attendre encore pour être sûr que le contenu dynamique est chargé
-                self.random_delay(5, 8)
-
-                # Attendre les annonces avec plusieurs sélecteurs possibles
-                listings = []
-                selectors = [
-                    '[data-qa-id="aditem_container"]',  # Ancien sélecteur classique
-                    'article[data-qa-id]',  # Article avec data-qa-id
-                    'div[data-qa-id*="ad"]',  # Div avec data-qa-id contenant "ad"
-                    'a[href*="/ad/"]',  # Liens vers annonces
-                    'a[href*="/voitures/"]',  # Liens vers voitures
-                    'article',  # Tous les articles (très générique)
-                    'li[data-qa-id]',  # Liste d'éléments avec data-qa-id
-                    'li',  # Tous les li (très générique)
-                    'div[class*="styles_adCard"]',  # Classe de carte d'annonce
-                    '[data-test-id*="ad"]',  # data-test-id au lieu de data-qa-id
-                ]
-
-                logger.info(f"🔍 Tentative de détection des annonces avec {len(selectors)} sélecteurs...")
-
-                for idx, selector in enumerate(selectors, 1):
-                    try:
-                        logger.debug(f"   Essai {idx}/{len(selectors)}: {selector}")
-                        self.page.wait_for_selector(selector, timeout=5000)
-                        elements = self.page.query_selector_all(selector)
-                        logger.debug(f"   → Trouvé {len(elements)} éléments")
-
-                        # Filtrer pour ne garder que les liens d'annonces
-                        if selector in ['article', 'li[data-qa-id]', 'li', 'div[data-qa-id*="ad"]', 'div[class*="styles_adCard"]']:
-                            # Vérifier que l'élément contient un lien vers une annonce
-                            listings = [el for el in elements if el.query_selector('a[href*="/ad/"]') or el.query_selector('a[href*="/voitures/"]')]
-                            logger.debug(f"   → {len(listings)} éléments avec liens d'annonce")
-                        elif selector in ['a[href*="/ad/"]', 'a[href*="/voitures/"]']:
-                            # Ne garder que les liens qui semblent être des annonces (pas footer, header, etc.)
-                            listings = [el for el in elements if 'footer' not in (el.get_attribute('class') or '').lower()]
-                            logger.debug(f"   → {len(listings)} liens filtrés")
-                        else:
-                            listings = elements
-
-                        if listings and len(listings) >= 5:  # Au moins 5 éléments pour être sûr
-                            logger.info(f"✅ Trouvé {len(listings)} annonces avec sélecteur: {selector}")
-                            break
-                        elif listings:
-                            logger.debug(f"   → {len(listings)} éléments (trop peu, minimum 5 requis)")
-                    except Exception as e:
-                        logger.debug(f"   → Échec: {str(e)[:50]}")
-                        continue
-
-                if not listings or len(listings) == 0:
-                    logger.warning(f"⚠️ Aucune annonce trouvée page {page_num} avec tous les sélecteurs")
-                    # Sauvegarder la page HTML et screenshot pour debug
-                    try:
-                        html_content = self.page.content()
-                        with open(f'leboncoin_page{page_num}_debug.html', 'w', encoding='utf-8') as f:
-                            f.write(html_content)
-                        logger.info(f"💾 Page HTML sauvegardée: leboncoin_page{page_num}_debug.html")
-
-                        # Sauvegarder un screenshot aussi
-                        self.page.screenshot(path=f'leboncoin_page{page_num}_debug.png')
-                        logger.info(f"📸 Screenshot sauvegardé: leboncoin_page{page_num}_debug.png")
-                    except Exception as e:
-                        logger.debug(f"Erreur sauvegarde debug: {e}")
+                
+                # Attendre les annonces
+                try:
+                    self.page.wait_for_selector('[data-qa-id="aditem_container"]', timeout=15000)
+                except Exception as e:
+                    logger.warning(f"⚠️ Pas d'annonces page {page_num}: {e}")
                     break
-
-                logger.info(f"📊 Traitement de {len(listings)} éléments...")
-
+                
+                # Parser les listings
+                listings = self.page.query_selector_all('[data-qa-id="aditem_container"]')
+                logger.info(f"✅ Trouvé {len(listings)} annonces")
+                
+                if len(listings) == 0:
+                    break
+                
                 for idx, listing in enumerate(listings, 1):
                     try:
                         # Extraction basique (liste)
