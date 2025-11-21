@@ -21,7 +21,7 @@ logging.basicConfig(
 logger = logging.getLogger("voiture-search")
 
 # import routers
-from app.routes import vehicles, search, auth, alerts, search_history, chatbot, similar, admin  # noqa: E402
+from app.routes import vehicles, search, auth, alerts, search_history, chatbot, similar, admin, scrape  # noqa: E402
 from app.routes.favorites import router as favorites_router  # noqa: E402
 
 app = FastAPI(title="Voiture Search API", version="0.2.0")
@@ -73,6 +73,7 @@ app.include_router(favorites_router)
 app.include_router(chatbot.router)
 app.include_router(similar.router)
 app.include_router(admin.router)
+app.include_router(scrape.router)
 
 # Exception handlers for nicer JSON errors
 @app.exception_handler(RequestValidationError)
