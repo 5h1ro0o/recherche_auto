@@ -212,10 +212,16 @@ class AutoScout24Scraper(BaseScraper):
                 link = element.query_selector('a[href*="/offre/"]') or element.query_selector('a')
 
             if not link:
+                logger.warning("❌ Rejeté: aucun lien trouvé")
                 return None
 
             url = link.get_attribute('href')
-            if not url or '/offre/' not in url:
+            if not url:
+                logger.warning("❌ Rejeté: URL vide")
+                return None
+
+            if '/offre/' not in url:
+                logger.warning(f"❌ Rejeté: URL ne contient pas /offre/ -> {url[:100]}")
                 return None
 
             # Construire l'URL complète
@@ -310,7 +316,12 @@ class AutoScout24Scraper(BaseScraper):
 
             # Retourner au moins avec URL et titre
             if not title or len(title) < 3:
+                logger.warning(f"❌ Rejeté: pas de titre (titre='{title}', len={len(title) if title else 0})")
+                logger.warning(f"   URL était: {url[:100]}")
+                logger.warning(f"   Texte était: {full_text[:200]}")
                 return None  # Pas assez d'infos
+
+            logger.info(f"✅ Parsé avec succès: {title[:50]}")
 
             return {
                 'id': source_id,
