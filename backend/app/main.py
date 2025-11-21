@@ -21,7 +21,7 @@ logging.basicConfig(
 logger = logging.getLogger("voiture-search")
 
 # import routers
-from app.routes import vehicles, search, auth, alerts, search_history, chatbot, similar, admin, scrape  # noqa: E402
+from app.routes import vehicles, search, auth, alerts, search_history, chatbot, similar, admin, scrape, search_advanced  # noqa: E402
 from app.routes.favorites import router as favorites_router  # noqa: E402
 
 app = FastAPI(title="Voiture Search API", version="0.2.0")
@@ -66,6 +66,7 @@ app.add_middleware(RequestLoggingMiddleware)
 # include routers
 app.include_router(vehicles.router)
 app.include_router(search.router)
+app.include_router(search_advanced.router)
 app.include_router(auth.router)
 app.include_router(alerts.router)
 app.include_router(search_history.router)
