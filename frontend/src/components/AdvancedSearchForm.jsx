@@ -114,14 +114,13 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
       {/* Marque et Modèle */}
       <div style={styles.row}>
         <div style={styles.field}>
-          <label style={styles.label}>Marque *</label>
+          <label style={styles.label}>Marque</label>
           <select
             value={filters.make}
             onChange={(e) => handleChange('make', e.target.value)}
             style={styles.select}
-            required
           >
-            <option value="">Sélectionner une marque</option>
+            <option value="">Toutes les marques</option>
             {makes.map(make => (
               <option key={make.value} value={make.value}>{make.label}</option>
             ))}
@@ -276,7 +275,7 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
         <button
           type="submit"
           style={styles.submitButton}
-          disabled={loading || !filters.make}
+          disabled={loading}
         >
           {loading ? '🔄 Recherche en cours...' : '🔍 Rechercher'}
         </button>
