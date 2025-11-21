@@ -913,13 +913,25 @@ function Lightbox({ images, currentIndex, onClose, onPrev, onNext }) {
             }}
             onMouseEnter={(e) => e.target.style.background = 'rgba(255,255,255,0.3)'}
             onMouseLeave={(e) => e.target.style.background = 'rgba(255,255,255,0.2)'}
-          />
+          >
+            ›
+          </button>
         </>
       )}
     </div>
   )
 }
+
 function ContactModal({ seller, vehicle, onClose }) {
+  const [message, setMessage] = useState('')
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    // TODO: Envoyer le message au vendeur
+    alert('Votre message a été envoyé au vendeur !')
+    onClose()
+  }
+
   return (
     <div
       style={{
@@ -937,7 +949,7 @@ function ContactModal({ seller, vehicle, onClose }) {
       }}
       onClick={onClose}
     >
-    <div
+      <div
         style={{
           background: 'white',
           borderRadius: '16px',
@@ -947,5 +959,107 @@ function ContactModal({ seller, vehicle, onClose }) {
           boxShadow: '0 2px 12px rgba(0,0,0,0.2)'
         }}
         onClick={(e) => e.stopPropagation()}
-    >
-  )}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h2 style={{ margin: 0, fontSize: '24px' }}>Contacter le vendeur</h2>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '28px',
+              cursor: 'pointer',
+              color: '#6a737d',
+              padding: '0',
+              width: '32px',
+              height: '32px'
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        <div style={{ marginBottom: '20px', padding: '16px', background: '#f6f8fa', borderRadius: '8px' }}>
+          <p style={{ margin: '0 0 8px 0', fontWeight: 600 }}>{seller.name}</p>
+          {seller.phone && (
+            <p style={{ margin: '4px 0', fontSize: '14px' }}>
+              📞 {seller.phone}
+            </p>
+          )}
+          {seller.email && (
+            <p style={{ margin: '4px 0', fontSize: '14px' }}>
+              ✉️ {seller.email}
+            </p>
+          )}
+        </div>
+
+        <div style={{ marginBottom: '20px', padding: '12px', background: '#f1f8ff', borderRadius: '8px', border: '1px solid #c8e1ff' }}>
+          <p style={{ margin: 0, fontSize: '14px', color: '#0366d6' }}>
+            <strong>Véhicule concerné :</strong> {vehicle.title}
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>
+              Votre message
+            </label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Bonjour, je suis intéressé par ce véhicule..."
+              required
+              rows={6}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '6px',
+                border: '1px solid #d1d5db',
+                fontSize: '14px',
+                fontFamily: 'inherit',
+                resize: 'vertical'
+              }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              onClick={onClose}
+              style={{
+                padding: '10px 20px',
+                background: '#f6f8fa',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 500
+              }}
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              style={{
+                padding: '10px 20px',
+                background: '#0366d6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 500
+              }}
+            >
+              Envoyer le message
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+export default function VehiclePage() {
+  return <div>VehiclePage component placeholder</div>
+}
