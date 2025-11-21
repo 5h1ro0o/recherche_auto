@@ -6,6 +6,7 @@ import time
 import logging
 import os
 import hashlib
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -112,3 +113,119 @@ class BaseScraper(ABC):
                     '--disable-blink-features=AutomationControlled',
                     '--exclude-switches=enable-automation',
                     '--disable-extensions'
+                ]
+            }
+
+            # Ajouter proxy si configuré
+            if proxy:
+                launch_options['proxy'] = {
+                    'server': proxy
+                }
+
+            self.browser = self.playwright.chromium.launch(**launch_options)
+
+            # Context avec anti-fingerprinting
+            context_options = {
+                'user_agent': self.get_random_user_agent(),
+                'viewport': {'width': 1920, 'height': 1080},
+                'locale': 'fr-FR',
+                'timezone_id': 'Europe/Paris',
+                'permissions': ['geolocation'],
+                'geolocation': {'latitude': 48.8566, 'longitude': 2.3522},  # Paris
+            }
+
+            context = self.browser.new_context(**context_options)
+
+            # Injecter scripts anti-détection
+            context.add_init_script("""
+                Object.defineProperty(navigator, 'webdriver', {
+                    get: () => undefined
+                });
+                Object.defineProperty(navigator, 'plugins', {
+                    get: () => [1, 2, 3, 4, 5]
+                });
+                Object.defineProperty(navigator, 'languages', {
+                    get: () => ['fr-FR', 'fr', 'en-US', 'en']
+                });
+            """)
+
+            self.page = context.new_page()
+
+            logger.info("✅ Browser Playwright initialisé avec succès")
+
+        except Exception as e:
+            logger.error(f"❌ Erreur init browser: {e}")
+            self.close_browser()
+            raise
+
+    def close_browser(self):
+        """Ferme proprement le browser"""
+        try:
+            if self.page:
+                self.page.close()
+            if self.browser:
+                self.browser.close()
+            if self.playwright:
+                self.playwright.stop()
+            logger.info("✅ Browser fermé")
+        except Exception as e:
+            logger.warning(f"⚠️ Erreur fermeture browser: {e}")
+
+    @abstractmethod
+    def get_source_name(self) -> str:
+        """Retourne le nom de la source (ex: 'leboncoin', 'lacentrale')"""
+        pass
+
+    @abstractmethod
+    def scrape(self, search_params: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Méthode principale de scraping
+        Doit retourner une liste de dictionnaires normalisés
+        """
+        pass
+
+    def normalize_data(self, raw_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalise les données scrapées"""
+        return {
+            'source_ids': {self.get_source_name(): raw_data.get('id')},
+            'title': raw_data.get('title', ''),
+            'make': raw_data.get('make'),
+            'model': raw_data.get('model'),
+            'price': self._normalize_price(raw_data.get('price')),
+            'year': self._normalize_year(raw_data.get('year')),
+            'mileage': self._normalize_mileage(raw_data.get('mileage')),
+            'fuel_type': raw_data.get('fuel_type'),
+            'transmission': raw_data.get('transmission'),
+            'location_city': raw_data.get('location'),
+            'url': raw_data.get('url'),
+            'images': raw_data.get('images', [])
+        }
+
+    def _normalize_price(self, price: Any) -> Optional[int]:
+        """Normalise le prix en entier"""
+        if price is None:
+            return None
+        try:
+            price_str = str(price).replace(' ', '').replace('€', '').replace(',', '.')
+            return int(float(re.sub(r'[^\d.]', '', price_str)))
+        except:
+            return None
+
+    def _normalize_year(self, year: Any) -> Optional[int]:
+        """Normalise l'année"""
+        if year is None:
+            return None
+        try:
+            return int(re.sub(r'[^\d]', '', str(year)))
+        except:
+            return None
+
+    def _normalize_mileage(self, mileage: Any) -> Optional[int]:
+        """Normalise le kilométrage"""
+        if mileage is None:
+            return None
+        try:
+            mileage_str = str(mileage).replace(' ', '').replace('km', '').replace(',', '')
+            return int(re.sub(r'[^\d]', '', mileage_str))
+        except:
+            return None
