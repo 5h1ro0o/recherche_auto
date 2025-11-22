@@ -51,14 +51,11 @@ class AutoScout24Scraper(BaseScraper):
                     # Naviguer vers la page suivante
                     page_url = f"{base_search_url}&page={page_num + 1}"
                     self.page.goto(page_url, wait_until='domcontentloaded', timeout=300000)
-                    # Scroll pour déclencher le lazy loading
-                    self.page.evaluate('window.scrollTo(0, document.body.scrollHeight / 2)')
-                    self.random_delay(3, 5)
-                    self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
-                    self.random_delay(3, 5)
+                    # Petit délai pour laisser charger
+                    self.random_delay(1, 2)
                 else:
-                    # Première page, délai court
-                    self.random_delay(2, 3)
+                    # Première page, délai très court
+                    self.random_delay(0.5, 1)
 
                 # Attendre les résultats
                 page_results = self._scrape_page()
@@ -161,7 +158,7 @@ class AutoScout24Scraper(BaseScraper):
             listings = []
             for selector in selectors:
                 try:
-                    self.page.wait_for_selector(selector, timeout=60000)
+                    self.page.wait_for_selector(selector, timeout=10000)
                     elements = self.page.query_selector_all(selector)
 
                     # Filtrer pour ne garder que les éléments pertinents
@@ -219,16 +216,13 @@ class AutoScout24Scraper(BaseScraper):
                 link = element.query_selector('a[href*="/offres/"]') or element.query_selector('a')
 
             if not link:
-                logger.warning("❌ Rejeté: aucun lien trouvé")
                 return None
 
             url = link.get_attribute('href')
             if not url:
-                logger.warning("❌ Rejeté: URL vide")
                 return None
 
             if '/offres/' not in url:
-                logger.warning(f"❌ Rejeté: URL ne contient pas /offres/ -> {url[:100]}")
                 return None
 
             # Construire l'URL complète
@@ -303,24 +297,34 @@ class AutoScout24Scraper(BaseScraper):
             elif 'manuelle' in full_text.lower():
                 transmission = 'Manuelle'
 
-            # Image - essayer plusieurs attributs et sources
+            # Image - chercher toutes les images
             images = []
-            img_elem = element.query_selector('img')
-            if img_elem:
-                # Essayer plusieurs attributs dans l'ordre
+            img_elems = element.query_selector_all('img')
+            for img_elem in img_elems[:3]:  # Max 3 images par annonce
+                # Essayer plusieurs attributs
                 img_src = (
                     img_elem.get_attribute('src') or
                     img_elem.get_attribute('data-src') or
                     img_elem.get_attribute('data-lazy-src') or
-                    img_elem.get_attribute('data-original')
+                    img_elem.get_attribute('data-original') or
+                    img_elem.get_attribute('data-lazy')
                 )
 
-                if img_src and not img_src.endswith('.svg') and 'placeholder' not in img_src.lower():
+                # Aussi vérifier srcset pour lazy loading
+                if not img_src:
+                    srcset = img_elem.get_attribute('srcset')
+                    if srcset:
+                        # Prendre la première URL du srcset
+                        img_src = srcset.split(',')[0].split()[0]
+
+                if img_src and not img_src.endswith('.svg') and 'placeholder' not in img_src.lower() and len(img_src) > 10:
                     # Rendre l'URL absolue si nécessaire
                     if img_src.startswith('//'):
                         img_src = f"https:{img_src}"
                     elif img_src.startswith('/'):
                         img_src = f"{self.BASE_URL}{img_src}"
+                    elif not img_src.startswith('http'):
+                        continue  # Ignorer les URLs invalides
                     images.append(img_src)
 
             # Extraire marque et modèle du titre
@@ -335,12 +339,7 @@ class AutoScout24Scraper(BaseScraper):
 
             # Retourner au moins avec URL et titre
             if not title or len(title) < 3:
-                logger.warning(f"❌ Rejeté: pas de titre (titre='{title}', len={len(title) if title else 0})")
-                logger.warning(f"   URL était: {url[:100]}")
-                logger.warning(f"   Texte était: {full_text[:200]}")
                 return None  # Pas assez d'infos
-
-            logger.info(f"✅ Parsé avec succès: {title[:50]}")
 
             return {
                 'id': source_id,
