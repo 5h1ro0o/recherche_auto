@@ -7,8 +7,10 @@ import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 
 import App from './App'
+import HomePage from './Pages/HomePage'
 import SearchPage from './Pages/SearchPage'
 import AdvancedSearchPage from './Pages/AdvancedSearchPage'
+import EncyclopediaPage from './Pages/EncyclopediaPage'
 import VehiclePage from './Pages/VehiclePage'
 import LoginPage from './Pages/LoginPage'
 import RegisterPage from './Pages/RegisterPage'
@@ -39,8 +41,9 @@ createRoot(document.getElementById('root')).render(
           <Routes>
             <Route path="/" element={<App />}>
               {/* Routes publiques */}
-              <Route index element={<AdvancedSearchPage />} />
-              <Route path="/search" element={<SearchPage />} />
+              <Route index element={<HomePage />} />
+              <Route path="/search" element={<AdvancedSearchPage />} />
+              <Route path="/encyclopedia" element={<EncyclopediaPage />} />
               <Route path="/vehicle/:id" element={<VehiclePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />

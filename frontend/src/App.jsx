@@ -25,7 +25,15 @@ export default function App() {
 
           <nav className="header-nav">
             <Link to="/" className="nav-link">
-              Rechercher
+              Accueil
+            </Link>
+
+            <Link to="/search" className="nav-link">
+              🔍 Rechercher
+            </Link>
+
+            <Link to="/encyclopedia" className="nav-link">
+              📚 Encyclopédie
             </Link>
 
             {isAuthenticated && (
@@ -35,7 +43,7 @@ export default function App() {
                 </Link>
 
                 <Link to="/assisted" className="nav-link">
-                  🤝 Mode Assisté
+                  🤝 Recherche Personnalisée
                 </Link>
 
                 {user?.role === 'EXPERT' && (
