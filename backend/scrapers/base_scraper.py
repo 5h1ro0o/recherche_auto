@@ -84,36 +84,60 @@ class BaseScraper(ABC):
         ])
         self.random_delay(delay, delay + 0.5)
     
-    def init_browser(self, headless: bool = True, proxy: Optional[str] = None):
+    def init_browser(self, headless: bool = True, proxy: Optional[str] = None, stealth_mode: bool = True):
         """Initialise Playwright browser avec anti-détection avancé"""
         if not PLAYWRIGHT_AVAILABLE:
             raise RuntimeError("❌ Playwright n'est pas installé. Exécutez: pip install playwright && playwright install chromium")
-        
+
         try:
             # Sélectionner proxy si manager disponible
             if self.use_proxy and self.proxy_manager:
                 proxy = proxy or self.proxy_manager.get_proxy()
                 self.current_proxy = proxy
-            
+
             self.playwright = sync_playwright().start()
-            
+
+            # Arguments Chrome pour anti-détection max
+            chrome_args = [
+                '--disable-blink-features=AutomationControlled',
+                '--disable-dev-shm-usage',
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-infobars',
+                '--window-size=1920,1080',
+                '--start-maximized',
+                '--exclude-switches=enable-automation',
+                '--disable-extensions',
+                '--disable-background-timer-throttling',
+                '--disable-backgrounding-occluded-windows',
+                '--disable-renderer-backgrounding',
+                '--disable-features=TranslateUI',
+                '--disable-ipc-flooding-protection',
+                '--disable-hang-monitor',
+                '--disable-popup-blocking',
+                '--disable-prompt-on-repost',
+                '--disable-sync',
+                '--force-color-profile=srgb',
+                '--metrics-recording-only',
+                '--safebrowsing-disable-auto-update',
+                '--enable-automation=false',
+                '--password-store=basic',
+                '--use-mock-keychain',
+                '--no-first-run',
+                '--no-service-autorun',
+                '--mute-audio',
+            ]
+
+            # Ajouter user-data-dir pour persistance (contourne certaines détections)
+            if stealth_mode:
+                import tempfile
+                user_data_dir = tempfile.mkdtemp()
+                chrome_args.append(f'--user-data-dir={user_data_dir}')
+
             launch_options = {
                 'headless': headless,
-                'args': [
-                    '--disable-blink-features=AutomationControlled',
-                    '--disable-dev-shm-usage',
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-web-security',
-                    '--disable-features=IsolateOrigins,site-per-process',
-                    '--disable-infobars',
-                    '--window-size=1920,1080',
-                    '--start-maximized',
-                    # Anti-détection supplémentaire
-                    '--disable-blink-features=AutomationControlled',
-                    '--exclude-switches=enable-automation',
-                    '--disable-extensions'
-                ]
+                'args': chrome_args,
+                'chromium_sandbox': False,
             }
 
             # Ajouter proxy si configuré
@@ -124,7 +148,7 @@ class BaseScraper(ABC):
 
             self.browser = self.playwright.chromium.launch(**launch_options)
 
-            # Context avec anti-fingerprinting
+            # Context avec anti-fingerprinting et headers réalistes
             context_options = {
                 'user_agent': self.get_random_user_agent(),
                 'viewport': {'width': 1920, 'height': 1080},
@@ -132,20 +156,81 @@ class BaseScraper(ABC):
                 'timezone_id': 'Europe/Paris',
                 'permissions': ['geolocation'],
                 'geolocation': {'latitude': 48.8566, 'longitude': 2.3522},  # Paris
+                'extra_http_headers': {
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                    'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
+                    'Accept-Encoding': 'gzip, deflate, br',
+                    'DNT': '1',
+                    'Connection': 'keep-alive',
+                    'Upgrade-Insecure-Requests': '1',
+                    'Sec-Fetch-Dest': 'document',
+                    'Sec-Fetch-Mode': 'navigate',
+                    'Sec-Fetch-Site': 'none',
+                    'Sec-Fetch-User': '?1',
+                    'Cache-Control': 'max-age=0',
+                }
             }
 
             context = self.browser.new_context(**context_options)
 
-            # Injecter scripts anti-détection
+            # Injecter scripts anti-détection AVANCÉS
             context.add_init_script("""
+                // Masquer webdriver
                 Object.defineProperty(navigator, 'webdriver', {
                     get: () => undefined
                 });
+
+                // Faux plugins
                 Object.defineProperty(navigator, 'plugins', {
-                    get: () => [1, 2, 3, 4, 5]
+                    get: () => [
+                        {
+                            0: {type: "application/x-google-chrome-pdf", suffixes: "pdf", description: "Portable Document Format"},
+                            description: "Portable Document Format",
+                            filename: "internal-pdf-viewer",
+                            length: 1,
+                            name: "Chrome PDF Plugin"
+                        },
+                        {
+                            0: {type: "application/pdf", suffixes: "pdf", description: "Portable Document Format"},
+                            description: "Portable Document Format",
+                            filename: "mhjfbmdgcfjbbpaeojofohoefgiehjai",
+                            length: 1,
+                            name: "Chrome PDF Viewer"
+                        }
+                    ]
                 });
+
+                // Languages
                 Object.defineProperty(navigator, 'languages', {
                     get: () => ['fr-FR', 'fr', 'en-US', 'en']
+                });
+
+                // Permissions
+                const originalQuery = window.navigator.permissions.query;
+                window.navigator.permissions.query = (parameters) => (
+                    parameters.name === 'notifications' ?
+                        Promise.resolve({ state: Notification.permission }) :
+                        originalQuery(parameters)
+                );
+
+                // Chrome runtime
+                window.chrome = {
+                    runtime: {}
+                };
+
+                // Platform
+                Object.defineProperty(navigator, 'platform', {
+                    get: () => 'Win32'
+                });
+
+                // HardwareConcurrency
+                Object.defineProperty(navigator, 'hardwareConcurrency', {
+                    get: () => 8
+                });
+
+                // DeviceMemory
+                Object.defineProperty(navigator, 'deviceMemory', {
+                    get: () => 8
                 });
             """)
 
