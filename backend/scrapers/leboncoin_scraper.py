@@ -3,7 +3,15 @@ from typing import List, Dict, Any, Optional
 import logging
 import re
 from datetime import datetime, timedelta
-from .base_scraper import BaseScraper
+
+try:
+    from .base_scraper import BaseScraper
+except ImportError:
+    # Pour exécution directe du fichier de test
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parent.parent))
+    from scrapers.base_scraper import BaseScraper
 
 logger = logging.getLogger(__name__)
 
@@ -21,11 +29,19 @@ class LeBonCoinScraper(BaseScraper):
             '[data-qa-id="aditem_container"]',
             'article[data-qa-id*="ad"]',
             'li[data-qa-id*="ad"]',
+            'div[data-qa-id*="ad"]',
             'a[href*="/ad/"]',
+            'a[href*="/voitures/"]',
             'div[class*="styles_adCard"]',
+            'div[class*="AdCard"]',
             'article',
             'li.clearfix',
-            'div[itemtype*="Product"]'
+            'li',
+            'div[itemtype*="Product"]',
+            'div[data-test-id*="ad"]',
+            'section article',
+            'main article',
+            'div[role="article"]'
         ],
         'title': [
             '[data-qa-id="aditem_title"]',
@@ -115,21 +131,36 @@ class LeBonCoinScraper(BaseScraper):
                         try:
                             self.page.wait_for_selector(selector, timeout=5000)
                             content_loaded = True
-                            logger.debug(f"✅ Sélecteur trouvé: {selector}")
+                            logger.info(f"✅ Sélecteur trouvé: {selector}")
                             break
                         except:
                             continue
 
                     if not content_loaded:
                         logger.warning(f"⚠️ Aucun sélecteur de listing trouvé, essai extraction brute...")
+                        # Sauvegarder HTML pour debug
+                        try:
+                            html_snippet = self.page.content()[:1000]
+                            logger.debug(f"HTML snippet: {html_snippet}")
+                        except:
+                            pass
 
                     # Parser les listings avec TOUS les sélecteurs possibles
                     listings = []
+                    best_selector = None
                     for selector in self.SELECTORS['listing_container']:
-                        found = self.page.query_selector_all(selector)
-                        if found and len(found) > len(listings):
-                            listings = found
-                            logger.debug(f"✅ {len(found)} éléments avec '{selector}'")
+                        try:
+                            found = self.page.query_selector_all(selector)
+                            if found and len(found) > len(listings):
+                                listings = found
+                                best_selector = selector
+                                logger.info(f"✅ {len(found)} éléments avec '{selector}'")
+                        except Exception as e:
+                            logger.debug(f"Erreur sélecteur '{selector}': {e}")
+                            continue
+
+                    if best_selector:
+                        logger.info(f"🎯 Meilleur sélecteur: {best_selector} ({len(listings)} éléments)")
 
                     logger.info(f"✅ Trouvé {len(listings)} annonces potentielles")
 
@@ -210,17 +241,29 @@ class LeBonCoinScraper(BaseScraper):
         try:
             # 1. Extraire le lien (ESSENTIEL)
             url = None
-            for selector in self.SELECTORS['link']:
-                try:
-                    link_elem = element.query_selector(selector)
-                    if link_elem:
-                        url = link_elem.get_attribute('href')
-                        if url:
-                            break
-                except:
-                    continue
+
+            # D'abord essayer si l'élément lui-même est un lien
+            try:
+                tag_name = element.evaluate('el => el.tagName.toLowerCase()')
+                if tag_name == 'a':
+                    url = element.get_attribute('href')
+            except:
+                pass
+
+            # Sinon chercher un lien enfant
+            if not url:
+                for selector in self.SELECTORS['link']:
+                    try:
+                        link_elem = element.query_selector(selector)
+                        if link_elem:
+                            url = link_elem.get_attribute('href')
+                            if url:
+                                break
+                    except:
+                        continue
 
             if not url:
+                logger.debug("Pas d'URL trouvée dans l'élément")
                 return None
 
             # Construire URL complète

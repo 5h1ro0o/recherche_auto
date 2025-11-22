@@ -220,14 +220,23 @@ class AutoScout24Scraper(BaseScraper):
 
             url = link.get_attribute('href')
             if not url:
+                logger.debug("Pas d'attribut href sur le lien")
                 return None
 
-            if '/offres/' not in url:
-                return None
-
-            # Construire l'URL complète
+            # Construire l'URL complète d'abord
             if url.startswith('/'):
                 url = f"{self.BASE_URL}{url}"
+            elif not url.startswith('http'):
+                logger.debug(f"URL invalide: {url}")
+                return None
+
+            # Vérifier que c'est une URL d'annonce (plusieurs patterns possibles)
+            valid_patterns = ['/offres/', '/ad/', '/voiture/', '/annonce/']
+            is_valid = any(pattern in url for pattern in valid_patterns)
+
+            if not is_valid:
+                logger.debug(f"URL rejetée (pas d'annonce): {url}")
+                return None
 
             # Extraire l'ID depuis l'URL
             source_id = url.split('/')[-1] if '/' in url else 'unknown'
