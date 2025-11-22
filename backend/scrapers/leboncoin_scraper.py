@@ -121,13 +121,16 @@ class LeBonCoinScraper(BaseScraper):
                     url = self._build_search_url(query, page_num, max_price)
                     logger.debug(f"URL: {url}")
 
-                    # Navigation
-                    self.page.goto(url, wait_until='domcontentloaded', timeout=60000)
+                    # Navigation avec wait_until load pour attendre le chargement complet
+                    self.page.goto(url, wait_until='load', timeout=60000)
+
+                    # Attendre un peu plus pour éviter détection
+                    self.random_delay(2, 3)
 
                     # Gérer les cookies GDPR si présents
                     try:
-                        # Attendre 2 secondes pour la popup cookies
-                        self.random_delay(1, 2)
+                        # Attendre 1 seconde pour la popup cookies
+                        self.random_delay(0.5, 1)
 
                         # Essayer de cliquer sur accepter cookies
                         cookie_buttons = [
@@ -150,6 +153,39 @@ class LeBonCoinScraper(BaseScraper):
                     except:
                         pass
 
+                    # Vérifier si on est sur une page de CAPTCHA/blocage
+                    try:
+                        logger.info(f"🔍 Vérification anti-bot...")
+
+                        # Essayer de récupérer le titre d'abord
+                        page_title = self.page.title()
+                        logger.info(f"📋 Titre: {page_title}")
+
+                        is_blocked = self.page.evaluate("""() => {
+                            const body = document.body.innerHTML.toLowerCase();
+                            const title = document.title.toLowerCase();
+                            return (
+                                body.includes('captcha') ||
+                                body.includes('datadome') ||
+                                body.includes('geo.captcha-delivery') ||
+                                body.includes('blocked') ||
+                                title.includes('challenge') ||
+                                document.querySelector('iframe[src*="captcha"]') !== null
+                            );
+                        }""")
+
+                        logger.info(f"🔒 Page bloquée: {is_blocked}")
+
+                        if is_blocked:
+                            logger.error(f"❌ CAPTCHA/Blocage détecté sur page {page_num}")
+                            logger.error(f"💡 LeBonCoin utilise DataDome - considérez:")
+                            logger.error(f"   - Proxies résidentiels rotatifs")
+                            logger.error(f"   - Service de résolution CAPTCHA")
+                            logger.error(f"   - Alternative: API LeBonCoin officielle")
+                            break
+                    except Exception as eval_err:
+                        logger.error(f"❌ Erreur évaluation blocage: {eval_err}")
+
                     self.random_delay(2, 4)
 
                     # Attendre que le contenu charge (essayer plusieurs sélecteurs)
@@ -166,26 +202,34 @@ class LeBonCoinScraper(BaseScraper):
                     if not content_loaded:
                         logger.warning(f"⚠️ Aucun sélecteur de listing trouvé, essai extraction brute...")
 
-                        # MODE DEBUG: Sauvegarder HTML et screenshot
+                        # MODE DEBUG: Prendre screenshot et essayer de sauvegarder HTML
                         try:
                             import os
                             debug_dir = os.path.join(os.path.dirname(__file__), 'debug')
                             os.makedirs(debug_dir, exist_ok=True)
 
-                            # Sauvegarder HTML complet
-                            html_path = os.path.join(debug_dir, 'leboncoin_page.html')
-                            with open(html_path, 'w', encoding='utf-8') as f:
-                                f.write(self.page.content())
-                            logger.warning(f"📄 HTML sauvegardé dans: {html_path}")
-
-                            # Prendre screenshot
+                            # Prendre screenshot EN PREMIER (plus stable)
                             screenshot_path = os.path.join(debug_dir, 'leboncoin_page.png')
-                            self.page.screenshot(path=screenshot_path, full_page=True)
-                            logger.warning(f"📸 Screenshot sauvegardé dans: {screenshot_path}")
+                            try:
+                                self.page.screenshot(path=screenshot_path, full_page=False, timeout=5000)
+                                logger.warning(f"📸 Screenshot sauvegardé dans: {screenshot_path}")
+                            except Exception as ss_err:
+                                logger.error(f"❌ Screenshot échoué: {ss_err}")
 
-                            # Afficher snippet
-                            html_snippet = self.page.content()[:2000]
-                            logger.debug(f"HTML snippet:\n{html_snippet}")
+                            # Essayer de récupérer l'URL actuelle
+                            try:
+                                current_url = self.page.url
+                                logger.warning(f"🔗 URL actuelle: {current_url}")
+                            except:
+                                pass
+
+                            # Essayer de récupérer le titre de la page
+                            try:
+                                page_title = self.page.title()
+                                logger.warning(f"📋 Titre page: {page_title}")
+                            except:
+                                pass
+
                         except Exception as e:
                             logger.error(f"Erreur debug: {e}")
 

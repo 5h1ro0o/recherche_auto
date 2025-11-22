@@ -97,7 +97,7 @@ class BaseScraper(ABC):
 
             self.playwright = sync_playwright().start()
 
-            # Arguments Chrome pour anti-détection max
+            # Arguments Chrome pour anti-détection (set stable pour éviter crashes)
             chrome_args = [
                 '--disable-blink-features=AutomationControlled',
                 '--disable-dev-shm-usage',
@@ -105,34 +105,15 @@ class BaseScraper(ABC):
                 '--disable-setuid-sandbox',
                 '--disable-infobars',
                 '--window-size=1920,1080',
-                '--start-maximized',
-                '--exclude-switches=enable-automation',
                 '--disable-extensions',
-                '--disable-background-timer-throttling',
-                '--disable-backgrounding-occluded-windows',
-                '--disable-renderer-backgrounding',
-                '--disable-features=TranslateUI',
-                '--disable-ipc-flooding-protection',
-                '--disable-hang-monitor',
                 '--disable-popup-blocking',
-                '--disable-prompt-on-repost',
                 '--disable-sync',
-                '--force-color-profile=srgb',
-                '--metrics-recording-only',
-                '--safebrowsing-disable-auto-update',
-                '--enable-automation=false',
-                '--password-store=basic',
-                '--use-mock-keychain',
                 '--no-first-run',
-                '--no-service-autorun',
                 '--mute-audio',
             ]
 
-            # Ajouter user-data-dir pour persistance (contourne certaines détections)
-            if stealth_mode:
-                import tempfile
-                user_data_dir = tempfile.mkdtemp()
-                chrome_args.append(f'--user-data-dir={user_data_dir}')
+            # Note: user-data-dir is handled via launch_persistent_context if needed
+            # Removed from chrome_args as Playwright requires different API for this
 
             launch_options = {
                 'headless': headless,
@@ -156,6 +137,7 @@ class BaseScraper(ABC):
                 'timezone_id': 'Europe/Paris',
                 'permissions': ['geolocation'],
                 'geolocation': {'latitude': 48.8566, 'longitude': 2.3522},  # Paris
+                'ignore_https_errors': True,  # Ignore SSL certificate errors
                 'extra_http_headers': {
                     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
                     'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
