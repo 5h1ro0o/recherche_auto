@@ -18,6 +18,14 @@ except ImportError:
     PLAYWRIGHT_AVAILABLE = False
     logger.warning("⚠️ Playwright non disponible. Installez avec: pip install playwright && playwright install chromium")
 
+# Gestion optionnelle de playwright-stealth
+try:
+    from playwright_stealth import Stealth
+    STEALTH_AVAILABLE = True
+except ImportError:
+    STEALTH_AVAILABLE = False
+    logger.warning("⚠️ playwright-stealth non disponible. Installez avec: pip install playwright-stealth")
+
 # Gestion optionnelle de fake_useragent
 try:
     from fake_useragent import UserAgent
@@ -153,6 +161,7 @@ class BaseScraper(ABC):
                 }
             }
 
+
             context = self.browser.new_context(**context_options)
 
             # Injecter scripts anti-détection AVANCÉS
@@ -217,6 +226,14 @@ class BaseScraper(ABC):
             """)
 
             self.page = context.new_page()
+
+            # Appliquer playwright-stealth à la page si disponible
+            if stealth_mode and STEALTH_AVAILABLE:
+                try:
+                    Stealth().apply_stealth_sync(self.page)
+                    logger.info("✅ Playwright-stealth activé sur la page")
+                except Exception as stealth_err:
+                    logger.warning(f"⚠️ Erreur activation stealth page: {stealth_err}")
 
             logger.info("✅ Browser Playwright initialisé avec succès")
 
