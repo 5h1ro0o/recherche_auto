@@ -123,6 +123,33 @@ class LeBonCoinScraper(BaseScraper):
 
                     # Navigation
                     self.page.goto(url, wait_until='domcontentloaded', timeout=60000)
+
+                    # Gérer les cookies GDPR si présents
+                    try:
+                        # Attendre 2 secondes pour la popup cookies
+                        self.random_delay(1, 2)
+
+                        # Essayer de cliquer sur accepter cookies
+                        cookie_buttons = [
+                            'button[id*="didomi-notice-agree"]',
+                            'button[id*="accept"]',
+                            'button:has-text("Accepter")',
+                            'button:has-text("Tout accepter")',
+                            '[data-testid="consent-accept-all"]'
+                        ]
+                        for btn_selector in cookie_buttons:
+                            try:
+                                btn = self.page.query_selector(btn_selector)
+                                if btn:
+                                    btn.click()
+                                    logger.info(f"✅ Cookies acceptés via {btn_selector}")
+                                    self.random_delay(1, 2)
+                                    break
+                            except:
+                                pass
+                    except:
+                        pass
+
                     self.random_delay(2, 4)
 
                     # Attendre que le contenu charge (essayer plusieurs sélecteurs)
@@ -138,12 +165,29 @@ class LeBonCoinScraper(BaseScraper):
 
                     if not content_loaded:
                         logger.warning(f"⚠️ Aucun sélecteur de listing trouvé, essai extraction brute...")
-                        # Sauvegarder HTML pour debug
+
+                        # MODE DEBUG: Sauvegarder HTML et screenshot
                         try:
-                            html_snippet = self.page.content()[:1000]
-                            logger.debug(f"HTML snippet: {html_snippet}")
-                        except:
-                            pass
+                            import os
+                            debug_dir = os.path.join(os.path.dirname(__file__), 'debug')
+                            os.makedirs(debug_dir, exist_ok=True)
+
+                            # Sauvegarder HTML complet
+                            html_path = os.path.join(debug_dir, 'leboncoin_page.html')
+                            with open(html_path, 'w', encoding='utf-8') as f:
+                                f.write(self.page.content())
+                            logger.warning(f"📄 HTML sauvegardé dans: {html_path}")
+
+                            # Prendre screenshot
+                            screenshot_path = os.path.join(debug_dir, 'leboncoin_page.png')
+                            self.page.screenshot(path=screenshot_path, full_page=True)
+                            logger.warning(f"📸 Screenshot sauvegardé dans: {screenshot_path}")
+
+                            # Afficher snippet
+                            html_snippet = self.page.content()[:2000]
+                            logger.debug(f"HTML snippet:\n{html_snippet}")
+                        except Exception as e:
+                            logger.error(f"Erreur debug: {e}")
 
                     # Parser les listings avec TOUS les sélecteurs possibles
                     listings = []
