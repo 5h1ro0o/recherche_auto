@@ -487,7 +487,7 @@ function PriceSection({ vehicle }) {
         color: '#28a745',
         marginBottom: '20px'
       }}>
-        {vehicle.price.toLocaleString()} €
+        {vehicle.price ? vehicle.price.toLocaleString() : 'Prix non disponible'} €
       </div>
 
       <div style={{
@@ -495,11 +495,11 @@ function PriceSection({ vehicle }) {
         gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '16px'
       }}>
-        <InfoItem icon="📅" label="Année" value={vehicle.year} />
-        <InfoItem icon="🛣️" label="Kilométrage" value={`${vehicle.mileage.toLocaleString()} km`} />
-        <InfoItem icon="⛽" label="Carburant" value={vehicle.fuel_type} />
-        <InfoItem icon="⚙️" label="Transmission" value={vehicle.transmission} />
-        <InfoItem icon="🔢" label="VIN" value={vehicle.vin.slice(0, 10) + '...'} />
+        {vehicle.year && <InfoItem icon="📅" label="Année" value={vehicle.year} />}
+        {vehicle.mileage && <InfoItem icon="🛣️" label="Kilométrage" value={`${vehicle.mileage.toLocaleString()} km`} />}
+        {vehicle.fuel_type && <InfoItem icon="⛽" label="Carburant" value={vehicle.fuel_type} />}
+        {vehicle.transmission && <InfoItem icon="⚙️" label="Transmission" value={vehicle.transmission} />}
+        {vehicle.vin && <InfoItem icon="🔢" label="VIN" value={vehicle.vin.slice(0, 10) + '...'} />}
       </div>
     </div>
   )
@@ -549,6 +549,10 @@ function Section({ title, children }) {
 }
 
 function SpecsGrid({ specs }) {
+  if (!specs || Object.keys(specs).length === 0) {
+    return <p style={{ color: '#6a737d' }}>Informations techniques non disponibles</p>
+  }
+
   return (
     <div style={{
       display: 'grid',
@@ -583,6 +587,10 @@ function SpecsGrid({ specs }) {
 }
 
 function FeaturesList({ features }) {
+  if (!features || features.length === 0) {
+    return <p style={{ color: '#6a737d' }}>Équipements non disponibles</p>
+  }
+
   return (
     <div style={{
       display: 'grid',
@@ -607,6 +615,10 @@ function FeaturesList({ features }) {
 }
 
 function PriceHistory({ history }) {
+  if (!history || history.length === 0) {
+    return <p style={{ color: '#6a737d' }}>Historique des prix non disponible</p>
+  }
+
   const maxPrice = Math.max(...history.map(h => h.price))
   
   return (
@@ -661,6 +673,10 @@ function PriceHistory({ history }) {
 }
 
 function ExpertOpinion({ opinion }) {
+  if (!opinion) {
+    return <p style={{ color: '#6a737d' }}>Avis expert non disponible</p>
+  }
+
   return (
     <div>
       <div style={{
@@ -760,6 +776,10 @@ function ExpertOpinion({ opinion }) {
 }
 
 function SimilarVehicles({ vehicles }) {
+  if (!vehicles || vehicles.length === 0) {
+    return <p style={{ color: '#6a737d' }}>Véhicules similaires non disponibles</p>
+  }
+
   return (
     <div style={{
       display: 'grid',
@@ -817,6 +837,10 @@ function SimilarVehicles({ vehicles }) {
 }
 
 function ContactCard({ seller, onContact }) {
+  if (!seller) {
+    return null
+  }
+
   return (
     <div style={{
       background: 'white',
@@ -845,21 +869,25 @@ function ContactCard({ seller, onContact }) {
           marginBottom: '8px',
           fontSize: '16px'
         }}>
-          {seller.name}
+          {seller.name || 'Vendeur'}
         </div>
-        <div style={{
-          fontSize: '14px',
-          color: '#6a737d',
-          marginBottom: '4px'
-        }}>
-          📧 {seller.email}
-        </div>
-        <div style={{
-          fontSize: '14px',
-          color: '#6a737d'
-        }}>
-          📞 {seller.phone}
-        </div>
+        {seller.email && (
+          <div style={{
+            fontSize: '14px',
+            color: '#6a737d',
+            marginBottom: '4px'
+          }}>
+            📧 {seller.email}
+          </div>
+        )}
+        {seller.phone && (
+          <div style={{
+            fontSize: '14px',
+            color: '#6a737d'
+          }}>
+            📞 {seller.phone}
+          </div>
+        )}
       </div>
 
       <button
