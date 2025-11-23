@@ -168,11 +168,6 @@ class LeBonCoinScraper(BaseScraper):
             Dict avec les données extraites ou None
         """
         try:
-            # Debug: afficher la structure de l'objet ad
-            logger.debug(f"  DEBUG ad attributes: {dir(ad)}")
-            if hasattr(ad, 'attributes'):
-                logger.debug(f"  DEBUG ad.attributes: {ad.attributes}")
-
             # Extraire les données de base
             data = {
                 'title': ad.subject if hasattr(ad, 'subject') else None,
@@ -376,46 +371,12 @@ class LeBonCoinScraper(BaseScraper):
 # ============================================================================
 if __name__ == '__main__':
     logging.basicConfig(
-        level=logging.DEBUG,  # Changed to DEBUG
+        level=logging.INFO,  # INFO for cleaner logs
         format='%(asctime)s - %(levelname)s - %(message)s'
     )
 
     print("=" * 70)
     print("🧪 TEST LEBONCOIN SCRAPER (avec bibliothèque lbc)")
-    print("=" * 70)
-    print()
-
-    # Premier test: afficher une annonce brute
-    print("🔍 Test 1: Affichage de la structure d'une annonce")
-    print()
-    try:
-        from lbc import Client, Category, Sort
-        client = Client()
-        search_result = client.search(
-            text='peugeot 208',
-            category=Category.VEHICULES_VOITURES,
-            sort=Sort.NEWEST,
-            price=(0, 15000),
-            page=1,
-            limit=1
-        )
-        if search_result.ads:
-            ad = search_result.ads[0]
-            print(f"Titre: {ad.subject}")
-            print(f"Prix: {ad.price}")
-            print(f"URL: {ad.url}")
-            print(f"Attributes disponibles: {list(ad.attributes.keys()) if hasattr(ad, 'attributes') and ad.attributes else 'None'}")
-            if hasattr(ad, 'attributes') and ad.attributes:
-                print(f"Attributes complets: {ad.attributes}")
-            print()
-    except Exception as e:
-        print(f"Erreur test: {e}")
-        import traceback
-        traceback.print_exc()
-        print()
-
-    print("=" * 70)
-    print("🧪 Test 2: Scraper complet")
     print("=" * 70)
     print()
 
