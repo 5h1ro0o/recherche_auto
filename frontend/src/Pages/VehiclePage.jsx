@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 
-// Simulation de données - remplacer par de vrais appels API
+const API_BASE = import.meta.env.VITE_API_BASE || '/api'
+
+// Simulation de données - remplacer par de vrais appels API (FALLBACK si API échoue)
 const mockVehicleData = {
   id: 'v123',
   title: 'Peugeot 208 Active 1.2 PureTech',
@@ -71,18 +74,69 @@ const mockVehicleData = {
 }
 
 export default function EnhancedVehiclePage() {
+  const { vehicleId } = useParams()
+  const navigate = useNavigate()
+
+  const [vehicle, setVehicle] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showLightbox, setShowLightbox] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
 
-  const vehicle = mockVehicleData
+  // Charger les données du véhicule depuis l'API
+  useEffect(() => {
+    async function loadVehicle() {
+      try {
+        setLoading(true)
+        setError(null)
+
+        const response = await fetch(`${API_BASE}/vehicles/${vehicleId}`)
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('Véhicule introuvable')
+          }
+          throw new Error('Erreur lors du chargement du véhicule')
+        }
+
+        const data = await response.json()
+
+        // S'assurer que les images sont un tableau
+        if (!data.images || !Array.isArray(data.images) || data.images.length === 0) {
+          data.images = []  // Fallback sur tableau vide si pas d'images
+        }
+
+        // Ajouter les données manquantes pour l'interface (optionnel)
+        if (!data.features) data.features = []
+        if (!data.technical_specs) data.technical_specs = {}
+        if (!data.seller) data.seller = { name: 'Vendeur', is_pro: false }
+
+        setVehicle(data)
+      } catch (err) {
+        console.error('Erreur chargement véhicule:', err)
+        setError(err.message)
+        // Fallback sur mockData en cas d'erreur (pour le développement)
+        setVehicle(mockVehicleData)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (vehicleId) {
+      loadVehicle()
+    }
+  }, [vehicleId])
 
   function nextImage() {
+    if (!vehicle || !vehicle.images || vehicle.images.length === 0) return
     setCurrentImageIndex((prev) => (prev + 1) % vehicle.images.length)
   }
 
   function prevImage() {
+    if (!vehicle || !vehicle.images || vehicle.images.length === 0) return
     setCurrentImageIndex((prev) => (prev - 1 + vehicle.images.length) % vehicle.images.length)
   }
 
@@ -90,13 +144,61 @@ export default function EnhancedVehiclePage() {
     alert('Génération du PDF en cours...')
   }
 
+  // État de chargement
+  if (loading) {
+    return (
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 20px', textAlign: 'center' }}>
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔄</div>
+        <p style={{ color: '#6a737d', fontSize: '18px' }}>Chargement du véhicule...</p>
+      </div>
+    )
+  }
+
+  // État d'erreur (avec fallback sur mockData)
+  if (error && !vehicle) {
+    return (
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 20px', textAlign: 'center' }}>
+        <div style={{ fontSize: '64px', marginBottom: '20px' }}>⚠️</div>
+        <h3 style={{ fontSize: '24px', color: '#24292e', marginBottom: '12px' }}>
+          {error}
+        </h3>
+        <button
+          onClick={() => navigate('/')}
+          style={{
+            padding: '12px 24px',
+            background: '#667eea',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '16px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            marginTop: '20px'
+          }}
+        >
+          Retour à l'accueil
+        </button>
+      </div>
+    )
+  }
+
+  // Vérifier que vehicle existe et a des images
+  if (!vehicle) {
+    return null
+  }
+
+  // S'assurer que vehicle.images est un tableau
+  const images = Array.isArray(vehicle.images) && vehicle.images.length > 0
+    ? vehicle.images
+    : ['https://via.placeholder.com/800x600/667eea/ffffff?text=Pas+d\'image']
+
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
       {/* Breadcrumb */}
       <div style={{ marginBottom: '20px', fontSize: '14px', color: '#6a737d' }}>
         <a href="/" style={{ color: '#667eea', textDecoration: 'none' }}>Accueil</a>
         {' > '}
-        <span>{vehicle.title}</span>
+        <span>{vehicle.title || 'Véhicule'}</span>
       </div>
 
       {/* Header avec actions */}
@@ -172,7 +274,7 @@ export default function EnhancedVehiclePage() {
         {/* Colonne principale */}
         <div>
           <PhotoGallery
-            images={vehicle.images}
+            images={images}
             currentIndex={currentImageIndex}
             onPrev={prevImage}
             onNext={nextImage}
@@ -220,7 +322,7 @@ export default function EnhancedVehiclePage() {
 
       {showLightbox && (
         <Lightbox
-          images={vehicle.images}
+          images={images}
           currentIndex={currentImageIndex}
           onClose={() => setShowLightbox(false)}
           onPrev={prevImage}
