@@ -4,6 +4,8 @@
 import logging
 import asyncio
 import unicodedata
+import os
+import json
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
@@ -12,6 +14,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/search-advanced", tags=["search-advanced"])
+
+# Configuration pour l'API Anthropic
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
 
 def normalize_text(text: str) -> str:
@@ -152,6 +157,20 @@ class AdvancedSearchResponse(BaseModel):
     filters_applied: Dict[str, Any]
     duration: float
     timestamp: str
+
+
+class NaturalSearchRequest(BaseModel):
+    """Requête de recherche en langage naturel"""
+    query: str = Field(..., description="Recherche en texte libre (ex: 'BMW Série 3 diesel de 2018 à moins de 20000€')")
+    sources: List[str] = Field(["leboncoin", "autoscout24"], description="Sources à scraper")
+    max_pages: int = Field(20, ge=1, le=1000, description="Nombre de pages par source")
+
+
+class ParsedFiltersResponse(BaseModel):
+    """Réponse contenant les filtres parsés"""
+    success: bool
+    filters: Dict[str, Any]
+    explanation: str
 
 
 def scrape_source(source: str, filters: Dict[str, Any]) -> Dict[str, Any]:
@@ -619,3 +638,64 @@ async def get_available_years():
     current_year = datetime.now().year
     years = list(range(current_year, 1990, -1))
     return {"years": years}
+
+
+@router.post("/parse-query", response_model=ParsedFiltersResponse)
+async def parse_natural_query(request: Dict[str, str]):
+    """
+    Parse une requête en langage naturel pour extraire les filtres de recherche.
+
+    Utilise l'IA (Claude) pour comprendre le texte et extraire les critères.
+
+    Exemples:
+    - "BMW Série 3 diesel de 2018 à moins de 20000€"
+    - "Volkswagen Golf automatique avec GPS et toit ouvrant"
+    - "SUV électrique récent première main avec caméra de recul"
+    """
+    from app.routes.ai_parser import parse_natural_query_with_ai
+
+    query = request.get("query", "")
+
+    if not query:
+        raise HTTPException(status_code=400, detail="Query manquante")
+
+    logger.info(f"🤖 Parsing requête naturelle: {query}")
+
+    result = await parse_natural_query_with_ai(query)
+
+    return ParsedFiltersResponse(
+        success=result["success"],
+        filters=result["filters"],
+        explanation=result["explanation"]
+    )
+
+
+@router.post("/search-natural", response_model=AdvancedSearchResponse)
+async def natural_search(request: NaturalSearchRequest):
+    """
+    Recherche en langage naturel.
+
+    Combine le parsing IA du texte avec la recherche avancée multi-sources.
+
+    Exemples:
+    - "BMW Série 3 diesel de 2018 à moins de 20000€"
+    - "Peugeot 308 essence automatique avec moins de 50000 km"
+    - "Mercedes Classe A noire cuir GPS caméra de recul"
+    """
+    from app.routes.ai_parser import parse_natural_query_with_ai
+
+    logger.info(f"🔍 Recherche naturelle: {request.query}")
+
+    # 1. Parser la requête naturelle avec l'IA
+    parse_result = await parse_natural_query_with_ai(request.query)
+    filters_dict = parse_result["filters"]
+
+    # 2. Ajouter les paramètres de la requête
+    filters_dict['sources'] = request.sources
+    filters_dict['max_pages'] = request.max_pages
+
+    # 3. Créer une AdvancedSearchRequest à partir des filtres parsés
+    search_request = AdvancedSearchRequest(**filters_dict)
+
+    # 4. Exécuter la recherche avancée
+    return await advanced_search(search_request)

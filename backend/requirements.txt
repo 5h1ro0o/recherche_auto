@@ -19,6 +19,9 @@ pydantic[email]
 # OpenAI pour le chatbot IA
 openai>=1.0.0
 
+# Anthropic pour la recherche naturelle avec IA
+anthropic>=0.18.0
+
 # Scraping - Versions compatibles multi-plateformes
 playwright>=1.41.0
 beautifulsoup4>=4.12.0

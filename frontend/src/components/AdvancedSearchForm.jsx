@@ -5,8 +5,13 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
   const [models, setModels] = useState([])
   const [years, setYears] = useState([])
 
+  // Mode de recherche: 'classic' ou 'natural'
+  const [searchMode, setSearchMode] = useState('classic')
+  const [naturalQuery, setNaturalQuery] = useState('')
+  const [parsedFiltersExplanation, setParsedFiltersExplanation] = useState('')
+
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
-  const [showEquipmentFilters, setShowEquipmentFilters] = useState(false)
+  const [showEquipmentFilters, setShowEquipementFilters] = useState(false)
 
   const [filters, setFilters] = useState({
     make: '',
@@ -110,13 +115,62 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
     setFilters(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Nettoyer les valeurs vides
-    const cleanedFilters = Object.fromEntries(
-      Object.entries(filters).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
-    )
-    onSearch(cleanedFilters)
+
+    if (searchMode === 'natural') {
+      // Mode recherche naturelle avec IA
+      await handleNaturalSearch()
+    } else {
+      // Mode recherche classique
+      const cleanedFilters = Object.fromEntries(
+        Object.entries(filters).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
+      )
+      onSearch(cleanedFilters)
+    }
+  }
+
+  const handleNaturalSearch = async () => {
+    if (!naturalQuery.trim()) {
+      alert('Veuillez entrer une recherche')
+      return
+    }
+
+    try {
+      // Appeler l'API pour lancer la recherche naturelle directement
+      const response = await fetch('http://localhost:8000/api/search-advanced/search-natural', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: naturalQuery,
+          sources: filters.sources,
+          max_pages: 20
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Afficher l'explication des filtres parsés
+        if (data.filters_applied) {
+          const explanation = Object.entries(data.filters_applied)
+            .filter(([_, v]) => v !== '' && v !== null && v !== undefined)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join(', ')
+          setParsedFiltersExplanation(explanation)
+        }
+
+        // Appeler onSearch avec les résultats
+        onSearch(data.filters_applied, data.results)
+      } else {
+        alert('Erreur lors de la recherche naturelle')
+      }
+    } catch (error) {
+      console.error('Erreur recherche naturelle:', error)
+      alert('Erreur lors de la recherche naturelle')
+    }
   }
 
   const handleReset = () => {
@@ -198,7 +252,21 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
 
   return (
     <form onSubmit={handleSubmit} style={styles.form}>
-      <h2 style={styles.title}>🔍 Recherche Multi-Sources</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2 style={{ ...styles.title, marginBottom: 0 }}>🔍 Recherche Multi-Sources</h2>
+
+        {/* Bouton de basculement de mode */}
+        <button
+          type="button"
+          onClick={() => {
+            setSearchMode(searchMode === 'classic' ? 'natural' : 'classic')
+            setParsedFiltersExplanation('')
+          }}
+          style={styles.modeToggleButton}
+        >
+          {searchMode === 'classic' ? '🤖 Passer en recherche IA' : '📋 Passer en recherche classique'}
+        </button>
+      </div>
 
       {/* Sources */}
       <div style={styles.section}>
@@ -223,8 +291,38 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
         </div>
       </div>
 
-      {/* Marque et Modèle */}
-      <div style={styles.row}>
+      {/* Mode recherche naturelle avec IA */}
+      {searchMode === 'natural' && (
+        <div style={styles.naturalSearchSection}>
+          <div style={styles.section}>
+            <label style={styles.label}>
+              🤖 Décrivez votre recherche en langage naturel
+            </label>
+            <textarea
+              value={naturalQuery}
+              onChange={(e) => setNaturalQuery(e.target.value)}
+              placeholder="Exemple: BMW Série 3 diesel de 2018 à moins de 20000€ avec GPS et toit ouvrant&#10;&#10;Ou: Volkswagen Golf automatique récente première main avec caméra de recul&#10;&#10;Ou: SUV électrique avec moins de 50000 km"
+              style={styles.textarea}
+              rows={5}
+            />
+            <p style={styles.hint}>
+              💡 L'IA comprendra votre demande et appliquera automatiquement les filtres appropriés
+            </p>
+          </div>
+
+          {parsedFiltersExplanation && (
+            <div style={styles.explanationBox}>
+              <strong>Filtres appliqués:</strong> {parsedFiltersExplanation}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Filtres classiques (cachés en mode natural) */}
+      {searchMode === 'classic' && (
+        <>
+          {/* Marque et Modèle */}
+          <div style={styles.row}>
         <div style={styles.field}>
           <label style={styles.label}>Marque</label>
           <select
@@ -767,6 +865,8 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
           </div>
         </div>
       )}
+        </>
+      )}
 
       {/* Boutons d'action */}
       <div style={styles.actions}>
@@ -904,5 +1004,49 @@ const styles = {
     backgroundColor: '#f6f8fa',
     borderRadius: '6px',
     marginBottom: '20px'
+  },
+  modeToggleButton: {
+    padding: '10px 20px',
+    backgroundColor: '#28a745',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '6px',
+    fontSize: '14px',
+    fontWeight: 500,
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+    whiteSpace: 'nowrap'
+  },
+  naturalSearchSection: {
+    padding: '20px',
+    backgroundColor: '#f0f8ff',
+    borderRadius: '8px',
+    marginBottom: '20px',
+    border: '2px solid #0366d6'
+  },
+  textarea: {
+    width: '100%',
+    padding: '12px',
+    border: '1px solid #d1d5db',
+    borderRadius: '6px',
+    fontSize: '14px',
+    fontFamily: 'inherit',
+    resize: 'vertical',
+    minHeight: '120px'
+  },
+  hint: {
+    fontSize: '13px',
+    color: '#6a737d',
+    marginTop: '8px',
+    fontStyle: 'italic'
+  },
+  explanationBox: {
+    padding: '12px',
+    backgroundColor: '#e6f7ff',
+    border: '1px solid #91d5ff',
+    borderRadius: '6px',
+    fontSize: '14px',
+    color: '#0366d6',
+    marginTop: '12px'
   }
 }
