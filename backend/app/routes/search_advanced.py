@@ -3,6 +3,7 @@
 
 import logging
 import asyncio
+import unicodedata
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
@@ -11,6 +12,21 @@ from concurrent.futures import ThreadPoolExecutor
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/search-advanced", tags=["search-advanced"])
+
+
+def normalize_text(text: str) -> str:
+    """
+    Normalise un texte en supprimant les accents et en le mettant en minuscules.
+
+    Exemple: "Série 1" -> "serie 1"
+    """
+    if not text:
+        return ""
+    # Décomposer les caractères Unicode (sépare les lettres des accents)
+    nfd = unicodedata.normalize('NFD', text)
+    # Filtrer les marques diacritiques (accents)
+    without_accents = ''.join(char for char in nfd if unicodedata.category(char) != 'Mn')
+    return without_accents.lower()
 
 
 class AdvancedSearchRequest(BaseModel):
@@ -178,24 +194,32 @@ def apply_post_filters(results: List[Dict[str, Any]], filters: Dict[str, Any]) -
 
         logger.info(f"🔍 Filtre make='{make_lower}': {before_count} -> {len(filtered)} résultats")
 
-    # Filtre sur le modèle (STRICT - cherche dans model OU title si model absent)
+    # Filtre sur le modèle (FLEXIBLE - cherche dans model ET title, insensible aux accents)
     if filters.get('model'):
-        model_lower = filters['model'].lower()
+        model_normalized = normalize_text(filters['model'])
         before_count = len(filtered)
 
         # DEBUG: Log quelques exemples avant filtre
         if filtered[:3]:
-            logger.debug(f"📋 Avant filtre model='{model_lower}', {before_count} résultats:")
+            logger.debug(f"📋 Avant filtre model='{filters['model']}' (normalisé: '{model_normalized}'), {before_count} résultats:")
             for r in filtered[:3]:
                 logger.debug(f"  - make={r.get('make')}, model={r.get('model')}, title={r.get('title', '')[:60]}")
 
-        filtered = [
-            r for r in filtered
-            if (r.get('model') and model_lower in r['model'].lower()) or
-               (not r.get('model') and r.get('title') and model_lower in r['title'].lower())
-        ]
+        # Chercher dans le champ model OU dans le titre (insensible aux accents)
+        def matches_model(result):
+            # Chercher dans le champ model
+            if result.get('model'):
+                if model_normalized in normalize_text(result['model']):
+                    return True
+            # Chercher dans le titre comme fallback
+            if result.get('title'):
+                if model_normalized in normalize_text(result['title']):
+                    return True
+            return False
 
-        logger.info(f"🔍 Filtre model='{model_lower}': {before_count} -> {len(filtered)} résultats")
+        filtered = [r for r in filtered if matches_model(r)]
+
+        logger.info(f"🔍 Filtre model='{filters['model']}': {before_count} -> {len(filtered)} résultats")
 
     # Filtre sur l'année
     if filters.get('year_min'):
