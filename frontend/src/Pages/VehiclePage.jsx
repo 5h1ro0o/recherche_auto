@@ -74,7 +74,7 @@ const mockVehicleData = {
 }
 
 export default function EnhancedVehiclePage() {
-  const { vehicleId } = useParams()
+  const { id: vehicleId } = useParams()
   const navigate = useNavigate()
 
   const [vehicle, setVehicle] = useState(null)
