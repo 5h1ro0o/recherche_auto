@@ -181,11 +181,21 @@ def apply_post_filters(results: List[Dict[str, Any]], filters: Dict[str, Any]) -
     # Filtre sur le modèle (STRICT - cherche dans model OU title si model absent)
     if filters.get('model'):
         model_lower = filters['model'].lower()
+        before_count = len(filtered)
+
+        # DEBUG: Log quelques exemples avant filtre
+        if filtered[:3]:
+            logger.debug(f"📋 Avant filtre model='{model_lower}', {before_count} résultats:")
+            for r in filtered[:3]:
+                logger.debug(f"  - make={r.get('make')}, model={r.get('model')}, title={r.get('title', '')[:60]}")
+
         filtered = [
             r for r in filtered
             if (r.get('model') and model_lower in r['model'].lower()) or
                (not r.get('model') and r.get('title') and model_lower in r['title'].lower())
         ]
+
+        logger.info(f"🔍 Filtre model='{model_lower}': {before_count} -> {len(filtered)} résultats")
 
     # Filtre sur l'année
     if filters.get('year_min'):

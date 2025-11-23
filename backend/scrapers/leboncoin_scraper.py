@@ -396,6 +396,15 @@ class LeBonCoinScraper(BaseScraper):
             # EXTRACTION COMPLÈTE DE TOUS LES ATTRIBUTS
             # Note: ad.attributes est une LISTE d'objets Attribute, pas un dict
             if hasattr(ad, 'attributes') and ad.attributes:
+                # DEBUG: Log tous les attributs du premier véhicule pour voir les champs disponibles
+                if not hasattr(self, '_logged_attributes'):
+                    self._logged_attributes = True
+                    logger.debug(f"📋 ATTRIBUTS DISPONIBLES pour l'annonce '{data.get('title', '')}' :")
+                    for attr in ad.attributes:
+                        if attr.key:
+                            val_label = attr.value_label if hasattr(attr, 'value_label') else None
+                            logger.debug(f"  - {attr.key} = {attr.value} (label: {val_label})")
+
                 for attr in ad.attributes:
                     if not attr.key or not attr.value:
                         continue
