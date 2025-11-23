@@ -534,6 +534,10 @@ class LeBonCoinScraper(BaseScraper):
             if not data['title']:
                 return None
 
+            # Mapper 'brand' vers 'make' pour compatibilité avec base_scraper
+            if data.get('brand') and not data.get('make'):
+                data['make'] = data['brand']
+
             return data
 
         except Exception as e:

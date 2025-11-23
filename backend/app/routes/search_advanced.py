@@ -163,9 +163,31 @@ def apply_post_filters(results: List[Dict[str, Any]], filters: Dict[str, Any]) -
     """
     filtered = results
 
-    # Filtre sur le prix minimum
+    # Filtre sur la marque (STRICT)
+    if filters.get('make'):
+        make_lower = filters['make'].lower()
+        filtered = [r for r in filtered if r.get('make') and make_lower in r['make'].lower()]
+
+    # Filtre sur le modèle (STRICT - cherche dans model OU title si model absent)
+    if filters.get('model'):
+        model_lower = filters['model'].lower()
+        filtered = [
+            r for r in filtered
+            if (r.get('model') and model_lower in r['model'].lower()) or
+               (not r.get('model') and r.get('title') and model_lower in r['title'].lower())
+        ]
+
+    # Filtre sur l'année
+    if filters.get('year_min'):
+        filtered = [r for r in filtered if r.get('year') and r['year'] >= filters['year_min']]
+    if filters.get('year_max'):
+        filtered = [r for r in filtered if r.get('year') and r['year'] <= filters['year_max']]
+
+    # Filtre sur le prix
     if filters.get('price_min'):
         filtered = [r for r in filtered if r.get('price') and r['price'] >= filters['price_min']]
+    if filters.get('price_max'):
+        filtered = [r for r in filtered if r.get('price') and r['price'] <= filters['price_max']]
 
     # Filtre sur le kilométrage
     if filters.get('mileage_min'):
