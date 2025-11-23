@@ -167,6 +167,7 @@ export default function EnrichedResults({ loading, results = [], total = 0, page
                 <div style={{ display: 'flex', gap: '12px', marginTop: 'auto' }}>
                   <Link
                     to={`/vehicle/${vehicle.id}`}
+                    state={{ vehicle }}
                     style={{
                       padding: '8px 16px',
                       backgroundColor: '#0366d6',

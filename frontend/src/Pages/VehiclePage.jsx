@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 
 const API_BASE = import.meta.env.VITE_API_BASE || '/api'
 
@@ -76,9 +76,13 @@ const mockVehicleData = {
 export default function EnhancedVehiclePage() {
   const { id: vehicleId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
 
-  const [vehicle, setVehicle] = useState(null)
-  const [loading, setLoading] = useState(true)
+  // Use vehicle data from navigation state if available
+  const vehicleFromState = location.state?.vehicle
+
+  const [vehicle, setVehicle] = useState(vehicleFromState || null)
+  const [loading, setLoading] = useState(!vehicleFromState)
   const [error, setError] = useState(null)
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -86,8 +90,13 @@ export default function EnhancedVehiclePage() {
   const [showContactModal, setShowContactModal] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
 
-  // Charger les données du véhicule depuis l'API
+  // Charger les données du véhicule depuis l'API si pas déjà disponible
   useEffect(() => {
+    // Skip if we already have vehicle data from navigation state
+    if (vehicleFromState) {
+      return
+    }
+
     async function loadVehicle() {
       try {
         setLoading(true)
@@ -128,7 +137,7 @@ export default function EnhancedVehiclePage() {
     if (vehicleId) {
       loadVehicle()
     }
-  }, [vehicleId])
+  }, [vehicleId, vehicleFromState])
 
   function nextImage() {
     if (!vehicle || !vehicle.images || vehicle.images.length === 0) return

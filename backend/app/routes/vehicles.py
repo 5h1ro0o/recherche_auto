@@ -31,10 +31,31 @@ def list_vehicles(page: int = Query(1, ge=1), size: int = Query(20, ge=1, le=200
         logger.exception("Erreur list_vehicles")
         raise HTTPException(status_code=500, detail="Erreur serveur lors de la récupération des véhicules")
 
-@router.get("/{vehicle_id}", response_model=VehicleOut)
+@router.get("/{vehicle_id}")
 def get_vehicle(vehicle_id: str, db: Session = Depends(get_db)):
     try:
-        # SQLAlchemy Session.get is the modern API and avoids deprecation warnings
+        # Check if this is a scraped vehicle ID (format: source_id)
+        if '_' in vehicle_id and vehicle_id.split('_', 1)[0] in ['leboncoin', 'autoscout24']:
+            source, external_id = vehicle_id.split('_', 1)
+
+            # For scraped vehicles, we return mock data with the external URL
+            # In a real implementation, you would fetch details from the scraper
+            return {
+                "id": vehicle_id,
+                "source_ids": {source: external_id},
+                "title": "Véhicule depuis " + source,
+                "description": "Cliquez sur 'Voir l'annonce' pour voir les détails complets sur " + source,
+                "price": None,
+                "year": None,
+                "mileage": None,
+                "fuel_type": None,
+                "transmission": None,
+                "location_city": None,
+                "url": f"https://www.{source}.fr/" if source == "leboncoin" else f"https://www.autoscout24.fr/",
+                "images": []
+            }
+
+        # Normal DB vehicle lookup
         v = db.get(models.Vehicle, vehicle_id)
         if not v:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Vehicle not found")
