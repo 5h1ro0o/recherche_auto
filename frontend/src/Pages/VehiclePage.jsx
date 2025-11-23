@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 
-// Simulation de données - remplacer par de vrais appels API
+const API_BASE = import.meta.env.VITE_API_BASE || '/api'
+
+// Simulation de données - remplacer par de vrais appels API (FALLBACK si API échoue)
 const mockVehicleData = {
   id: 'v123',
   title: 'Peugeot 208 Active 1.2 PureTech',
@@ -71,18 +74,69 @@ const mockVehicleData = {
 }
 
 export default function EnhancedVehiclePage() {
+  const { vehicleId } = useParams()
+  const navigate = useNavigate()
+
+  const [vehicle, setVehicle] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showLightbox, setShowLightbox] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
 
-  const vehicle = mockVehicleData
+  // Charger les données du véhicule depuis l'API
+  useEffect(() => {
+    async function loadVehicle() {
+      try {
+        setLoading(true)
+        setError(null)
+
+        const response = await fetch(`${API_BASE}/vehicles/${vehicleId}`)
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('Véhicule introuvable')
+          }
+          throw new Error('Erreur lors du chargement du véhicule')
+        }
+
+        const data = await response.json()
+
+        // S'assurer que les images sont un tableau
+        if (!data.images || !Array.isArray(data.images) || data.images.length === 0) {
+          data.images = []  // Fallback sur tableau vide si pas d'images
+        }
+
+        // Ajouter les données manquantes pour l'interface (optionnel)
+        if (!data.features) data.features = []
+        if (!data.technical_specs) data.technical_specs = {}
+        if (!data.seller) data.seller = { name: 'Vendeur', is_pro: false }
+
+        setVehicle(data)
+      } catch (err) {
+        console.error('Erreur chargement véhicule:', err)
+        setError(err.message)
+        // Fallback sur mockData en cas d'erreur (pour le développement)
+        setVehicle(mockVehicleData)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (vehicleId) {
+      loadVehicle()
+    }
+  }, [vehicleId])
 
   function nextImage() {
+    if (!vehicle || !vehicle.images || vehicle.images.length === 0) return
     setCurrentImageIndex((prev) => (prev + 1) % vehicle.images.length)
   }
 
   function prevImage() {
+    if (!vehicle || !vehicle.images || vehicle.images.length === 0) return
     setCurrentImageIndex((prev) => (prev - 1 + vehicle.images.length) % vehicle.images.length)
   }
 
@@ -90,13 +144,61 @@ export default function EnhancedVehiclePage() {
     alert('Génération du PDF en cours...')
   }
 
+  // État de chargement
+  if (loading) {
+    return (
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 20px', textAlign: 'center' }}>
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔄</div>
+        <p style={{ color: '#6a737d', fontSize: '18px' }}>Chargement du véhicule...</p>
+      </div>
+    )
+  }
+
+  // État d'erreur (avec fallback sur mockData)
+  if (error && !vehicle) {
+    return (
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 20px', textAlign: 'center' }}>
+        <div style={{ fontSize: '64px', marginBottom: '20px' }}>⚠️</div>
+        <h3 style={{ fontSize: '24px', color: '#24292e', marginBottom: '12px' }}>
+          {error}
+        </h3>
+        <button
+          onClick={() => navigate('/')}
+          style={{
+            padding: '12px 24px',
+            background: '#667eea',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '16px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            marginTop: '20px'
+          }}
+        >
+          Retour à l'accueil
+        </button>
+      </div>
+    )
+  }
+
+  // Vérifier que vehicle existe et a des images
+  if (!vehicle) {
+    return null
+  }
+
+  // S'assurer que vehicle.images est un tableau
+  const images = Array.isArray(vehicle.images) && vehicle.images.length > 0
+    ? vehicle.images
+    : ['https://via.placeholder.com/800x600/667eea/ffffff?text=Pas+d\'image']
+
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
       {/* Breadcrumb */}
       <div style={{ marginBottom: '20px', fontSize: '14px', color: '#6a737d' }}>
         <a href="/" style={{ color: '#667eea', textDecoration: 'none' }}>Accueil</a>
         {' > '}
-        <span>{vehicle.title}</span>
+        <span>{vehicle.title || 'Véhicule'}</span>
       </div>
 
       {/* Header avec actions */}
@@ -172,7 +274,7 @@ export default function EnhancedVehiclePage() {
         {/* Colonne principale */}
         <div>
           <PhotoGallery
-            images={vehicle.images}
+            images={images}
             currentIndex={currentImageIndex}
             onPrev={prevImage}
             onNext={nextImage}
@@ -220,7 +322,7 @@ export default function EnhancedVehiclePage() {
 
       {showLightbox && (
         <Lightbox
-          images={vehicle.images}
+          images={images}
           currentIndex={currentImageIndex}
           onClose={() => setShowLightbox(false)}
           onPrev={prevImage}
@@ -913,13 +1015,25 @@ function Lightbox({ images, currentIndex, onClose, onPrev, onNext }) {
             }}
             onMouseEnter={(e) => e.target.style.background = 'rgba(255,255,255,0.3)'}
             onMouseLeave={(e) => e.target.style.background = 'rgba(255,255,255,0.2)'}
-          />
+          >
+            ›
+          </button>
         </>
       )}
     </div>
   )
 }
+
 function ContactModal({ seller, vehicle, onClose }) {
+  const [message, setMessage] = useState('')
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    // TODO: Envoyer le message au vendeur
+    alert('Votre message a été envoyé au vendeur !')
+    onClose()
+  }
+
   return (
     <div
       style={{
@@ -937,7 +1051,7 @@ function ContactModal({ seller, vehicle, onClose }) {
       }}
       onClick={onClose}
     >
-    <div
+      <div
         style={{
           background: 'white',
           borderRadius: '16px',
@@ -947,5 +1061,103 @@ function ContactModal({ seller, vehicle, onClose }) {
           boxShadow: '0 2px 12px rgba(0,0,0,0.2)'
         }}
         onClick={(e) => e.stopPropagation()}
-    >
-  )}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h2 style={{ margin: 0, fontSize: '24px' }}>Contacter le vendeur</h2>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '28px',
+              cursor: 'pointer',
+              color: '#6a737d',
+              padding: '0',
+              width: '32px',
+              height: '32px'
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        <div style={{ marginBottom: '20px', padding: '16px', background: '#f6f8fa', borderRadius: '8px' }}>
+          <p style={{ margin: '0 0 8px 0', fontWeight: 600 }}>{seller.name}</p>
+          {seller.phone && (
+            <p style={{ margin: '4px 0', fontSize: '14px' }}>
+              📞 {seller.phone}
+            </p>
+          )}
+          {seller.email && (
+            <p style={{ margin: '4px 0', fontSize: '14px' }}>
+              ✉️ {seller.email}
+            </p>
+          )}
+        </div>
+
+        <div style={{ marginBottom: '20px', padding: '12px', background: '#f1f8ff', borderRadius: '8px', border: '1px solid #c8e1ff' }}>
+          <p style={{ margin: 0, fontSize: '14px', color: '#0366d6' }}>
+            <strong>Véhicule concerné :</strong> {vehicle.title}
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>
+              Votre message
+            </label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Bonjour, je suis intéressé par ce véhicule..."
+              required
+              rows={6}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '6px',
+                border: '1px solid #d1d5db',
+                fontSize: '14px',
+                fontFamily: 'inherit',
+                resize: 'vertical'
+              }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              onClick={onClose}
+              style={{
+                padding: '10px 20px',
+                background: '#f6f8fa',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 500
+              }}
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              style={{
+                padding: '10px 20px',
+                background: '#0366d6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 500
+              }}
+            >
+              Envoyer le message
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
