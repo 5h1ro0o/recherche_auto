@@ -214,24 +214,25 @@ class LeBonCoinScraper(BaseScraper):
                     pass
 
             # Attributs (année, kilométrage, carburant, transmission)
+            # Note: ad.attributes est une LISTE d'objets Attribute, pas un dict
             if hasattr(ad, 'attributes') and ad.attributes:
-                for attr_key, attr_value in ad.attributes.items():
-                    # Année (regdate, mileage, fuel, gearbox)
-                    if attr_key == 'regdate' and attr_value:
+                for attr in ad.attributes:
+                    # Année (regdate)
+                    if attr.key == 'regdate' and attr.value:
                         try:
-                            data['year'] = int(attr_value)
+                            data['year'] = int(attr.value)
                         except (ValueError, TypeError):
                             pass
 
-                    # Kilométrage
-                    elif attr_key == 'mileage' and attr_value:
+                    # Kilométrage (mileage)
+                    elif attr.key == 'mileage' and attr.value:
                         try:
-                            data['mileage'] = int(attr_value)
+                            data['mileage'] = int(attr.value)
                         except (ValueError, TypeError):
                             pass
 
-                    # Carburant
-                    elif attr_key == 'fuel' and attr_value:
+                    # Carburant (fuel)
+                    elif attr.key == 'fuel' and attr.value:
                         fuel_mapping = {
                             '1': 'essence',
                             '2': 'diesel',
@@ -239,15 +240,15 @@ class LeBonCoinScraper(BaseScraper):
                             '4': 'electrique',
                             '5': 'hybride',
                         }
-                        data['fuel_type'] = fuel_mapping.get(str(attr_value), attr_value).lower()
+                        data['fuel_type'] = fuel_mapping.get(str(attr.value), attr.value).lower()
 
-                    # Boîte de vitesse
-                    elif attr_key == 'gearbox' and attr_value:
+                    # Boîte de vitesse (gearbox)
+                    elif attr.key == 'gearbox' and attr.value:
                         gearbox_mapping = {
                             '1': 'manuelle',
                             '2': 'automatique',
                         }
-                        data['transmission'] = gearbox_mapping.get(str(attr_value), attr_value).lower()
+                        data['transmission'] = gearbox_mapping.get(str(attr.value), attr.value).lower()
 
             # Si pas d'attributs extraits, essayer d'extraire depuis le titre/description
             if not data['year'] or not data['mileage']:
