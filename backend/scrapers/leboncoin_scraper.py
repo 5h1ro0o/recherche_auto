@@ -293,7 +293,8 @@ class LeBonCoinScraper(BaseScraper):
                 'url': ad.url if hasattr(ad, 'url') else None,
                 'price': None,
                 'location': None,
-                'image_url': None,
+                'image_url': None,  # Première image (compatibilité)
+                'images': [],  # TOUTES les images
 
                 # DATES
                 'first_publication_date': ad.first_publication_date if hasattr(ad, 'first_publication_date') else None,
@@ -348,12 +349,30 @@ class LeBonCoinScraper(BaseScraper):
                 except (ValueError, TypeError):
                     pass
 
-            # Images
-            if hasattr(ad, 'images') and ad.images:
-                try:
-                    data['image_url'] = ad.images[0] if ad.images else None
-                except (IndexError, AttributeError):
-                    pass
+            # Images - Extraire TOUTES les images disponibles
+            # Note: ad.images est une List[str] d'URLs (ou None si pas d'images)
+            try:
+                if hasattr(ad, 'images'):
+                    logger.debug(f"   🔍 ad.images type: {type(ad.images)}, value: {ad.images}")
+
+                    if ad.images and isinstance(ad.images, list) and len(ad.images) > 0:
+                        data['images'] = ad.images  # Toutes les images
+                        data['image_url'] = ad.images[0]  # Première image (compatibilité)
+                        logger.debug(f"   ✅ {len(ad.images)} images extraites")
+                    else:
+                        logger.debug(f"   ⚠️ ad.images vide ou None")
+                        data['images'] = []
+                        data['image_url'] = None
+                else:
+                    logger.debug(f"   ⚠️ ad n'a pas d'attribut 'images'")
+                    data['images'] = []
+                    data['image_url'] = None
+            except (IndexError, AttributeError, TypeError) as e:
+                logger.error(f"   ❌ Erreur extraction images: {e}")
+                import traceback
+                traceback.print_exc()
+                data['images'] = []
+                data['image_url'] = None
 
             # Localisation complète
             if hasattr(ad, 'location') and ad.location:
@@ -592,8 +611,9 @@ class LeBonCoinScraper(BaseScraper):
 # SCRIPT DE TEST
 # ============================================================================
 if __name__ == '__main__':
+    # Activer DEBUG pour voir tous les détails de l'extraction (images, etc.)
     logging.basicConfig(
-        level=logging.INFO,  # INFO for cleaner logs
+        level=logging.DEBUG,  # DEBUG pour voir les détails de l'extraction d'images
         format='%(asctime)s - %(levelname)s - %(message)s'
     )
 
@@ -722,10 +742,20 @@ if __name__ == '__main__':
             print(f"   Référence: {result.get('custom_ref', 'N/A')}")
             print(f"   Téléphone: {'Oui' if result.get('has_phone') else 'Non'}")
 
-            # Liens
+            # Liens et Images
             print(f"\n🔗 LIENS:")
             print(f"   URL: {result.get('url', 'N/A')}")
-            print(f"   Image: {result.get('image_url', 'N/A')}")
+
+            # Afficher TOUTES les images
+            images = result.get('images', [])
+            if images:
+                print(f"\n📸 IMAGES ({len(images)} au total):")
+                for idx, img_url in enumerate(images[:5], 1):  # Afficher les 5 premières
+                    print(f"   {idx}. {img_url}")
+                if len(images) > 5:
+                    print(f"   ... et {len(images) - 5} autres images")
+            else:
+                print(f"\n📸 IMAGES: Aucune image disponible")
 
         if len(results) > 3:
             print(f"\n... et {len(results) - 3} autres annonces")
