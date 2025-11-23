@@ -166,7 +166,17 @@ def apply_post_filters(results: List[Dict[str, Any]], filters: Dict[str, Any]) -
     # Filtre sur la marque (STRICT)
     if filters.get('make'):
         make_lower = filters['make'].lower()
+        before_count = len(filtered)
+
+        # DEBUG: Log quelques exemples avant filtre
+        if filtered[:3]:
+            logger.debug(f"📋 Avant filtre make='{make_lower}', {before_count} résultats:")
+            for r in filtered[:3]:
+                logger.debug(f"  - make={r.get('make')}, model={r.get('model')}, title={r.get('title', '')[:40]}")
+
         filtered = [r for r in filtered if r.get('make') and make_lower in r['make'].lower()]
+
+        logger.info(f"🔍 Filtre make='{make_lower}': {before_count} -> {len(filtered)} résultats")
 
     # Filtre sur le modèle (STRICT - cherche dans model OU title si model absent)
     if filters.get('model'):
