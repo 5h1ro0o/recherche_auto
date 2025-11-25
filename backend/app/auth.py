@@ -1,6 +1,8 @@
 # backend/app/auth.py
 from datetime import datetime, timedelta
 from typing import Optional
+import hashlib
+import base64
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from app.config import settings
@@ -8,13 +10,28 @@ from app.config import settings
 # Configuration du hashing de mot de passe
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+def _prehash_password(password: str) -> str:
+    """
+    Pré-hashe le mot de passe avec SHA256 pour éviter la limitation de 72 bytes de bcrypt.
+    Retourne une chaîne base64 du hash SHA256.
+    """
+    # Hasher avec SHA256
+    password_bytes = password.encode('utf-8')
+    sha256_hash = hashlib.sha256(password_bytes).digest()
+    # Encoder en base64 pour avoir une chaîne ASCII valide
+    return base64.b64encode(sha256_hash).decode('ascii')
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Vérifie si le mot de passe correspond au hash"""
-    return pwd_context.verify(plain_password, hashed_password)
+    # Pré-hasher avant de vérifier
+    prehashed = _prehash_password(plain_password)
+    return pwd_context.verify(prehashed, hashed_password)
 
 def get_password_hash(password: str) -> str:
     """Hash un mot de passe"""
-    return pwd_context.hash(password)
+    # Pré-hasher avec SHA256 pour gérer les mots de passe > 72 bytes
+    prehashed = _prehash_password(password)
+    return pwd_context.hash(prehashed)
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Créer un token JWT d'accès"""
