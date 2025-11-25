@@ -23,11 +23,14 @@ from difflib import SequenceMatcher
 from math import radians, cos, sin, asin, sqrt
 
 # === ENVIRONNEMENT ===
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/recherche_auto")
-ELASTIC_HOST = os.getenv("ELASTIC_HOST", "http://127.0.0.1:9200")
-REDIS_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
-ES_INDEX = os.getenv("ES_INDEX", "vehicles")
-REDIS_QUEUE_KEY = os.getenv("REDIS_QUEUE_KEY", "scraper_queue")
+# Importer la configuration centralisée qui charge le .env
+from app.config import settings
+
+DATABASE_URL = settings.DATABASE_URL
+ELASTIC_HOST = settings.ELASTIC_HOST
+REDIS_URL = settings.REDIS_URL
+ES_INDEX = settings.ES_INDEX
+REDIS_QUEUE_KEY = settings.REDIS_QUEUE_KEY
 
 # === LIBS ===
 from sqlalchemy import create_engine
