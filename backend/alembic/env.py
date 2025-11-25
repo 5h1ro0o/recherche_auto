@@ -32,24 +32,32 @@ except Exception as e:
     raise RuntimeError("Impossible d'importer app.models.Base — vérifie le chemin/module. Erreur: %s" % e)
 
 # Récupère l'URL depuis la variable d'environnement (ou alembic.ini)
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    # fallback to value in alembic.ini if present
-    DATABASE_URL = config.get_main_option("sqlalchemy.url")
+# Utilise la configuration centralisée qui charge le .env et gère l'encodage
+try:
+    from app.config import settings
+    DATABASE_URL = settings.DATABASE_URL
+except Exception as e:
+    print(f"Warning: Could not load settings from app.config: {e}", file=sys.stderr)
+    DATABASE_URL = os.getenv("DATABASE_URL")
+    if not DATABASE_URL:
+        # fallback to value in alembic.ini if present
+        DATABASE_URL = config.get_main_option("sqlalchemy.url")
 
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL non défini — vérifie backend/.env ou la variable d'environnement")
 
-config.set_main_option("sqlalchemy.url", DATABASE_URL)
+# Ne pas utiliser set_main_option car ConfigParser ne supporte pas les % dans les valeurs
+# (les % sont interprétés comme syntaxe d'interpolation)
+# On va plutôt passer l'URL directement à engine_from_config
 
 # --------------------------------------------------------------------
 # Fonctions alembic (générées)
 # --------------------------------------------------------------------
 def run_migrations_offline():
     """Run migrations in 'offline' mode."""
-    url = config.get_main_option("sqlalchemy.url")
+    # Utiliser DATABASE_URL directement au lieu de config.get_main_option
     context.configure(
-        url=url,
+        url=DATABASE_URL,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -61,11 +69,11 @@ def run_migrations_offline():
 
 def run_migrations_online():
     """Run migrations in 'online' mode."""
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
+    # Créer l'engine directement avec DATABASE_URL pour éviter les problèmes d'interpolation ConfigParser
+    from sqlalchemy import create_engine
+    connectable = create_engine(
+        DATABASE_URL,
         poolclass=pool.NullPool,
-        url=DATABASE_URL
     )
 
     with connectable.connect() as connection:
