@@ -8,7 +8,13 @@ from passlib.context import CryptContext
 from app.config import settings
 
 # Configuration du hashing de mot de passe
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# truncate_error=True pour éviter l'erreur lors de l'initialisation de passlib
+pwd_context = CryptContext(
+    schemes=["bcrypt"],
+    deprecated="auto",
+    bcrypt__ident="2b",  # Utiliser bcrypt 2b (version moderne)
+    bcrypt__truncate_error=True,  # Tronquer automatiquement si > 72 bytes
+)
 
 def _prehash_password(password: str) -> str:
     """
