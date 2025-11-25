@@ -32,8 +32,9 @@ except Exception as e:
 print("Étape 1: Vérification de la connexion à PostgreSQL...")
 try:
     from app.db import engine
+    from sqlalchemy import text
     with engine.connect() as conn:
-        result = conn.execute("SELECT version();")
+        result = conn.execute(text("SELECT version();"))
         version = result.fetchone()[0]
         print(f"✓ Connexion réussie!")
         print(f"  PostgreSQL version: {version.split(',')[0]}")
