@@ -2,11 +2,27 @@
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from urllib.parse import quote_plus
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+psycopg2://app:changeme@127.0.0.1:5432/vehicles"
-)
+def get_database_url():
+    """
+    Récupère l'URL de la base de données en gérant les problèmes d'encodage
+    """
+    default_url = "postgresql+psycopg2://postgres:postgres@localhost:5432/vehicles"
+
+    db_url = os.getenv("DATABASE_URL", default_url)
+
+    # Sur Windows, s'assurer que l'URL est en UTF-8
+    if isinstance(db_url, bytes):
+        try:
+            db_url = db_url.decode('utf-8')
+        except UnicodeDecodeError:
+            # Si l'encodage UTF-8 échoue, essayer Windows-1252
+            db_url = db_url.decode('windows-1252')
+
+    return db_url
+
+DATABASE_URL = get_database_url()
 
 # create engine with UTF-8 encoding
 engine = create_engine(
