@@ -58,6 +58,9 @@ class ProposalUpdate(BaseModel):
     status: ProposalStatus
     rejection_reason: Optional[str] = None
 
+class TinderActionRequest(BaseModel):
+    feedback: Optional[str] = None  # Feedback optionnel pour affiner la recherche
+
 class ProposedVehicleOut(BaseModel):
     id: str
     request_id: str
@@ -65,9 +68,25 @@ class ProposedVehicleOut(BaseModel):
     status: str
     message: Optional[str]
     rejection_reason: Optional[str]
+    client_feedback: Optional[str]
     created_at: datetime
     updated_at: datetime
-    
+
+    model_config = {"from_attributes": True}
+
+class ProposedVehicleWithDetails(BaseModel):
+    """Proposition avec détails complets du véhicule (pour l'interface Tinder)"""
+    id: str
+    request_id: str
+    vehicle_id: str
+    status: str
+    message: Optional[str]
+    rejection_reason: Optional[str]
+    client_feedback: Optional[str]
+    created_at: datetime
+    updated_at: datetime
+    vehicle: Optional[Dict[str, Any]] = None  # Détails du véhicule
+
     model_config = {"from_attributes": True}
 from app.dependencies import get_current_user, require_expert
 
@@ -89,8 +108,15 @@ async def create_assisted_request(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Créer une demande d'assistance (client)"""
-    
+    """Créer une demande d'assistance (client - PARTICULIERS UNIQUEMENT)"""
+
+    # Vérifier que seuls les particuliers peuvent créer des demandes
+    if current_user.role != UserRole.PARTICULAR:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Seuls les particuliers peuvent créer des demandes de recherche personnalisée"
+        )
+
     request = AssistedRequest(
         id=str(uuid.uuid4()),
         client_id=current_user.id,
@@ -103,11 +129,11 @@ async def create_assisted_request(
         min_year=request_data.min_year,
         ai_parsed_criteria=request_data.ai_parsed_criteria or {}
     )
-    
+
     db.add(request)
     db.commit()
     db.refresh(request)
-    
+
     logger.info(f"Demande assistée créée: {request.id} par {current_user.email}")
     return request
 
@@ -248,21 +274,166 @@ async def update_proposal_status(
         ProposedVehicle.id == proposal_id,
         AssistedRequest.client_id == current_user.id
     ).first()
-    
+
     if not proposal:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Proposition non trouvée"
         )
-    
+
     proposal.status = update_data.status
     proposal.rejection_reason = update_data.rejection_reason
     proposal.updated_at = datetime.utcnow()
-    
+
     db.commit()
     db.refresh(proposal)
-    
+
     logger.info(f"Proposition {proposal_id} mise à jour: {update_data.status}")
+    return proposal
+
+# ============ ROUTES TINDER-LIKE (CLIENT) ============
+
+@router.get("/requests/{request_id}/tinder/next", response_model=Optional[ProposedVehicleWithDetails])
+async def get_next_proposal_tinder(
+    request_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Obtenir la prochaine proposition non évaluée (interface Tinder)"""
+
+    # Vérifier que la demande appartient au client
+    request = db.query(AssistedRequest).filter(
+        AssistedRequest.id == request_id,
+        AssistedRequest.client_id == current_user.id
+    ).first()
+
+    if not request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Demande non trouvée"
+        )
+
+    # Récupérer la prochaine proposition PENDING
+    proposal = db.query(ProposedVehicle).filter(
+        ProposedVehicle.request_id == request_id,
+        ProposedVehicle.status == ProposalStatus.PENDING
+    ).order_by(ProposedVehicle.created_at.asc()).first()
+
+    if not proposal:
+        return None  # Plus de propositions à évaluer
+
+    # Charger les détails du véhicule
+    vehicle = db.query(Vehicle).filter(Vehicle.id == proposal.vehicle_id).first()
+
+    # Construire la réponse avec les détails du véhicule
+    result = ProposedVehicleWithDetails.model_validate(proposal)
+    if vehicle:
+        result.vehicle = {
+            "id": vehicle.id,
+            "title": vehicle.title,
+            "make": vehicle.make,
+            "model": vehicle.model,
+            "price": vehicle.price,
+            "mileage": vehicle.mileage,
+            "year": vehicle.year,
+            "fuel_type": vehicle.fuel_type,
+            "transmission": vehicle.transmission,
+            "description": vehicle.description,
+            "images": vehicle.images,
+            "location_city": vehicle.location_city
+        }
+
+    return result
+
+@router.post("/proposals/{proposal_id}/tinder/like", response_model=ProposedVehicleOut)
+async def like_proposal_tinder(
+    proposal_id: str,
+    action_data: TinderActionRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Liker une proposition (interface Tinder)"""
+
+    proposal = db.query(ProposedVehicle).join(AssistedRequest).filter(
+        ProposedVehicle.id == proposal_id,
+        AssistedRequest.client_id == current_user.id
+    ).first()
+
+    if not proposal:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Proposition non trouvée"
+        )
+
+    proposal.status = ProposalStatus.LIKED
+    proposal.client_feedback = action_data.feedback
+    proposal.updated_at = datetime.utcnow()
+
+    db.commit()
+    db.refresh(proposal)
+
+    logger.info(f"Proposition {proposal_id} likée par client")
+    return proposal
+
+@router.post("/proposals/{proposal_id}/tinder/super-like", response_model=ProposedVehicleOut)
+async def super_like_proposal_tinder(
+    proposal_id: str,
+    action_data: TinderActionRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Coup de foudre sur une proposition (interface Tinder)"""
+
+    proposal = db.query(ProposedVehicle).join(AssistedRequest).filter(
+        ProposedVehicle.id == proposal_id,
+        AssistedRequest.client_id == current_user.id
+    ).first()
+
+    if not proposal:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Proposition non trouvée"
+        )
+
+    proposal.status = ProposalStatus.SUPER_LIKED
+    proposal.client_feedback = action_data.feedback
+    proposal.updated_at = datetime.utcnow()
+
+    db.commit()
+    db.refresh(proposal)
+
+    logger.info(f"Proposition {proposal_id} SUPER LIKÉE (coup de foudre) par client")
+    return proposal
+
+@router.post("/proposals/{proposal_id}/tinder/reject", response_model=ProposedVehicleOut)
+async def reject_proposal_tinder(
+    proposal_id: str,
+    action_data: TinderActionRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Refuser une proposition (interface Tinder)"""
+
+    proposal = db.query(ProposedVehicle).join(AssistedRequest).filter(
+        ProposedVehicle.id == proposal_id,
+        AssistedRequest.client_id == current_user.id
+    ).first()
+
+    if not proposal:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Proposition non trouvée"
+        )
+
+    proposal.status = ProposalStatus.REJECTED
+    proposal.rejection_reason = action_data.feedback  # Utiliser feedback comme raison du refus
+    proposal.client_feedback = action_data.feedback
+    proposal.updated_at = datetime.utcnow()
+
+    db.commit()
+    db.refresh(proposal)
+
+    logger.info(f"Proposition {proposal_id} refusée par client")
     return proposal
 
 # ============ ROUTES EXPERT ============
@@ -407,6 +578,66 @@ async def complete_request(
     logger.info(f"Demande {request_id} terminée")
     return request
 
+@router.get("/requests/{request_id}/feedback")
+async def get_request_feedback(
+    request_id: str,
+    current_user: User = Depends(require_expert),
+    db: Session = Depends(get_db)
+):
+    """Obtenir tous les feedbacks des clients pour une demande (expert)"""
+
+    request = db.query(AssistedRequest).filter(
+        AssistedRequest.id == request_id,
+        AssistedRequest.expert_id == current_user.id
+    ).first()
+
+    if not request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Demande non trouvée ou vous n'êtes pas assigné"
+        )
+
+    # Récupérer toutes les propositions avec leur feedback
+    proposals = db.query(ProposedVehicle).filter(
+        ProposedVehicle.request_id == request_id,
+        ProposedVehicle.status != ProposalStatus.PENDING
+    ).all()
+
+    feedbacks = []
+    for proposal in proposals:
+        vehicle = db.query(Vehicle).filter(Vehicle.id == proposal.vehicle_id).first()
+
+        feedbacks.append({
+            "proposal_id": proposal.id,
+            "vehicle_id": proposal.vehicle_id,
+            "vehicle_title": vehicle.title if vehicle else None,
+            "vehicle_make": vehicle.make if vehicle else None,
+            "vehicle_model": vehicle.model if vehicle else None,
+            "status": proposal.status,
+            "client_feedback": proposal.client_feedback,
+            "rejection_reason": proposal.rejection_reason,
+            "created_at": proposal.created_at,
+            "updated_at": proposal.updated_at
+        })
+
+    # Statistiques sur les feedbacks
+    total = len(feedbacks)
+    liked = sum(1 for f in feedbacks if f["status"] == ProposalStatus.LIKED)
+    super_liked = sum(1 for f in feedbacks if f["status"] == ProposalStatus.SUPER_LIKED)
+    rejected = sum(1 for f in feedbacks if f["status"] == ProposalStatus.REJECTED)
+
+    return {
+        "request_id": request_id,
+        "total_evaluated": total,
+        "stats": {
+            "liked": liked,
+            "super_liked": super_liked,
+            "rejected": rejected,
+            "positive_rate": round((liked + super_liked) / total * 100, 1) if total > 0 else 0
+        },
+        "feedbacks": feedbacks
+    }
+
 # ============ STATISTIQUES EXPERT ============
 
 @router.get("/expert/stats")
@@ -436,9 +667,15 @@ async def get_expert_stats(
         AssistedRequest.expert_id == current_user.id
     ).count()
     
+    # Comptabiliser LIKED + SUPER_LIKED comme acceptées
     accepted_proposals = db.query(ProposedVehicle).join(AssistedRequest).filter(
         AssistedRequest.expert_id == current_user.id,
-        ProposedVehicle.status == ProposalStatus.FAVORITE
+        ProposedVehicle.status.in_([ProposalStatus.LIKED, ProposalStatus.SUPER_LIKED])
+    ).count()
+
+    super_liked_proposals = db.query(ProposedVehicle).join(AssistedRequest).filter(
+        AssistedRequest.expert_id == current_user.id,
+        ProposedVehicle.status == ProposalStatus.SUPER_LIKED
     ).count()
     
     # Taux d'acceptation
@@ -450,5 +687,6 @@ async def get_expert_stats(
         "completed_requests": completed_requests,
         "total_proposals": total_proposals,
         "accepted_proposals": accepted_proposals,
+        "super_liked_proposals": super_liked_proposals,
         "acceptance_rate": round(acceptance_rate, 1)
     }

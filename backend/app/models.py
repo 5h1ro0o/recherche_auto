@@ -115,7 +115,8 @@ class RequestStatus(str, enum.Enum):
 class ProposalStatus(str, enum.Enum):
     """Statuts des propositions de véhicules"""
     PENDING = "PENDING"
-    FAVORITE = "FAVORITE"
+    LIKED = "LIKED"
+    SUPER_LIKED = "SUPER_LIKED"  # Coup de foudre
     REJECTED = "REJECTED"
 
 class AssistedRequest(Base):
@@ -150,18 +151,19 @@ class AssistedRequest(Base):
 class ProposedVehicle(Base):
     """Véhicules proposés par l'expert au client"""
     __tablename__ = "proposed_vehicles"
-    
+
     id = Column(String, primary_key=True)
     request_id = Column(String, ForeignKey('assisted_requests.id', ondelete='CASCADE'), nullable=False, index=True)
     vehicle_id = Column(String, ForeignKey('vehicles.id', ondelete='CASCADE'), nullable=False, index=True)
-    
+
     status = Column(SQLEnum(ProposalStatus), nullable=False, default=ProposalStatus.PENDING, index=True)
     message = Column(Text, nullable=True)  # Message de l'expert
     rejection_reason = Column(Text, nullable=True)  # Raison du refus par le client
-    
+    client_feedback = Column(Text, nullable=True)  # Feedback du client pour affiner la recherche
+
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
     updated_at = Column(TIMESTAMP, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     # Relations
     request = relationship("AssistedRequest", back_populates="proposals")
     vehicle = relationship("Vehicle")
