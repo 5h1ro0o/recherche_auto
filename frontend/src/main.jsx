@@ -19,6 +19,8 @@ import FavoritesPage from './Pages/FavoritesPage'
 import AssistedRequestPage from './Pages/AssistedRequestPage'
 import ExpertDashboard from './Pages/ExpertDashboard'
 import ExpertRequestDetailPage from './Pages/ExpertRequestDetailPage'
+import ExpertRequestsPage from './Pages/ExpertRequestsPage'
+import TinderProposalsPage from './Pages/TinderProposalsPage'
 import AdminDashboard from './Pages/AdminDashboard'
 import MessagesPage from './Pages/MessagesPage'
 import ConversationPage from './Pages/ConversationPage'
@@ -110,6 +112,32 @@ createRoot(document.getElementById('root')).render(
                 element={
                   <ProtectedRoute requiredRole="EXPERT">
                     <ExpertDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/expert/requests"
+                element={
+                  <ProtectedRoute requiredRole="EXPERT">
+                    <ExpertRequestsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/expert/requests/:requestId"
+                element={
+                  <ProtectedRoute requiredRole="EXPERT">
+                    <ExpertRequestDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Routes protégées - Tinder client */}
+              <Route
+                path="/assisted/requests/:requestId/tinder"
+                element={
+                  <ProtectedRoute>
+                    <TinderProposalsPage />
                   </ProtectedRoute>
                 }
               />

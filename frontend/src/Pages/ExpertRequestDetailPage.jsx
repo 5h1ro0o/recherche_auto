@@ -97,7 +97,7 @@ export default function ExpertRequestDetailPage() {
 
   const stats = {
     proposed: proposals?.length || 0,
-    favorites: proposals?.filter(p => p.status === 'FAVORITE').length || 0,
+    favorites: proposals?.filter(p => p.status === 'SUPER_LIKED' || p.status === 'LIKED').length || 0,
     rejected: proposals?.filter(p => p.status === 'REJECTED').length || 0,
     pending: proposals?.filter(p => p.status === 'PENDING').length || 0
   }
@@ -244,11 +244,12 @@ export default function ExpertRequestDetailPage() {
 function RequestCard({ request }) {
   const getStatusBadge = (status) => {
     const badges = {
-      'EN_ATTENTE': { text: '⏳ En attente', color: '#ffc107' },
-      'EN_COURS': { text: '🔄 En cours', color: '#17a2b8' },
-      'TERMINEE': { text: '✅ Terminée', color: '#28a745' }
+      'PENDING': { text: '⏳ En attente', color: '#ffc107' },
+      'IN_PROGRESS': { text: '🔄 En cours', color: '#17a2b8' },
+      'COMPLETED': { text: '✅ Terminée', color: '#28a745' },
+      'CANCELLED': { text: '❌ Annulée', color: '#dc3545' }
     }
-    const badge = badges[status] || badges['EN_COURS']
+    const badge = badges[status] || badges['IN_PROGRESS']
     return (
       <span style={{
         background: badge.color,
@@ -393,7 +394,8 @@ function ProposalCard({ proposal, onViewVehicle }) {
   const getStatusBadge = (status) => {
     const badges = {
       'PENDING': { text: '⏱️ En attente', color: '#6c757d' },
-      'FAVORITE': { text: '❤️ Coup de cœur', color: '#e91e63' },
+      'LIKED': { text: '👍 Aimé', color: '#28a745' },
+      'SUPER_LIKED': { text: '❤️ Coup de cœur', color: '#e91e63' },
       'REJECTED': { text: '❌ Refusé', color: '#dc3545' }
     }
     const badge = badges[status] || badges['PENDING']
@@ -417,7 +419,7 @@ function ProposalCard({ proposal, onViewVehicle }) {
       borderRadius: '12px',
       padding: '20px',
       boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-      border: proposal.status === 'FAVORITE' ? '2px solid #e91e63' : '2px solid transparent'
+      border: proposal.status === 'SUPER_LIKED' ? '2px solid #e91e63' : '2px solid transparent'
     }}>
       <div style={{
         display: 'flex',

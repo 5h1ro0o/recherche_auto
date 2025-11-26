@@ -26,13 +26,13 @@ export default function ExpertDashboard() {
 
   // Charger les données
   const { data: availableRequests, mutate: mutateAvailable } = useSWR(
-    ['/assisted/available', 'EN_ATTENTE'],
-    () => getAvailableRequests('EN_ATTENTE')
+    ['/assisted/available', 'PENDING'],
+    () => getAvailableRequests('PENDING')
   )
 
   const { data: myAssignments, mutate: mutateAssignments } = useSWR(
-    ['/assisted/assignments', 'EN_COURS'],
-    () => getAvailableRequests('EN_COURS')
+    ['/assisted/assignments', 'IN_PROGRESS'],
+    () => getAvailableRequests('IN_PROGRESS')
   )
 
   const { data: stats } = useSWR('/assisted/expert/stats', getExpertStats)
