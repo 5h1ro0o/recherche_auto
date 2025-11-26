@@ -107,10 +107,10 @@ class SearchHistory(Base):
 
 class RequestStatus(str, enum.Enum):
     """Statuts des demandes assistées"""
-    PENDING = "EN_ATTENTE"
-    IN_PROGRESS = "EN_COURS"
-    COMPLETED = "TERMINEE"
-    CANCELLED = "ANNULEE"
+    PENDING = "PENDING"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
 
 class ProposalStatus(str, enum.Enum):
     """Statuts des propositions de véhicules"""

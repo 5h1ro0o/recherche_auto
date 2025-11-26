@@ -24,7 +24,7 @@ def upgrade() -> None:
     # Créer l'enum RequestStatus (seulement s'il n'existe pas)
     op.execute("""
         DO $$ BEGIN
-            CREATE TYPE requeststatus AS ENUM ('EN_ATTENTE', 'EN_COURS', 'TERMINEE', 'ANNULEE');
+            CREATE TYPE requeststatus AS ENUM ('PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED');
         EXCEPTION
             WHEN duplicate_object THEN null;
         END $$;
@@ -51,7 +51,7 @@ def upgrade() -> None:
             sa.Column('id', sa.String(), nullable=False),
             sa.Column('client_id', sa.String(), nullable=False),
             sa.Column('expert_id', sa.String(), nullable=True),
-            sa.Column('status', postgresql.ENUM('EN_ATTENTE', 'EN_COURS', 'TERMINEE', 'ANNULEE', name='requeststatus', create_type=False), nullable=False),
+            sa.Column('status', postgresql.ENUM('PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', name='requeststatus', create_type=False), nullable=False),
             sa.Column('description', sa.Text(), nullable=False),
             sa.Column('budget_max', sa.Integer(), nullable=True),
             sa.Column('preferred_fuel_type', sa.String(), nullable=True),
