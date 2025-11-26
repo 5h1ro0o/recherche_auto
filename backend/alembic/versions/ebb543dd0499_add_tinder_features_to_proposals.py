@@ -1,7 +1,7 @@
 """add_tinder_features_to_proposals
 
 Revision ID: ebb543dd0499
-Revises: add_scraper_logs
+Revises: 3b6e29d6f3ac
 Create Date: 2025-11-26 11:37:40.471444
 
 """
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = 'ebb543dd0499'
-down_revision: Union[str, Sequence[str], None] = 'add_scraper_logs'
+down_revision: Union[str, Sequence[str], None] = '3b6e29d6f3ac'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
