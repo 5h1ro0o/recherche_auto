@@ -1,17 +1,16 @@
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 
-// TODO: Remplacer par vos vrais appels API
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 async function getNextProposal(requestId, token) {
   const response = await fetch(`${API_BASE}/api/assisted/requests/${requestId}/tinder/next`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
-  })
-  if (!response.ok) throw new Error('Failed to fetch proposal')
-  return response.json()
+  });
+  if (!response.ok) throw new Error('Failed to fetch proposal');
+  return response.json();
 }
 
 async function tinderAction(proposalId, action, feedback, token) {
@@ -22,74 +21,69 @@ async function tinderAction(proposalId, action, feedback, token) {
       'Authorization': `Bearer ${token}`
     },
     body: JSON.stringify({ feedback })
-  })
-  if (!response.ok) throw new Error(`Failed to ${action}`)
-  return response.json()
+  });
+  if (!response.ok) throw new Error(`Failed to ${action}`);
+  return response.json();
 }
 
 export default function TinderProposalsPage() {
-  const { requestId } = useParams()
-  const navigate = useNavigate()
+  const { requestId } = useParams();
+  const navigate = useNavigate();
 
-  const [proposal, setProposal] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [showFeedbackModal, setShowFeedbackModal] = useState(null) // 'like', 'super-like', or 'reject'
-  const [feedback, setFeedback] = useState('')
-  const [animating, setAnimating] = useState(false)
-  const [animationDirection, setAnimationDirection] = useState(null) // 'left' or 'right'
+  const [proposal, setProposal] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(null);
+  const [feedback, setFeedback] = useState('');
+  const [animating, setAnimating] = useState(false);
+  const [animationDirection, setAnimationDirection] = useState(null);
 
-  // TODO: Récupérer le token d'auth depuis votre AuthContext
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('token') || localStorage.getItem('access_token');
 
   useEffect(() => {
-    loadNextProposal()
-  }, [requestId])
+    loadNextProposal();
+  }, [requestId]);
 
   async function loadNextProposal() {
     try {
-      setLoading(true)
-      const data = await getNextProposal(requestId, token)
-      setProposal(data)
+      setLoading(true);
+      const data = await getNextProposal(requestId, token);
+      setProposal(data);
     } catch (error) {
-      console.error('Error loading proposal:', error)
+      console.error('Error loading proposal:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   async function handleAction(action) {
-    if (!proposal) return
+    if (!proposal) return;
 
-    // Animation de swipe
-    setAnimating(true)
-    setAnimationDirection(action === 'reject' ? 'left' : 'right')
+    setAnimating(true);
+    setAnimationDirection(action === 'reject' ? 'left' : 'right');
 
-    // Attendre la fin de l'animation
     setTimeout(async () => {
       try {
-        await tinderAction(proposal.id, action, feedback, token)
-        setFeedback('')
-        setShowFeedbackModal(null)
-        setAnimating(false)
-        setAnimationDirection(null)
-
-        // Charger la proposition suivante
-        await loadNextProposal()
+        await tinderAction(proposal.id, action, feedback, token);
+        setFeedback('');
+        setShowFeedbackModal(null);
+        setAnimating(false);
+        setAnimationDirection(null);
+        await loadNextProposal();
       } catch (error) {
-        console.error(`Error during ${action}:`, error)
-        setAnimating(false)
-        setAnimationDirection(null)
+        console.error(`Error during ${action}:`, error);
+        setAnimating(false);
+        setAnimationDirection(null);
       }
-    }, 500)
+    }, 500);
   }
 
   function openFeedbackModal(action) {
-    setShowFeedbackModal(action)
+    setShowFeedbackModal(action);
   }
 
   function confirmAction() {
     if (showFeedbackModal) {
-      handleAction(showFeedbackModal)
+      handleAction(showFeedbackModal);
     }
   }
 
@@ -101,12 +95,12 @@ export default function TinderProposalsPage() {
         alignItems: 'center',
         minHeight: '80vh'
       }}>
-        <div style={{textAlign: 'center'}}>
-          <div style={{fontSize: '48px', marginBottom: '16px'}}>⏳</div>
-          <p>Chargement...</p>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
+          <p style={{ color: '#666666' }}>Chargement...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!proposal) {
@@ -117,35 +111,45 @@ export default function TinderProposalsPage() {
         alignItems: 'center',
         minHeight: '80vh'
       }}>
-        <div style={{textAlign: 'center'}}>
-          <div style={{fontSize: '80px', marginBottom: '24px'}}>🎉</div>
-          <h2 style={{margin: '0 0 16px 0', fontSize: '24px'}}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '80px', marginBottom: '24px' }}>🎉</div>
+          <h2 style={{
+            margin: '0 0 16px 0',
+            fontSize: '24px',
+            color: '#222222'
+          }}>
             Plus de propositions à évaluer !
           </h2>
-          <p style={{color: '#6a737d', marginBottom: '24px'}}>
+          <p style={{
+            color: '#666666',
+            marginBottom: '24px'
+          }}>
             Vous avez consulté toutes les propositions de votre expert.
           </p>
           <button
             onClick={() => navigate(`/assisted/requests/${requestId}`)}
             style={{
               padding: '12px 24px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: '#DC2626',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
               fontSize: '16px',
               fontWeight: 600,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              transition: 'background 0.2s'
             }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#B91C1C'}
+            onMouseLeave={(e) => e.currentTarget.style.background = '#DC2626'}
           >
             Voir toutes mes propositions
           </button>
         </div>
       </div>
-    )
+    );
   }
 
-  const vehicle = proposal.vehicle
+  const vehicle = proposal.vehicle;
 
   return (
     <div style={{
@@ -164,26 +168,39 @@ export default function TinderProposalsPage() {
         <button
           onClick={() => navigate(`/assisted/requests/${requestId}`)}
           style={{
-            background: 'none',
-            border: '1px solid #ddd',
+            background: 'white',
+            border: '1px solid #EEEEEE',
             padding: '8px 16px',
             borderRadius: '8px',
             cursor: 'pointer',
-            fontSize: '14px'
+            fontSize: '14px',
+            color: '#222222',
+            fontWeight: 500,
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = '#222222';
+            e.currentTarget.style.background = '#FAFAFA';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = '#EEEEEE';
+            e.currentTarget.style.background = 'white';
           }}
         >
           ← Retour
         </button>
 
         <div style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          padding: '8px 16px',
-          borderRadius: '20px',
+          background: '#222222',
+          padding: '6px 14px',
+          borderRadius: '4px',
           color: 'white',
-          fontSize: '14px',
-          fontWeight: 600
+          fontSize: '12px',
+          fontWeight: 600,
+          letterSpacing: '0.5px',
+          textTransform: 'uppercase'
         }}>
-          🔥 Mode Tinder
+          Mode Sélection
         </div>
       </div>
 
@@ -195,8 +212,9 @@ export default function TinderProposalsPage() {
         <div
           style={{
             background: 'white',
-            borderRadius: '24px',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+            borderRadius: '12px',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+            border: '1px solid #EEEEEE',
             overflow: 'hidden',
             transform: animating
               ? `translateX(${animationDirection === 'left' ? '-150%' : '150%'}) rotate(${animationDirection === 'left' ? '-30deg' : '30deg'})`
@@ -234,18 +252,18 @@ export default function TinderProposalsPage() {
                   fontWeight: 600,
                   textShadow: '0 2px 10px rgba(0,0,0,0.5)'
                 }}>
-                  💰 {vehicle.price?.toLocaleString()} €
+                  {vehicle.price?.toLocaleString()} €
                 </div>
               </div>
             </div>
           ) : (
             <div style={{
               height: '400px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: '#FAFAFA',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'white',
+              color: '#CCCCCC',
               fontSize: '60px'
             }}>
               🚗
@@ -253,23 +271,26 @@ export default function TinderProposalsPage() {
           )}
 
           {/* Vehicle Info */}
-          <div style={{padding: '24px'}}>
+          <div style={{ padding: '24px' }}>
             {/* Expert Message */}
             {proposal.message && (
               <div style={{
-                background: '#e7f3ff',
+                background: '#FAFAFA',
                 padding: '16px',
-                borderRadius: '12px',
-                marginBottom: '20px'
+                borderRadius: '8px',
+                marginBottom: '20px',
+                border: '1px solid #EEEEEE'
               }}>
                 <div style={{
-                  fontSize: '14px',
+                  fontSize: '12px',
                   fontWeight: 600,
-                  color: '#667eea',
+                  color: '#222222',
                   marginBottom: '8px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px'
+                  gap: '8px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
                 }}>
                   <span>💬</span>
                   <span>Message de votre expert</span>
@@ -278,7 +299,7 @@ export default function TinderProposalsPage() {
                   margin: 0,
                   fontSize: '14px',
                   lineHeight: 1.6,
-                  color: '#24292e'
+                  color: '#666666'
                 }}>
                   {proposal.message}
                 </p>
@@ -305,21 +326,25 @@ export default function TinderProposalsPage() {
               <div style={{
                 marginTop: '20px',
                 padding: '16px',
-                background: '#f8f9fa',
-                borderRadius: '12px'
+                background: '#FAFAFA',
+                borderRadius: '8px',
+                border: '1px solid #EEEEEE'
               }}>
                 <div style={{
-                  fontSize: '14px',
+                  fontSize: '12px',
                   fontWeight: 600,
-                  marginBottom: '8px'
+                  marginBottom: '8px',
+                  color: '#222222',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
                 }}>
-                  📝 Description
+                  Description
                 </div>
                 <p style={{
                   margin: 0,
                   fontSize: '14px',
                   lineHeight: 1.6,
-                  color: '#6a737d'
+                  color: '#666666'
                 }}>
                   {vehicle.description}
                 </p>
@@ -345,11 +370,11 @@ export default function TinderProposalsPage() {
             height: '70px',
             borderRadius: '50%',
             background: 'white',
-            border: '3px solid #dc3545',
-            color: '#dc3545',
+            border: '2px solid #999999',
+            color: '#999999',
             fontSize: '32px',
             cursor: animating ? 'not-allowed' : 'pointer',
-            boxShadow: '0 4px 12px rgba(220, 53, 69, 0.3)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
             transition: 'all 0.2s',
             opacity: animating ? 0.5 : 1,
             display: 'flex',
@@ -358,16 +383,16 @@ export default function TinderProposalsPage() {
           }}
           onMouseEnter={(e) => {
             if (!animating) {
-              e.currentTarget.style.transform = 'scale(1.1)'
-              e.currentTarget.style.background = '#dc3545'
-              e.currentTarget.style.color = 'white'
+              e.currentTarget.style.transform = 'scale(1.1)';
+              e.currentTarget.style.background = '#999999';
+              e.currentTarget.style.color = 'white';
             }
           }}
           onMouseLeave={(e) => {
             if (!animating) {
-              e.currentTarget.style.transform = 'scale(1)'
-              e.currentTarget.style.background = 'white'
-              e.currentTarget.style.color = '#dc3545'
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.background = 'white';
+              e.currentTarget.style.color = '#999999';
             }
           }}
         >
@@ -383,11 +408,11 @@ export default function TinderProposalsPage() {
             height: '80px',
             borderRadius: '50%',
             background: 'white',
-            border: '3px solid #28a745',
-            color: '#28a745',
+            border: '2px solid #222222',
+            color: '#222222',
             fontSize: '36px',
             cursor: animating ? 'not-allowed' : 'pointer',
-            boxShadow: '0 4px 12px rgba(40, 167, 69, 0.3)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
             transition: 'all 0.2s',
             opacity: animating ? 0.5 : 1,
             display: 'flex',
@@ -396,16 +421,16 @@ export default function TinderProposalsPage() {
           }}
           onMouseEnter={(e) => {
             if (!animating) {
-              e.currentTarget.style.transform = 'scale(1.1)'
-              e.currentTarget.style.background = '#28a745'
-              e.currentTarget.style.color = 'white'
+              e.currentTarget.style.transform = 'scale(1.1)';
+              e.currentTarget.style.background = '#222222';
+              e.currentTarget.style.color = 'white';
             }
           }}
           onMouseLeave={(e) => {
             if (!animating) {
-              e.currentTarget.style.transform = 'scale(1)'
-              e.currentTarget.style.background = 'white'
-              e.currentTarget.style.color = '#28a745'
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.background = 'white';
+              e.currentTarget.style.color = '#222222';
             }
           }}
         >
@@ -421,11 +446,11 @@ export default function TinderProposalsPage() {
             height: '70px',
             borderRadius: '50%',
             background: 'white',
-            border: '3px solid #e91e63',
-            color: '#e91e63',
+            border: '2px solid #DC2626',
+            color: '#DC2626',
             fontSize: '32px',
             cursor: animating ? 'not-allowed' : 'pointer',
-            boxShadow: '0 4px 12px rgba(233, 30, 99, 0.3)',
+            boxShadow: '0 2px 8px rgba(220, 38, 38, 0.15)',
             transition: 'all 0.2s',
             opacity: animating ? 0.5 : 1,
             display: 'flex',
@@ -434,16 +459,16 @@ export default function TinderProposalsPage() {
           }}
           onMouseEnter={(e) => {
             if (!animating) {
-              e.currentTarget.style.transform = 'scale(1.1)'
-              e.currentTarget.style.background = '#e91e63'
-              e.currentTarget.style.color = 'white'
+              e.currentTarget.style.transform = 'scale(1.1)';
+              e.currentTarget.style.background = '#DC2626';
+              e.currentTarget.style.color = 'white';
             }
           }}
           onMouseLeave={(e) => {
             if (!animating) {
-              e.currentTarget.style.transform = 'scale(1)'
-              e.currentTarget.style.background = 'white'
-              e.currentTarget.style.color = '#e91e63'
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.background = 'white';
+              e.currentTarget.style.color = '#DC2626';
             }
           }}
         >
@@ -459,13 +484,37 @@ export default function TinderProposalsPage() {
         gap: '20px',
         marginTop: '12px'
       }}>
-        <div style={{width: '70px', textAlign: 'center', fontSize: '12px', color: '#6a737d', fontWeight: 600}}>
+        <div style={{
+          width: '70px',
+          textAlign: 'center',
+          fontSize: '11px',
+          color: '#999999',
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px'
+        }}>
           Refuser
         </div>
-        <div style={{width: '80px', textAlign: 'center', fontSize: '12px', color: '#6a737d', fontWeight: 600}}>
+        <div style={{
+          width: '80px',
+          textAlign: 'center',
+          fontSize: '11px',
+          color: '#999999',
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px'
+        }}>
           J'aime
         </div>
-        <div style={{width: '70px', textAlign: 'center', fontSize: '12px', color: '#6a737d', fontWeight: 600}}>
+        <div style={{
+          width: '70px',
+          textAlign: 'center',
+          fontSize: '11px',
+          color: '#999999',
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px'
+        }}>
           Coup de ❤️
         </div>
       </div>
@@ -477,45 +526,45 @@ export default function TinderProposalsPage() {
           feedback={feedback}
           onFeedbackChange={setFeedback}
           onClose={() => {
-            setShowFeedbackModal(null)
-            setFeedback('')
+            setShowFeedbackModal(null);
+            setFeedback('');
           }}
           onConfirm={confirmAction}
         />
       )}
     </div>
-  )
+  );
 }
 
-// Spec Item Component
 function SpecItem({ icon, label, value }) {
   return (
     <div>
       <div style={{
-        fontSize: '12px',
-        color: '#6a737d',
+        fontSize: '11px',
+        color: '#999999',
         marginBottom: '4px',
-        fontWeight: 600
+        fontWeight: 600,
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px'
       }}>
         {icon} {label}
       </div>
       <div style={{
         fontSize: '16px',
         fontWeight: 600,
-        color: '#24292e'
+        color: '#222222'
       }}>
         {value || 'N/A'}
       </div>
     </div>
-  )
+  );
 }
 
-// Feedback Modal Component
 function FeedbackModal({ action, feedback, onFeedbackChange, onClose, onConfirm }) {
   const actionConfig = {
     'like': {
-      title: '👍 J\'aime cette proposition',
-      color: '#28a745',
+      title: 'J\'aime cette proposition',
+      color: '#222222',
       placeholder: 'Qu\'est-ce qui vous plaît dans ce véhicule ? (optionnel)',
       suggestions: [
         'Bon rapport qualité-prix',
@@ -526,8 +575,8 @@ function FeedbackModal({ action, feedback, onFeedbackChange, onClose, onConfirm 
       ]
     },
     'super-like': {
-      title: '❤️ Coup de foudre !',
-      color: '#e91e63',
+      title: 'Coup de cœur !',
+      color: '#DC2626',
       placeholder: 'Pourquoi ce véhicule est parfait pour vous ? (optionnel)',
       suggestions: [
         'Exactement ce que je cherchais !',
@@ -538,8 +587,8 @@ function FeedbackModal({ action, feedback, onFeedbackChange, onClose, onConfirm 
       ]
     },
     'reject': {
-      title: '❌ Refuser cette proposition',
-      color: '#dc3545',
+      title: 'Refuser cette proposition',
+      color: '#999999',
       placeholder: 'Pourquoi ce véhicule ne vous convient pas ?',
       suggestions: [
         'Prix trop élevé',
@@ -549,9 +598,9 @@ function FeedbackModal({ action, feedback, onFeedbackChange, onClose, onConfirm 
         'Année trop ancienne'
       ]
     }
-  }
+  };
 
-  const config = actionConfig[action]
+  const config = actionConfig[action];
 
   return (
     <div
@@ -573,55 +622,70 @@ function FeedbackModal({ action, feedback, onFeedbackChange, onClose, onConfirm 
       <div
         style={{
           background: 'white',
-          borderRadius: '20px',
+          borderRadius: '12px',
           padding: '28px',
           maxWidth: '500px',
           width: '100%',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+          boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
         }}
         onClick={(e) => e.stopPropagation()}
       >
         <h2 style={{
           margin: '0 0 16px 0',
-          fontSize: '22px',
-          color: config.color
+          fontSize: '20px',
+          color: config.color,
+          fontWeight: 600
         }}>
           {config.title}
         </h2>
 
         <p style={{
-          color: '#6a737d',
+          color: '#666666',
           fontSize: '14px',
-          marginBottom: '16px'
+          marginBottom: '16px',
+          lineHeight: 1.6
         }}>
           Votre feedback aide l'expert à mieux comprendre vos préférences.
           {action === 'reject' && ' (Requis pour refuser)'}
         </p>
 
         {/* Suggestions */}
-        <div style={{marginBottom: '16px'}}>
+        <div style={{ marginBottom: '16px' }}>
           <div style={{
-            fontSize: '13px',
+            fontSize: '12px',
             fontWeight: 600,
             marginBottom: '8px',
-            color: '#24292e'
+            color: '#222222',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
           }}>
             Suggestions rapides :
           </div>
-          <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {config.suggestions.map(s => (
               <button
                 key={s}
                 onClick={() => onFeedbackChange(s)}
                 style={{
                   padding: '8px 14px',
-                  background: feedback === s ? config.color : '#f0f0f0',
-                  color: feedback === s ? 'white' : '#24292e',
-                  border: 'none',
-                  borderRadius: '20px',
+                  background: feedback === s ? config.color : '#FAFAFA',
+                  color: feedback === s ? 'white' : '#222222',
+                  border: feedback === s ? 'none' : '1px solid #EEEEEE',
+                  borderRadius: '4px',
                   fontSize: '12px',
+                  fontWeight: 500,
                   cursor: 'pointer',
                   transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  if (feedback !== s) {
+                    e.currentTarget.style.background = '#EEEEEE';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (feedback !== s) {
+                    e.currentTarget.style.background = '#FAFAFA';
+                  }
                 }}
               >
                 {s}
@@ -638,31 +702,41 @@ function FeedbackModal({ action, feedback, onFeedbackChange, onClose, onConfirm 
           style={{
             width: '100%',
             padding: '12px',
-            border: '2px solid #e1e4e8',
-            borderRadius: '12px',
+            border: '1px solid #EEEEEE',
+            borderRadius: '8px',
             fontSize: '14px',
             fontFamily: 'inherit',
             minHeight: '80px',
             resize: 'vertical',
             marginBottom: '20px',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            color: '#222222'
           }}
         />
 
         {/* Actions */}
-        <div style={{display: 'flex', gap: '12px'}}>
+        <div style={{ display: 'flex', gap: '12px' }}>
           <button
             onClick={onClose}
             style={{
               flex: 1,
               padding: '14px',
               background: 'white',
-              border: '2px solid #e1e4e8',
-              borderRadius: '10px',
+              border: '1px solid #EEEEEE',
+              borderRadius: '8px',
               fontSize: '15px',
               fontWeight: 600,
               cursor: 'pointer',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              color: '#222222'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#FAFAFA';
+              e.currentTarget.style.borderColor = '#222222';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'white';
+              e.currentTarget.style.borderColor = '#EEEEEE';
             }}
           >
             Annuler
@@ -673,14 +747,24 @@ function FeedbackModal({ action, feedback, onFeedbackChange, onClose, onConfirm 
             style={{
               flex: 1,
               padding: '14px',
-              background: (action === 'reject' && !feedback.trim()) ? '#ccc' : config.color,
+              background: (action === 'reject' && !feedback.trim()) ? '#CCCCCC' : config.color,
               border: 'none',
               color: 'white',
-              borderRadius: '10px',
+              borderRadius: '8px',
               fontSize: '15px',
               fontWeight: 600,
               cursor: (action === 'reject' && !feedback.trim()) ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              if (!(action === 'reject' && !feedback.trim())) {
+                e.currentTarget.style.opacity = '0.9';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!(action === 'reject' && !feedback.trim())) {
+                e.currentTarget.style.opacity = '1';
+              }
             }}
           >
             Confirmer
@@ -688,5 +772,5 @@ function FeedbackModal({ action, feedback, onFeedbackChange, onClose, onConfirm 
         </div>
       </div>
     </div>
-  )
+  );
 }
