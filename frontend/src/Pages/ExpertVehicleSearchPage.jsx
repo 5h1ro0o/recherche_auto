@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AdvancedSearchForm from '../components/AdvancedSearchForm';
+import EnrichedResults from '../ui/Results';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -11,16 +13,17 @@ export default function ExpertVehicleSearchPage() {
   const { user } = useAuth();
 
   const [request, setRequest] = useState(null);
-  const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [searchStats, setSearchStats] = useState(null);
+  const [error, setError] = useState(null);
   const [proposing, setProposing] = useState({});
+  const [initialFilters, setInitialFilters] = useState(null);
 
   const token = localStorage.getItem('token') || localStorage.getItem('access_token');
 
   useEffect(() => {
     fetchRequest();
-    performSearch();
   }, [requestId]);
 
   const fetchRequest = async () => {
@@ -31,65 +34,91 @@ export default function ExpertVehicleSearchPage() {
       if (!response.ok) throw new Error('Erreur chargement demande');
       const data = await response.json();
       setRequest(data);
+
+      // Pré-remplir les filtres avec les critères de la demande
+      const filters = {
+        sources: ['leboncoin', 'autoscout24']
+      };
+
+      // Budget
+      if (data.budget_max) {
+        filters.price_max = data.budget_max.toString();
+      }
+
+      // Carburant
+      if (data.preferred_fuel_type && data.preferred_fuel_type !== 'null') {
+        filters.fuel_type = data.preferred_fuel_type;
+      }
+
+      // Transmission
+      if (data.preferred_transmission && data.preferred_transmission !== 'null') {
+        filters.transmission = data.preferred_transmission;
+      }
+
+      // Kilométrage
+      if (data.max_mileage) {
+        filters.mileage_max = data.max_mileage.toString();
+      }
+
+      // Année
+      if (data.min_year) {
+        filters.year_min = data.min_year.toString();
+      }
+
+      setInitialFilters(filters);
     } catch (error) {
       console.error('Erreur:', error);
       alert('Erreur lors du chargement de la demande');
     }
   };
 
-  const performSearch = async (customQuery = null) => {
+  const handleSearch = async (filters) => {
     setLoading(true);
+    setError(null);
+    setResults([]);
+    setSearchStats(null);
+
+    console.log('🔍 Recherche avec filtres:', filters);
+
     try {
-      // Construire les filtres à partir des critères de la demande
-      const filters = {};
-
-      // Récupérer les critères depuis les searchParams (passés depuis la page précédente)
-      const budgetMax = searchParams.get('budget_max');
-      const fuelType = searchParams.get('fuel_type');
-      const transmission = searchParams.get('transmission');
-      const maxMileage = searchParams.get('max_mileage');
-      const minYear = searchParams.get('min_year');
-
-      if (budgetMax) filters.price_max = parseInt(budgetMax);
-      if (fuelType && fuelType !== 'null') filters.fuel_type = fuelType;
-      if (transmission && transmission !== 'null') filters.transmission = transmission;
-      if (maxMileage) filters.mileage_max = parseInt(maxMileage);
-      if (minYear) filters.year_min = parseInt(minYear);
-
-      const response = await fetch(`${API_URL}/api/search`, {
+      const response = await fetch(`${API_URL}/api/search-advanced/search`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          q: customQuery || searchQuery || null,
-          filters: filters,
-          page: 1,
-          size: 50,
-        }),
+          ...filters,
+          max_pages: 20
+        })
       });
 
-      if (!response.ok) throw new Error('Erreur recherche');
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
       const data = await response.json();
 
-      // Extraire les véhicules des résultats Elasticsearch
-      const vehiclesList = data.hits ? data.hits.map(hit => ({
-        id: hit.id,
-        ...hit.source
-      })) : [];
+      console.log('✅ Résultats reçus:', data);
 
-      setVehicles(vehiclesList);
-    } catch (error) {
-      console.error('Erreur recherche:', error);
-      alert('Erreur lors de la recherche de véhicules');
+      setResults(data.results || []);
+      setSearchStats({
+        total: data.total_results,
+        duration: data.duration,
+        sources: data.sources_stats,
+        filters: data.filters_applied
+      });
+
+    } catch (err) {
+      console.error('❌ Erreur recherche:', err);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleProposeVehicle = async (vehicleId) => {
-    setProposing(prev => ({ ...prev, [vehicleId]: true }));
+  const handleProposeVehicle = async (vehicle) => {
+    setProposing(prev => ({ ...prev, [vehicle.id]: true }));
 
     try {
       const response = await fetch(`${API_URL}/api/assisted/requests/${requestId}/propose`, {
@@ -99,8 +128,19 @@ export default function ExpertVehicleSearchPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          vehicle_id: vehicleId,
-          message: 'Ce véhicule correspond à vos critères de recherche.',
+          vehicle_id: vehicle.id,
+          vehicle_data: {
+            title: vehicle.title,
+            price: vehicle.price,
+            year: vehicle.year,
+            mileage: vehicle.mileage,
+            fuel_type: vehicle.fuel_type,
+            transmission: vehicle.transmission,
+            url: vehicle.url,
+            image_url: vehicle.images?.[0] || null,
+            source: vehicle.source
+          },
+          message: `Ce véhicule correspond parfaitement à vos critères de recherche. ${vehicle.title} - ${vehicle.price}€`
         }),
       });
 
@@ -109,321 +149,313 @@ export default function ExpertVehicleSearchPage() {
       alert('✅ Véhicule proposé au client avec succès !');
 
       // Marquer visuellement comme proposé
-      setVehicles(prev => prev.map(v =>
-        v.id === vehicleId ? { ...v, proposed: true } : v
+      setResults(prev => prev.map(v =>
+        v.id === vehicle.id ? { ...v, proposed: true } : v
       ));
     } catch (error) {
       console.error('Erreur:', error);
       alert('❌ Erreur lors de la proposition du véhicule');
     } finally {
-      setProposing(prev => ({ ...prev, [vehicleId]: false }));
+      setProposing(prev => ({ ...prev, [vehicle.id]: false }));
     }
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    performSearch(searchQuery);
-  };
+  if (!request || !initialFilters) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '80vh'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
+          <p style={{ color: '#666666' }}>Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '20px' }}>
-      {/* Header */}
-      <div style={{ marginBottom: '30px' }}>
-        <button
-          onClick={() => navigate(`/expert/requests/${requestId}`)}
-          style={{
-            background: 'none',
-            border: '1px solid #ddd',
-            padding: '8px 16px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            marginBottom: '16px',
-          }}
-        >
-          ← Retour à la demande
-        </button>
-
-        <h1 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px' }}>
-          🔍 Recherche de véhicules
-        </h1>
-        <p style={{ color: '#6a737d', fontSize: '14px' }}>
-          Proposez des véhicules correspondant aux critères du client
-        </p>
-      </div>
-
-      {/* Critères de recherche appliqués */}
-      {request && (
-        <div style={{
-          background: '#e7f3ff',
-          padding: '16px',
-          borderRadius: '12px',
-          marginBottom: '24px',
-        }}>
-          <div style={{ fontWeight: 600, marginBottom: '12px', color: '#0366d6' }}>
-            📋 Critères du client appliqués :
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {searchParams.get('budget_max') && (
-              <span style={{
-                background: 'white',
-                padding: '6px 12px',
-                borderRadius: '16px',
-                fontSize: '13px',
-                fontWeight: 500,
-              }}>
-                💰 Budget max : {parseInt(searchParams.get('budget_max')).toLocaleString()} €
-              </span>
-            )}
-            {searchParams.get('fuel_type') && searchParams.get('fuel_type') !== 'null' && (
-              <span style={{
-                background: 'white',
-                padding: '6px 12px',
-                borderRadius: '16px',
-                fontSize: '13px',
-                fontWeight: 500,
-              }}>
-                ⛽ Carburant : {searchParams.get('fuel_type')}
-              </span>
-            )}
-            {searchParams.get('transmission') && searchParams.get('transmission') !== 'null' && (
-              <span style={{
-                background: 'white',
-                padding: '6px 12px',
-                borderRadius: '16px',
-                fontSize: '13px',
-                fontWeight: 500,
-              }}>
-                ⚙️ Transmission : {searchParams.get('transmission')}
-              </span>
-            )}
-            {searchParams.get('max_mileage') && (
-              <span style={{
-                background: 'white',
-                padding: '6px 12px',
-                borderRadius: '16px',
-                fontSize: '13px',
-                fontWeight: 500,
-              }}>
-                🛣️ Km max : {parseInt(searchParams.get('max_mileage')).toLocaleString()} km
-              </span>
-            )}
-            {searchParams.get('min_year') && (
-              <span style={{
-                background: 'white',
-                padding: '6px 12px',
-                borderRadius: '16px',
-                fontSize: '13px',
-                fontWeight: 500,
-              }}>
-                📅 Année min : {searchParams.get('min_year')}
-              </span>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Barre de recherche */}
-      <form onSubmit={handleSearchSubmit} style={{ marginBottom: '24px' }}>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <input
-            type="text"
-            placeholder="Rechercher par marque, modèle..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              flex: 1,
-              padding: '12px 16px',
-              border: '2px solid #e1e4e8',
-              borderRadius: '8px',
-              fontSize: '15px',
-            }}
-          />
+    <div style={{ backgroundColor: '#FAFAFA', minHeight: '100vh' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px' }}>
+        {/* Header */}
+        <div style={{ marginBottom: '32px' }}>
           <button
-            type="submit"
-            disabled={loading}
+            onClick={() => navigate(`/expert/requests/${requestId}`)}
             style={{
-              padding: '12px 24px',
-              background: loading ? '#CCCCCC' : '#DC2626',
-              color: 'white',
-              border: 'none',
+              background: 'white',
+              border: '1px solid #EEEEEE',
+              padding: '8px 16px',
               borderRadius: '8px',
-              fontSize: '15px',
-              fontWeight: 600,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'background 0.2s',
+              cursor: 'pointer',
+              marginBottom: '16px',
+              color: '#222222',
+              fontSize: '14px',
+              fontWeight: 500,
+              transition: 'all 0.2s'
             }}
             onMouseEnter={(e) => {
-              if (!loading) e.currentTarget.style.background = '#B91C1C';
+              e.currentTarget.style.borderColor = '#222222';
+              e.currentTarget.style.background = '#FAFAFA';
             }}
             onMouseLeave={(e) => {
-              if (!loading) e.currentTarget.style.background = '#DC2626';
+              e.currentTarget.style.borderColor = '#EEEEEE';
+              e.currentTarget.style.background = 'white';
             }}
           >
-            {loading ? 'Recherche...' : 'Rechercher'}
+            ← Retour à la demande
           </button>
-        </div>
-      </form>
 
-      {/* Résultats */}
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#6a737d' }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
-          <p>Recherche en cours...</p>
-        </div>
-      ) : vehicles.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#6a737d' }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
-          <p>Aucun véhicule trouvé avec ces critères</p>
-          <p style={{ fontSize: '13px' }}>Essayez de modifier votre recherche</p>
-        </div>
-      ) : (
-        <div>
-          <div style={{
-            marginBottom: '16px',
-            fontSize: '14px',
-            color: '#6a737d',
-            fontWeight: 600,
+          <h1 style={{
+            fontSize: '32px',
+            fontWeight: 700,
+            color: '#222222',
+            margin: '0 0 8px 0'
           }}>
-            {vehicles.length} véhicule{vehicles.length > 1 ? 's' : ''} trouvé{vehicles.length > 1 ? 's' : ''}
-          </div>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-            gap: '20px',
-          }}>
-            {vehicles.map((vehicle) => (
-              <VehicleCard
-                key={vehicle.id}
-                vehicle={vehicle}
-                onPropose={() => handleProposeVehicle(vehicle.id)}
-                proposing={proposing[vehicle.id]}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function VehicleCard({ vehicle, onPropose, proposing }) {
-  return (
-    <div style={{
-      background: 'white',
-      borderRadius: '12px',
-      overflow: 'hidden',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-      border: vehicle.proposed ? '2px solid #28a745' : '2px solid transparent',
-      transition: 'all 0.2s',
-    }}>
-      {/* Image */}
-      {vehicle.images && vehicle.images.length > 0 ? (
-        <div style={{
-          height: '200px',
-          background: `url(${vehicle.images[0]})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }} />
-      ) : (
-        <div style={{
-          height: '200px',
-          background: '#FAFAFA',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '48px',
-          color: '#CCCCCC',
-        }}>
-          🚗
-        </div>
-      )}
-
-      {/* Content */}
-      <div style={{ padding: '16px' }}>
-        <h3 style={{
-          margin: '0 0 12px 0',
-          fontSize: '16px',
-          fontWeight: 600,
-          color: '#24292e',
-        }}>
-          {vehicle.title}
-        </h3>
-
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '8px',
-          marginBottom: '16px',
-          fontSize: '13px',
-          color: '#6a737d',
-        }}>
-          {vehicle.price && (
-            <div>💰 {vehicle.price.toLocaleString()} €</div>
-          )}
-          {vehicle.year && (
-            <div>📅 {vehicle.year}</div>
-          )}
-          {vehicle.mileage && (
-            <div>🛣️ {vehicle.mileage.toLocaleString()} km</div>
-          )}
-          {vehicle.fuel_type && (
-            <div>⛽ {vehicle.fuel_type}</div>
-          )}
-        </div>
-
-        {vehicle.description && (
+            Recherche de véhicules
+          </h1>
           <p style={{
-            margin: '0 0 16px 0',
-            fontSize: '13px',
-            color: '#6a737d',
-            lineHeight: 1.5,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
+            fontSize: '16px',
+            color: '#666666',
+            margin: 0
           }}>
-            {vehicle.description}
+            Recherchez et proposez des véhicules pour <strong>{request.client?.full_name || request.client?.email}</strong>
           </p>
+        </div>
+
+        {/* Critères du client */}
+        <div style={{
+          background: 'white',
+          padding: '20px',
+          borderRadius: '12px',
+          marginBottom: '24px',
+          border: '1px solid #EEEEEE',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
+        }}>
+          <div style={{
+            fontSize: '12px',
+            fontWeight: 600,
+            marginBottom: '12px',
+            color: '#222222',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
+          }}>
+            Critères du client
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {request.budget_max && (
+              <span style={{
+                background: '#FAFAFA',
+                padding: '6px 12px',
+                borderRadius: '4px',
+                fontSize: '13px',
+                fontWeight: 500,
+                border: '1px solid #EEEEEE'
+              }}>
+                💰 Budget max : {request.budget_max.toLocaleString()} €
+              </span>
+            )}
+            {request.preferred_fuel_type && request.preferred_fuel_type !== 'null' && (
+              <span style={{
+                background: '#FAFAFA',
+                padding: '6px 12px',
+                borderRadius: '4px',
+                fontSize: '13px',
+                fontWeight: 500,
+                border: '1px solid #EEEEEE'
+              }}>
+                ⛽ Carburant : {request.preferred_fuel_type}
+              </span>
+            )}
+            {request.preferred_transmission && request.preferred_transmission !== 'null' && (
+              <span style={{
+                background: '#FAFAFA',
+                padding: '6px 12px',
+                borderRadius: '4px',
+                fontSize: '13px',
+                fontWeight: 500,
+                border: '1px solid #EEEEEE'
+              }}>
+                ⚙️ Transmission : {request.preferred_transmission}
+              </span>
+            )}
+            {request.max_mileage && (
+              <span style={{
+                background: '#FAFAFA',
+                padding: '6px 12px',
+                borderRadius: '4px',
+                fontSize: '13px',
+                fontWeight: 500,
+                border: '1px solid #EEEEEE'
+              }}>
+                🛣️ Km max : {request.max_mileage.toLocaleString()} km
+              </span>
+            )}
+            {request.min_year && (
+              <span style={{
+                background: '#FAFAFA',
+                padding: '6px 12px',
+                borderRadius: '4px',
+                fontSize: '13px',
+                fontWeight: 500,
+                border: '1px solid #EEEEEE'
+              }}>
+                📅 Année min : {request.min_year}
+              </span>
+            )}
+          </div>
+          {request.description && (
+            <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #EEEEEE' }}>
+              <div style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                marginBottom: '6px',
+                color: '#222222',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                Description du besoin
+              </div>
+              <p style={{
+                margin: 0,
+                fontSize: '14px',
+                color: '#666666',
+                lineHeight: 1.6
+              }}>
+                {request.description}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Formulaire de recherche */}
+        <div style={{
+          background: 'white',
+          padding: '24px',
+          borderRadius: '12px',
+          marginBottom: '24px',
+          border: '1px solid #EEEEEE',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
+        }}>
+          <AdvancedSearchForm
+            onSearch={handleSearch}
+            loading={loading}
+            initialFilters={initialFilters}
+          />
+        </div>
+
+        {/* Statistiques de recherche */}
+        {searchStats && (
+          <div style={{
+            background: 'white',
+            padding: '20px',
+            borderRadius: '12px',
+            marginBottom: '24px',
+            border: '1px solid #EEEEEE',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
+          }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '16px'
+            }}>
+              <h3 style={{
+                fontSize: '18px',
+                fontWeight: 600,
+                color: '#222222',
+                margin: 0
+              }}>
+                {searchStats.total} résultat{searchStats.total > 1 ? 's' : ''} trouvé{searchStats.total > 1 ? 's' : ''}
+              </h3>
+              <span style={{
+                fontSize: '13px',
+                color: '#666666'
+              }}>
+                ⏱️ {searchStats.duration.toFixed(2)}s
+              </span>
+            </div>
+
+            <div style={{
+              display: 'flex',
+              gap: '16px',
+              marginBottom: '12px'
+            }}>
+              {Object.entries(searchStats.sources).map(([source, stats]) => (
+                <div key={source} style={{
+                  flex: 1,
+                  padding: '12px',
+                  background: '#FAFAFA',
+                  borderRadius: '8px',
+                  border: '1px solid #EEEEEE'
+                }}>
+                  <div style={{
+                    fontSize: '12px',
+                    color: '#666666',
+                    marginBottom: '4px',
+                    textTransform: 'uppercase',
+                    fontWeight: 600,
+                    letterSpacing: '0.5px'
+                  }}>
+                    {source === 'leboncoin' ? 'LeBonCoin' : 'AutoScout24'}
+                  </div>
+                  <div style={{
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    color: stats.success ? '#222222' : '#DC2626'
+                  }}>
+                    {stats.success ? `${stats.count} annonces` : `Erreur`}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
-        <button
-          onClick={onPropose}
-          disabled={proposing || vehicle.proposed}
-          style={{
-            width: '100%',
-            padding: '12px',
-            background: vehicle.proposed
-              ? '#222222'
-              : proposing
-                ? '#CCCCCC'
-                : '#DC2626',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: 600,
-            cursor: (proposing || vehicle.proposed) ? 'not-allowed' : 'pointer',
-            transition: 'background 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            if (!proposing && !vehicle.proposed) {
-              e.currentTarget.style.background = '#B91C1C';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!proposing && !vehicle.proposed) {
-              e.currentTarget.style.background = '#DC2626';
-            }
-          }}
-        >
-          {vehicle.proposed
-            ? 'Déjà proposé'
-            : proposing
-              ? 'Envoi...'
-              : 'Envoyer au client'}
-        </button>
+        {/* Erreur */}
+        {error && (
+          <div style={{
+            background: 'white',
+            padding: '20px',
+            borderRadius: '12px',
+            marginBottom: '24px',
+            border: '2px solid #DC2626'
+          }}>
+            <h3 style={{ color: '#DC2626', margin: '0 0 8px 0' }}>❌ Erreur</h3>
+            <p style={{ color: '#666666', margin: 0 }}>{error}</p>
+          </div>
+        )}
+
+        {/* Résultats avec bouton de proposition */}
+        {!loading && !error && results.length > 0 && (
+          <div>
+            <EnrichedResults
+              loading={loading}
+              results={results}
+              total={results.length}
+              showProposeButton={true}
+              onPropose={handleProposeVehicle}
+              proposing={proposing}
+              requestId={requestId}
+            />
+          </div>
+        )}
+
+        {/* État vide */}
+        {!loading && !error && results.length === 0 && searchStats && (
+          <div style={{
+            background: 'white',
+            padding: '60px 20px',
+            borderRadius: '12px',
+            textAlign: 'center',
+            border: '1px solid #EEEEEE'
+          }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
+            <h3 style={{ color: '#222222', margin: '0 0 8px 0' }}>Aucun véhicule trouvé</h3>
+            <p style={{ color: '#666666', margin: 0 }}>Essayez de modifier les critères de recherche</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-export default function AdvancedSearchForm({ onSearch, loading }) {
+export default function AdvancedSearchForm({ onSearch, loading, initialFilters = null }) {
   const [makes, setMakes] = useState([])
   const [models, setModels] = useState([])
   const [years, setYears] = useState([])
@@ -97,6 +97,16 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
       .then(data => setYears(data.years))
       .catch(err => console.error('Erreur chargement années:', err))
   }, [])
+
+  // Appliquer les filtres initiaux (pour pré-remplissage depuis une demande expert par exemple)
+  useEffect(() => {
+    if (initialFilters) {
+      setFilters(prev => ({
+        ...prev,
+        ...initialFilters
+      }))
+    }
+  }, [initialFilters])
 
   // Charger les modèles quand la marque change
   useEffect(() => {

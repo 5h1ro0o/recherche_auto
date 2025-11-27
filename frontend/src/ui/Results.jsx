@@ -2,7 +2,17 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // Composant principal Results enrichi
-export default function EnrichedResults({ loading, results = [], total = 0, page = 1, onPageChange }) {
+export default function EnrichedResults({
+  loading,
+  results = [],
+  total = 0,
+  page = 1,
+  onPageChange,
+  showProposeButton = false,
+  onPropose = null,
+  proposing = {},
+  requestId = null
+}) {
   const [quickViewVehicle, setQuickViewVehicle] = useState(null)
 
   if (loading) {
@@ -39,17 +49,18 @@ export default function EnrichedResults({ loading, results = [], total = 0, page
           <div
             key={vehicle.id}
             style={{
-              border: '1px solid #e1e4e8',
-              borderRadius: '6px',
-              padding: '16px',
+              border: '1px solid #EEEEEE',
+              borderRadius: '12px',
+              padding: '20px',
               backgroundColor: '#fff',
-              transition: 'box-shadow 0.2s ease',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+              transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 3px 12px rgba(0,0,0,0.1)'
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = 'none'
+              e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)'
             }}
           >
             <div style={{ display: 'flex', gap: '16px' }}>
@@ -170,14 +181,17 @@ export default function EnrichedResults({ loading, results = [], total = 0, page
                     state={{ vehicle }}
                     style={{
                       padding: '8px 16px',
-                      backgroundColor: '#0366d6',
+                      backgroundColor: '#DC2626',
                       color: '#fff',
                       textDecoration: 'none',
-                      borderRadius: '6px',
+                      borderRadius: '8px',
                       fontSize: '14px',
-                      fontWeight: 500,
+                      fontWeight: 600,
                       display: 'inline-block',
+                      transition: 'background 0.2s'
                     }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#B91C1C'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = '#DC2626'}
                   >
                     Voir les détails
                   </Link>
@@ -190,17 +204,66 @@ export default function EnrichedResults({ loading, results = [], total = 0, page
                       style={{
                         padding: '8px 16px',
                         backgroundColor: '#fff',
-                        color: '#0366d6',
+                        color: '#222222',
                         textDecoration: 'none',
-                        border: '1px solid #0366d6',
-                        borderRadius: '6px',
+                        border: '1px solid #EEEEEE',
+                        borderRadius: '8px',
                         fontSize: '14px',
                         fontWeight: 500,
                         display: 'inline-block',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = '#222222';
+                        e.currentTarget.style.background = '#FAFAFA';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = '#EEEEEE';
+                        e.currentTarget.style.background = '#fff';
                       }}
                     >
                       Voir l'annonce
                     </a>
+                  )}
+
+                  {/* Bouton pour proposer le véhicule au client (mode expert) */}
+                  {showProposeButton && onPropose && (
+                    <button
+                      onClick={() => onPropose(vehicle)}
+                      disabled={proposing[vehicle.id] || vehicle.proposed}
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: vehicle.proposed
+                          ? '#222222'
+                          : proposing[vehicle.id]
+                            ? '#CCCCCC'
+                            : '#DC2626',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        cursor: (proposing[vehicle.id] || vehicle.proposed) ? 'not-allowed' : 'pointer',
+                        display: 'inline-block',
+                        transition: 'background 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!proposing[vehicle.id] && !vehicle.proposed) {
+                          e.currentTarget.style.background = '#B91C1C';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!proposing[vehicle.id] && !vehicle.proposed) {
+                          e.currentTarget.style.background = '#DC2626';
+                        }
+                      }}
+                    >
+                      {vehicle.proposed
+                        ? '✓ Déjà proposé'
+                        : proposing[vehicle.id]
+                          ? 'Envoi...'
+                          : 'Proposer au client'}
+                    </button>
                   )}
                 </div>
               </div>
