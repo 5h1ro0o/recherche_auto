@@ -72,6 +72,25 @@ export default function ExpertVehicleSearchPage() {
     }
   };
 
+  // Fonction pour générer un ID stable basé sur l'URL du véhicule
+  const generateVehicleId = (url, source) => {
+    if (!url) {
+      // Fallback: générer un UUID aléatoire
+      return `${source}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    // Créer un hash simple de l'URL pour un ID stable
+    let hash = 0;
+    for (let i = 0; i < url.length; i++) {
+      const char = url.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+
+    // Combiner source et hash pour un ID unique
+    return `${source}_${Math.abs(hash).toString(36)}`;
+  };
+
   const handleSearch = async (filters) => {
     setLoading(true);
     setError(null);
@@ -101,7 +120,13 @@ export default function ExpertVehicleSearchPage() {
 
       console.log('✅ Résultats reçus:', data);
 
-      setResults(data.results || []);
+      // Générer des IDs stables pour les véhicules qui n'en ont pas
+      const vehiclesWithIds = (data.results || []).map(vehicle => ({
+        ...vehicle,
+        id: vehicle.id || generateVehicleId(vehicle.url, vehicle.source)
+      }));
+
+      setResults(vehiclesWithIds);
       setSearchStats({
         total: data.total_results,
         duration: data.duration,
