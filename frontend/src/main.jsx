@@ -7,6 +7,7 @@ import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 
 import App from './App'
+import ExpertLayout from './Layouts/ExpertLayout'
 import HomePage from './Pages/HomePage'
 import SearchPage from './Pages/SearchPage'
 import AdvancedSearchPage from './Pages/AdvancedSearchPage'
@@ -21,6 +22,8 @@ import ExpertDashboard from './Pages/ExpertDashboard'
 import ExpertRequestDetailPage from './Pages/ExpertRequestDetailPage'
 import ExpertRequestsPage from './Pages/ExpertRequestsPage'
 import ExpertVehicleSearchPage from './Pages/ExpertVehicleSearchPage'
+import ExpertMarketPage from './Pages/ExpertMarketPage'
+import ExpertMissionsPage from './Pages/ExpertMissionsPage'
 import TinderProposalsPage from './Pages/TinderProposalsPage'
 import AdminDashboard from './Pages/AdminDashboard'
 import MessagesPage from './Pages/MessagesPage'
@@ -106,40 +109,66 @@ createRoot(document.getElementById('root')).render(
                   </ProtectedRoute>
                 }
               />
-              
-              {/* Routes protégées - Expert uniquement */}
-              <Route
-                path="/expert"
-                element={
-                  <ProtectedRoute requiredRole="EXPERT">
-                    <ExpertDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/expert/requests"
-                element={
-                  <ProtectedRoute requiredRole="EXPERT">
-                    <ExpertRequestsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/expert/requests/:requestId"
-                element={
-                  <ProtectedRoute requiredRole="EXPERT">
-                    <ExpertRequestDetailPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/expert/requests/:requestId/search"
-                element={
-                  <ProtectedRoute requiredRole="EXPERT">
-                    <ExpertVehicleSearchPage />
-                  </ProtectedRoute>
-                }
-              />
+
+              {/* Routes protégées - Expert uniquement (avec layout spécial) */}
+              <Route element={<ExpertLayout />}>
+                <Route
+                  path="/expert"
+                  element={
+                    <ProtectedRoute requiredRole="EXPERT">
+                      <ExpertDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/expert/market"
+                  element={
+                    <ProtectedRoute requiredRole="EXPERT">
+                      <ExpertMarketPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/expert/missions"
+                  element={
+                    <ProtectedRoute requiredRole="EXPERT">
+                      <ExpertMissionsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/expert/search"
+                  element={
+                    <ProtectedRoute requiredRole="EXPERT">
+                      <AdvancedSearchPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/expert/requests"
+                  element={
+                    <ProtectedRoute requiredRole="EXPERT">
+                      <ExpertRequestsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/expert/requests/:requestId"
+                  element={
+                    <ProtectedRoute requiredRole="EXPERT">
+                      <ExpertRequestDetailPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/expert/requests/:requestId/search"
+                  element={
+                    <ProtectedRoute requiredRole="EXPERT">
+                      <ExpertVehicleSearchPage />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
 
               {/* Routes protégées - Tinder client */}
               <Route
