@@ -32,6 +32,14 @@ class AssistedRequestUpdate(BaseModel):
     max_mileage: Optional[int] = None
     min_year: Optional[int] = None
 
+class UserBasic(BaseModel):
+    """Schéma minimaliste pour les informations utilisateur"""
+    id: str
+    email: str
+    full_name: Optional[str] = None
+
+    model_config = {"from_attributes": True}
+
 class AssistedRequestOut(BaseModel):
     id: str
     client_id: str
@@ -47,12 +55,15 @@ class AssistedRequestOut(BaseModel):
     created_at: datetime
     accepted_at: Optional[datetime]
     completed_at: Optional[datetime]
-    
+    client: Optional[UserBasic] = None
+    expert: Optional[UserBasic] = None
+
     model_config = {"from_attributes": True}
 
 class ProposedVehicleCreate(BaseModel):
     vehicle_id: str
     message: Optional[str] = None
+    vehicle_data: Optional[Dict[str, Any]] = None  # Données du véhicule si pas encore en DB
 
 class ProposalUpdate(BaseModel):
     status: ProposalStatus
@@ -160,18 +171,24 @@ async def get_request_detail(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Détail d'une demande (client)"""
+    """Détail d'une demande (client OU expert assigné)"""
     request = db.query(AssistedRequest).filter(
-        AssistedRequest.id == request_id,
-        AssistedRequest.client_id == current_user.id
+        AssistedRequest.id == request_id
     ).first()
-    
+
     if not request:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Demande non trouvée"
         )
-    
+
+    # Vérifier que l'utilisateur est soit le client, soit l'expert assigné
+    if request.client_id != current_user.id and request.expert_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Accès non autorisé à cette demande"
+        )
+
     return request
 
 @router.patch("/requests/{request_id}", response_model=AssistedRequestOut)
@@ -244,16 +261,22 @@ async def get_my_proposals(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Voir les véhicules proposés par l'expert (client)"""
+    """Voir les véhicules proposés (client OU expert assigné)"""
     request = db.query(AssistedRequest).filter(
-        AssistedRequest.id == request_id,
-        AssistedRequest.client_id == current_user.id
+        AssistedRequest.id == request_id
     ).first()
-    
+
     if not request:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Demande non trouvée"
+        )
+
+    # Vérifier que l'utilisateur est soit le client, soit l'expert assigné
+    if request.client_id != current_user.id and request.expert_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Accès non autorisé à cette demande"
         )
     
     proposals = db.query(ProposedVehicle).filter(
@@ -508,33 +531,56 @@ async def propose_vehicle(
         AssistedRequest.expert_id == current_user.id,
         AssistedRequest.status == RequestStatus.IN_PROGRESS
     ).first()
-    
+
     if not request:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Demande non trouvée ou vous n'êtes pas assigné"
         )
-    
-    # Vérifier que le véhicule existe
+
+    # Vérifier que le véhicule existe, sinon le créer si vehicle_data est fourni
     vehicle = db.query(Vehicle).filter(Vehicle.id == proposal_data.vehicle_id).first()
-    if not vehicle:
+    if not vehicle and proposal_data.vehicle_data:
+        # Créer le véhicule à partir des données fournies
+        vdata = proposal_data.vehicle_data
+        vehicle = Vehicle(
+            id=proposal_data.vehicle_id,
+            title=vdata.get('title'),
+            make=vdata.get('make'),
+            model=vdata.get('model'),
+            price=vdata.get('price'),
+            year=vdata.get('year'),
+            mileage=vdata.get('mileage'),
+            fuel_type=vdata.get('fuel_type'),
+            transmission=vdata.get('transmission'),
+            url=vdata.get('url'),
+            images=vdata.get('image_url', []) if isinstance(vdata.get('image_url'), list) else [vdata.get('image_url')] if vdata.get('image_url') else [],
+            source=vdata.get('source', 'scraping'),
+            description=vdata.get('description'),
+            location_city=vdata.get('location_city'),
+            seller_type='PRO' if vdata.get('source') in ['autoscout24', 'lacentrale'] else 'PARTICULAR'
+        )
+        db.add(vehicle)
+        db.flush()  # Pour obtenir l'ID sans commit
+        logger.info(f"Véhicule créé depuis scraping: {vehicle.id}")
+    elif not vehicle:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Véhicule non trouvé"
+            detail="Véhicule non trouvé et aucune donnée fournie pour le créer"
         )
-    
+
     # Vérifier si déjà proposé
     existing = db.query(ProposedVehicle).filter(
         ProposedVehicle.request_id == request_id,
         ProposedVehicle.vehicle_id == proposal_data.vehicle_id
     ).first()
-    
+
     if existing:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Véhicule déjà proposé pour cette demande"
         )
-    
+
     proposal = ProposedVehicle(
         id=str(uuid.uuid4()),
         request_id=request_id,
@@ -542,11 +588,11 @@ async def propose_vehicle(
         status=ProposalStatus.PENDING,
         message=proposal_data.message
     )
-    
+
     db.add(proposal)
     db.commit()
     db.refresh(proposal)
-    
+
     logger.info(f"Véhicule {proposal_data.vehicle_id} proposé pour demande {request_id}")
     return proposal
 
