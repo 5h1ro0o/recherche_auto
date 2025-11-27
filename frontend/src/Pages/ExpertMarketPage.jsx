@@ -188,13 +188,13 @@ export default function ExpertMarketPage() {
             icon="📋"
             label="Demandes disponibles"
             value={filteredAndSortedRequests.length}
-            color="#667eea"
+            color="#222222"
           />
           <StatCard
             icon="🚨"
             label="Demandes urgentes"
             value={filteredAndSortedRequests.filter(r => isUrgent(r.created_at)).length}
-            color="#dc3545"
+            color="#DC2626"
           />
           <StatCard
             icon="💰"
@@ -207,7 +207,7 @@ export default function ExpertMarketPage() {
                   ).toLocaleString() + ' €'
                 : 'N/A'
             }
-            color="#28a745"
+            color="#666666"
           />
         </div>
       )}
@@ -300,23 +300,17 @@ function RequestCard({ request, onAccept, isUrgent }) {
   return (
     <div style={{
       background: 'white',
-      borderRadius: '16px',
+      borderRadius: '12px',
       padding: '24px',
-      boxShadow: isUrgent
-        ? '0 4px 12px rgba(220, 53, 69, 0.15)'
-        : '0 1px 3px rgba(0,0,0,0.08)',
-      border: isUrgent ? '2px solid #dc3545' : '2px solid transparent',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      border: isUrgent ? '2px solid #DC2626' : '1px solid #EEEEEE',
       transition: 'all 0.2s',
     }}
     onMouseEnter={(e) => {
-      e.currentTarget.style.transform = 'translateY(-4px)';
-      e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)';
+      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)';
     }}
     onMouseLeave={(e) => {
-      e.currentTarget.style.transform = 'translateY(0)';
-      e.currentTarget.style.boxShadow = isUrgent
-        ? '0 4px 12px rgba(220, 53, 69, 0.15)'
-        : '0 1px 3px rgba(0,0,0,0.08)';
+      e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
     }}
     >
       {/* Header */}
@@ -335,7 +329,7 @@ function RequestCard({ request, onAccept, isUrgent }) {
             width: '36px',
             height: '36px',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: '#DC2626',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -357,15 +351,16 @@ function RequestCard({ request, onAccept, isUrgent }) {
 
         {isUrgent && (
           <span style={{
-            background: '#dc3545',
+            background: '#DC2626',
             color: 'white',
             padding: '4px 8px',
-            borderRadius: '6px',
+            borderRadius: '4px',
             fontSize: '11px',
-            fontWeight: 700,
+            fontWeight: 600,
+            letterSpacing: '0.5px',
             textTransform: 'uppercase',
           }}>
-            🚨 Urgent
+            Urgent
           </span>
         )}
       </div>
@@ -417,25 +412,23 @@ function RequestCard({ request, onAccept, isUrgent }) {
         style={{
           width: '100%',
           padding: '14px',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: '#DC2626',
           color: 'white',
           border: 'none',
-          borderRadius: '10px',
+          borderRadius: '8px',
           fontSize: '15px',
           fontWeight: 600,
           cursor: 'pointer',
-          transition: 'all 0.2s',
+          transition: 'background 0.2s',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'scale(1.02)';
-          e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+          e.currentTarget.style.background = '#B91C1C';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'scale(1)';
-          e.currentTarget.style.boxShadow = 'none';
+          e.currentTarget.style.background = '#DC2626';
         }}
       >
-        ✅ Accepter cette demande
+        Accepter cette demande
       </button>
     </div>
   );

@@ -63,19 +63,19 @@ export default function ExpertMissionsPage() {
           icon="🔄"
           label="En cours"
           value={missions?.length || 0}
-          color="#0366d6"
+          color="#DC2626"
         />
         <StatCard
           icon="✅"
           label="Terminées"
           value={completed?.length || 0}
-          color="#28a745"
+          color="#222222"
         />
         <StatCard
           icon="📊"
           label="Total"
           value={totalMissions}
-          color="#6a737d"
+          color="#666666"
         />
         <StatCard
           icon="📈"
@@ -85,7 +85,7 @@ export default function ExpertMissionsPage() {
               ? `${Math.round(((completed?.length || 0) / totalMissions) * 100)}%`
               : '0%'
           }
-          color="#764ba2"
+          color="#222222"
         />
       </div>
 
@@ -126,16 +126,19 @@ export default function ExpertMissionsPage() {
               onClick={() => navigate('/expert/market')}
               style={{
                 padding: '12px 24px',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: '#DC2626',
                 color: 'white',
                 border: 'none',
-                borderRadius: '10px',
+                borderRadius: '8px',
                 fontSize: '15px',
                 fontWeight: 600,
                 cursor: 'pointer',
+                transition: 'background 0.2s',
               }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#B91C1C'}
+              onMouseLeave={(e) => e.currentTarget.style.background = '#DC2626'}
             >
-              🏪 Voir le marché
+              Voir le marché
             </button>
           </div>
         ) : (
@@ -227,10 +230,10 @@ function MissionCard({ mission, onViewDetails, onComplete, onSearchVehicles }) {
   return (
     <div style={{
       background: 'white',
-      borderRadius: '16px',
+      borderRadius: '12px',
       padding: '24px',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-      border: '2px solid #667eea',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      border: '1px solid #EEEEEE',
     }}>
       {/* Header */}
       <div style={{
@@ -253,12 +256,14 @@ function MissionCard({ mission, onViewDetails, onComplete, onSearchVehicles }) {
           </div>
         </div>
         <span style={{
-          background: '#0366d6',
+          background: '#DC2626',
           color: 'white',
           padding: '4px 10px',
-          borderRadius: '12px',
-          fontSize: '12px',
+          borderRadius: '4px',
+          fontSize: '11px',
           fontWeight: 600,
+          letterSpacing: '0.5px',
+          textTransform: 'uppercase',
         }}>
           En cours
         </span>
@@ -297,14 +302,17 @@ function MissionCard({ mission, onViewDetails, onComplete, onSearchVehicles }) {
           style={{
             width: '100%',
             padding: '12px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: '#DC2626',
             color: 'white',
             border: 'none',
             borderRadius: '8px',
             fontSize: '14px',
             fontWeight: 600,
             cursor: 'pointer',
+            transition: 'background 0.2s',
           }}
+          onMouseEnter={(e) => e.currentTarget.style.background = '#B91C1C'}
+          onMouseLeave={(e) => e.currentTarget.style.background = '#DC2626'}
         >
           🔍 Rechercher véhicules
         </button>
@@ -315,31 +323,43 @@ function MissionCard({ mission, onViewDetails, onComplete, onSearchVehicles }) {
               flex: 1,
               padding: '10px',
               background: 'white',
-              color: '#0366d6',
-              border: '2px solid #0366d6',
+              color: '#222222',
+              border: '1px solid #EEEEEE',
               borderRadius: '8px',
               fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#222222';
+              e.currentTarget.style.background = '#FAFAFA';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#EEEEEE';
+              e.currentTarget.style.background = 'white';
             }}
           >
-            👁️ Détails
+            Détails
           </button>
           <button
             onClick={onComplete}
             style={{
               flex: 1,
               padding: '10px',
-              background: '#28a745',
+              background: '#222222',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
               fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',
+              transition: 'background 0.2s',
             }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#000000'}
+            onMouseLeave={(e) => e.currentTarget.style.background = '#222222'}
           >
-            ✅ Terminer
+            Terminer
           </button>
         </div>
       </div>
@@ -382,14 +402,16 @@ function CompletedMissionCard({ mission, onViewDetails }) {
           </div>
         </div>
         <span style={{
-          background: '#28a745',
+          background: '#222222',
           color: 'white',
           padding: '4px 8px',
-          borderRadius: '12px',
+          borderRadius: '4px',
           fontSize: '11px',
           fontWeight: 600,
+          letterSpacing: '0.5px',
+          textTransform: 'uppercase',
         }}>
-          ✅ Terminée
+          Terminée
         </span>
       </div>
 
@@ -398,16 +420,25 @@ function CompletedMissionCard({ mission, onViewDetails }) {
         style={{
           width: '100%',
           padding: '10px',
-          background: '#f6f8fa',
-          color: '#24292e',
-          border: '1px solid #e1e4e8',
+          background: 'white',
+          color: '#222222',
+          border: '1px solid #EEEEEE',
           borderRadius: '8px',
           fontSize: '13px',
           fontWeight: 600,
           cursor: 'pointer',
+          transition: 'all 0.2s',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = '#222222';
+          e.currentTarget.style.background = '#FAFAFA';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = '#EEEEEE';
+          e.currentTarget.style.background = 'white';
         }}
       >
-        👁️ Voir les détails
+        Voir les détails
       </button>
     </div>
   );

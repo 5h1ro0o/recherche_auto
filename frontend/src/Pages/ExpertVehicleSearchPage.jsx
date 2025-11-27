@@ -243,16 +243,23 @@ export default function ExpertVehicleSearchPage() {
             disabled={loading}
             style={{
               padding: '12px 24px',
-              background: loading ? '#ccc' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: loading ? '#CCCCCC' : '#DC2626',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
               fontSize: '15px',
               fontWeight: 600,
               cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              if (!loading) e.currentTarget.style.background = '#B91C1C';
+            }}
+            onMouseLeave={(e) => {
+              if (!loading) e.currentTarget.style.background = '#DC2626';
             }}
           >
-            {loading ? '🔍 Recherche...' : '🔍 Rechercher'}
+            {loading ? 'Recherche...' : 'Rechercher'}
           </button>
         </div>
       </form>
@@ -321,11 +328,12 @@ function VehicleCard({ vehicle, onPropose, proposing }) {
       ) : (
         <div style={{
           height: '200px',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: '#FAFAFA',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: '48px',
+          color: '#CCCCCC',
         }}>
           🚗
         </div>
@@ -387,24 +395,34 @@ function VehicleCard({ vehicle, onPropose, proposing }) {
             width: '100%',
             padding: '12px',
             background: vehicle.proposed
-              ? '#28a745'
+              ? '#222222'
               : proposing
-                ? '#ccc'
-                : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                ? '#CCCCCC'
+                : '#DC2626',
             color: 'white',
             border: 'none',
             borderRadius: '8px',
             fontSize: '14px',
             fontWeight: 600,
             cursor: (proposing || vehicle.proposed) ? 'not-allowed' : 'pointer',
-            transition: 'all 0.2s',
+            transition: 'background 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            if (!proposing && !vehicle.proposed) {
+              e.currentTarget.style.background = '#B91C1C';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!proposing && !vehicle.proposed) {
+              e.currentTarget.style.background = '#DC2626';
+            }
           }}
         >
           {vehicle.proposed
-            ? '✅ Déjà proposé'
+            ? 'Déjà proposé'
             : proposing
-              ? '⏳ Envoi...'
-              : '📤 Envoyer au client'}
+              ? 'Envoi...'
+              : 'Envoyer au client'}
         </button>
       </div>
     </div>
