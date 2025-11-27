@@ -74,9 +74,12 @@ export default function ExpertVehicleSearchPage() {
 
   // Fonction pour générer un ID stable basé sur l'URL du véhicule
   const generateVehicleId = (url, source) => {
+    // Assurer que source a une valeur par défaut
+    const safeSource = source || 'scraping';
+
     if (!url) {
       // Fallback: générer un UUID aléatoire
-      return `${source}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      return `${safeSource}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     }
 
     // Créer un hash simple de l'URL pour un ID stable
@@ -88,7 +91,7 @@ export default function ExpertVehicleSearchPage() {
     }
 
     // Combiner source et hash pour un ID unique
-    return `${source}_${Math.abs(hash).toString(36)}`;
+    return `${safeSource}_${Math.abs(hash).toString(36)}`;
   };
 
   const handleSearch = async (filters) => {

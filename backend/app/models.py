@@ -45,7 +45,7 @@ class Vehicle(Base):
     price = Column(Integer, index=True)
     mileage = Column(Integer)
     year = Column(Integer)
-    vin = Column(String, unique=True, index=True)
+    # vin = Column(String, unique=True, index=True, nullable=True)  # Colonne non présente en DB
     fuel_type = Column(String)  # essence, diesel, electrique, hybride
     transmission = Column(String)  # manuelle, automatique
     description = Column(Text)

@@ -543,6 +543,22 @@ async def propose_vehicle(
     if not vehicle and proposal_data.vehicle_data:
         # Créer le véhicule à partir des données fournies
         vdata = proposal_data.vehicle_data
+
+        # Préparer les images (s'assurer que c'est une liste)
+        images_list = []
+        if vdata.get('image_url'):
+            if isinstance(vdata.get('image_url'), list):
+                images_list = vdata.get('image_url')
+            else:
+                images_list = [vdata.get('image_url')]
+
+        # Stocker les infos de source dans source_ids
+        source_data = {
+            'source': vdata.get('source', 'scraping'),
+            'url': vdata.get('url'),
+            'original_id': vdata.get('original_id')
+        }
+
         vehicle = Vehicle(
             id=proposal_data.vehicle_id,
             title=vdata.get('title'),
@@ -553,12 +569,10 @@ async def propose_vehicle(
             mileage=vdata.get('mileage'),
             fuel_type=vdata.get('fuel_type'),
             transmission=vdata.get('transmission'),
-            url=vdata.get('url'),
-            images=vdata.get('image_url', []) if isinstance(vdata.get('image_url'), list) else [vdata.get('image_url')] if vdata.get('image_url') else [],
-            source=vdata.get('source', 'scraping'),
+            images=images_list,
+            source_ids=source_data,
             description=vdata.get('description'),
-            location_city=vdata.get('location_city'),
-            seller_type='PRO' if vdata.get('source') in ['autoscout24', 'lacentrale'] else 'PARTICULAR'
+            location_city=vdata.get('location_city')
         )
         db.add(vehicle)
         db.flush()  # Pour obtenir l'ID sans commit
