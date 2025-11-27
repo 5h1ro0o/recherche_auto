@@ -99,16 +99,16 @@ export default function ExpertLayout() {
             active={isActive('/expert/search')}
           />
           <NavLink
-            to="/messages"
+            to="/expert/messages"
             icon="💬"
             label="Messagerie"
-            active={isActive('/messages')}
+            active={isActive('/expert/messages')}
           />
           <NavLink
-            to="/profile"
+            to="/expert/profile"
             icon="👤"
             label="Mon profil"
-            active={isActive('/profile')}
+            active={isActive('/expert/profile')}
           />
         </nav>
 
