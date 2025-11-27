@@ -7,7 +7,7 @@ const ExpertRequestsPage = () => {
   const [filter, setFilter] = useState('PENDING');
   const navigate = useNavigate();
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token') || localStorage.getItem('access_token');
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   useEffect(() => {
@@ -40,13 +40,26 @@ const ExpertRequestsPage = () => {
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      PENDING: { label: 'En attente', color: 'bg-yellow-100 text-yellow-800' },
-      IN_PROGRESS: { label: 'En cours', color: 'bg-blue-100 text-blue-800' },
-      COMPLETED: { label: 'Terminée', color: 'bg-green-100 text-green-800' },
-      CANCELLED: { label: 'Annulée', color: 'bg-red-100 text-red-800' },
+      PENDING: { label: 'En attente', color: '#666666' },
+      IN_PROGRESS: { label: 'En cours', color: '#DC2626' },
+      COMPLETED: { label: 'Terminée', color: '#222222' },
+      CANCELLED: { label: 'Annulée', color: '#999999' },
     };
-    const { label, color } = statusMap[status] || { label: status, color: 'bg-gray-100 text-gray-800' };
-    return <span className={`px-3 py-1 rounded-full text-sm font-medium ${color}`}>{label}</span>;
+    const { label, color } = statusMap[status] || { label: status, color: '#666666' };
+    return (
+      <span style={{
+        background: color,
+        color: 'white',
+        padding: '4px 10px',
+        borderRadius: '4px',
+        fontSize: '11px',
+        fontWeight: 600,
+        letterSpacing: '0.5px',
+        textTransform: 'uppercase'
+      }}>
+        {label}
+      </span>
+    );
   };
 
   const formatDate = (dateString) => {
@@ -60,133 +73,245 @@ const ExpertRequestsPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Demandes de recherche personnalisée</h1>
-        <p className="text-gray-600">Gérez les demandes des clients et proposez-leur des véhicules</p>
+    <div style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
+      {/* Header */}
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{
+          fontSize: '32px',
+          fontWeight: 700,
+          color: '#222222',
+          margin: '0 0 8px 0',
+        }}>
+          Demandes de recherche personnalisée
+        </h1>
+        <p style={{
+          fontSize: '16px',
+          color: '#666666',
+          margin: 0,
+        }}>
+          Gérez les demandes des clients et proposez-leur des véhicules
+        </p>
       </div>
 
       {/* Filtres */}
-      <div className="mb-6 flex gap-2">
-        <button
+      <div style={{
+        display: 'flex',
+        gap: '8px',
+        marginBottom: '24px',
+        flexWrap: 'wrap'
+      }}>
+        <FilterButton
+          label="En attente"
+          active={filter === 'PENDING'}
           onClick={() => setFilter('PENDING')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            filter === 'PENDING'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          En attente
-        </button>
-        <button
+        />
+        <FilterButton
+          label="En cours"
+          active={filter === 'IN_PROGRESS'}
           onClick={() => setFilter('IN_PROGRESS')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            filter === 'IN_PROGRESS'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          En cours
-        </button>
-        <button
+        />
+        <FilterButton
+          label="Terminées"
+          active={filter === 'COMPLETED'}
           onClick={() => setFilter('COMPLETED')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            filter === 'COMPLETED'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          Terminées
-        </button>
-        <button
+        />
+        <FilterButton
+          label="Toutes"
+          active={filter === ''}
           onClick={() => setFilter('')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            filter === ''
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          Toutes
-        </button>
+        />
       </div>
 
       {/* Liste des demandes */}
       {loading ? (
-        <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Chargement des demandes...</p>
+        <div style={{
+          textAlign: 'center',
+          padding: '60px 20px',
+        }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
+          <p style={{ color: '#666666' }}>Chargement des demandes...</p>
         </div>
       ) : requests.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-500 text-lg">Aucune demande trouvée</p>
+        <div style={{
+          textAlign: 'center',
+          padding: '60px 20px',
+          background: '#FAFAFA',
+          borderRadius: '12px',
+          border: '1px solid #EEEEEE'
+        }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>📭</div>
+          <p style={{ color: '#666666', fontSize: '16px' }}>Aucune demande trouvée</p>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+          gap: '20px',
+        }}>
           {requests.map((request) => (
-            <div
+            <RequestCard
               key={request.id}
-              className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 cursor-pointer"
-              onClick={() => navigate(`/expert/requests/${request.id}`)}
-            >
-              <div className="flex justify-between items-start mb-4">
-                {getStatusBadge(request.status)}
-                <span className="text-sm text-gray-500">
-                  {formatDate(request.created_at)}
-                </span>
-              </div>
-
-              <h3 className="font-semibold text-lg mb-2 text-gray-900">
-                Demande de recherche
-              </h3>
-
-              <p className="text-gray-600 mb-4 line-clamp-3">
-                {request.description}
-              </p>
-
-              <div className="space-y-2 text-sm">
-                {request.budget_max && (
-                  <div className="flex items-center text-gray-700">
-                    <span className="font-medium mr-2">Budget max:</span>
-                    <span>{request.budget_max.toLocaleString()} €</span>
-                  </div>
-                )}
-                {request.preferred_fuel_type && (
-                  <div className="flex items-center text-gray-700">
-                    <span className="font-medium mr-2">Carburant:</span>
-                    <span className="capitalize">{request.preferred_fuel_type}</span>
-                  </div>
-                )}
-                {request.max_mileage && (
-                  <div className="flex items-center text-gray-700">
-                    <span className="font-medium mr-2">Kilométrage max:</span>
-                    <span>{request.max_mileage.toLocaleString()} km</span>
-                  </div>
-                )}
-                {request.min_year && (
-                  <div className="flex items-center text-gray-700">
-                    <span className="font-medium mr-2">Année min:</span>
-                    <span>{request.min_year}</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/expert/requests/${request.id}`);
-                  }}
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                >
-                  {request.status === 'PENDING' ? 'Accepter la demande' : 'Voir les détails'}
-                </button>
-              </div>
-            </div>
+              request={request}
+              onViewDetails={() => navigate(`/expert/requests/${request.id}`)}
+              getStatusBadge={getStatusBadge}
+              formatDate={formatDate}
+            />
           ))}
         </div>
       )}
     </div>
   );
 };
+
+function FilterButton({ label, active, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        padding: '12px 20px',
+        background: active ? '#DC2626' : 'white',
+        color: active ? 'white' : '#222222',
+        border: active ? 'none' : '1px solid #EEEEEE',
+        borderRadius: '8px',
+        fontSize: '14px',
+        fontWeight: 600,
+        cursor: 'pointer',
+        transition: 'all 0.2s',
+      }}
+      onMouseEnter={(e) => {
+        if (!active) {
+          e.currentTarget.style.borderColor = '#222222';
+          e.currentTarget.style.background = '#FAFAFA';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          e.currentTarget.style.borderColor = '#EEEEEE';
+          e.currentTarget.style.background = 'white';
+        }
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+function RequestCard({ request, onViewDetails, getStatusBadge, formatDate }) {
+  return (
+    <div
+      onClick={onViewDetails}
+      style={{
+        background: 'white',
+        borderRadius: '12px',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+        border: '1px solid #EEEEEE',
+        padding: '24px',
+        cursor: 'pointer',
+        transition: 'all 0.2s',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
+      }}
+    >
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: '16px',
+      }}>
+        {getStatusBadge(request.status)}
+        <span style={{
+          fontSize: '12px',
+          color: '#999999',
+        }}>
+          {formatDate(request.created_at)}
+        </span>
+      </div>
+
+      {/* Title */}
+      <h3 style={{
+        fontSize: '18px',
+        fontWeight: 600,
+        color: '#222222',
+        margin: '0 0 12px 0',
+      }}>
+        Demande de recherche
+      </h3>
+
+      {/* Description */}
+      <p style={{
+        fontSize: '14px',
+        color: '#666666',
+        lineHeight: 1.6,
+        marginBottom: '16px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        display: '-webkit-box',
+        WebkitLineClamp: 3,
+        WebkitBoxOrient: 'vertical',
+      }}>
+        {request.description}
+      </p>
+
+      {/* Criteria */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+        marginBottom: '16px',
+        fontSize: '13px',
+      }}>
+        {request.budget_max && (
+          <div style={{ color: '#666666' }}>
+            <span style={{ fontWeight: 600, color: '#222222' }}>Budget max:</span> {request.budget_max.toLocaleString()} €
+          </div>
+        )}
+        {request.preferred_fuel_type && (
+          <div style={{ color: '#666666' }}>
+            <span style={{ fontWeight: 600, color: '#222222' }}>Carburant:</span> {request.preferred_fuel_type}
+          </div>
+        )}
+        {request.max_mileage && (
+          <div style={{ color: '#666666' }}>
+            <span style={{ fontWeight: 600, color: '#222222' }}>Kilométrage max:</span> {request.max_mileage.toLocaleString()} km
+          </div>
+        )}
+        {request.min_year && (
+          <div style={{ color: '#666666' }}>
+            <span style={{ fontWeight: 600, color: '#222222' }}>Année min:</span> {request.min_year}
+          </div>
+        )}
+      </div>
+
+      {/* Action Button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onViewDetails();
+        }}
+        style={{
+          width: '100%',
+          padding: '12px',
+          background: '#DC2626',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: 600,
+          cursor: 'pointer',
+          transition: 'background 0.2s',
+        }}
+        onMouseEnter={(e) => e.currentTarget.style.background = '#B91C1C'}
+        onMouseLeave={(e) => e.currentTarget.style.background = '#DC2626'}
+      >
+        {request.status === 'PENDING' ? 'Accepter la demande' : 'Voir les détails'}
+      </button>
+    </div>
+  );
+}
 
 export default ExpertRequestsPage;

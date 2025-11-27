@@ -84,15 +84,27 @@ export default function ExpertRequestDetailPage() {
     <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '20px' }}>
       {/* Header */}
       <div style={{ marginBottom: '30px' }}>
-        <button 
+        <button
           onClick={() => navigate('/expert')}
           style={{
-            background: 'none',
-            border: '1px solid #ddd',
+            background: 'white',
+            border: '1px solid #EEEEEE',
             padding: '8px 16px',
             borderRadius: '8px',
             cursor: 'pointer',
-            marginBottom: '16px'
+            marginBottom: '16px',
+            color: '#222222',
+            fontSize: '14px',
+            fontWeight: 500,
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = '#222222';
+            e.currentTarget.style.background = '#FAFAFA';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = '#EEEEEE';
+            e.currentTarget.style.background = 'white';
           }}
         >
           ← Retour au dashboard
@@ -108,10 +120,10 @@ export default function ExpertRequestDetailPage() {
         gap: '16px',
         marginBottom: '30px'
       }}>
-        <StatCard icon="📋" label="Propositions" value={stats.proposed} color="#667eea" />
-        <StatCard icon="❤️" label="Coup de cœur" value={stats.favorites} color="#e91e63" />
-        <StatCard icon="⏱️" label="En attente" value={stats.pending} color="#ffc107" />
-        <StatCard icon="❌" label="Refusés" value={stats.rejected} color="#dc3545" />
+        <StatCard icon="📋" label="Propositions" value={stats.proposed} color="#222222" />
+        <StatCard icon="❤️" label="Coup de cœur" value={stats.favorites} color="#DC2626" />
+        <StatCard icon="⏱️" label="En attente" value={stats.pending} color="#666666" />
+        <StatCard icon="❌" label="Refusés" value={stats.rejected} color="#999999" />
       </div>
 
       {/* Actions principales */}
@@ -127,17 +139,19 @@ export default function ExpertRequestDetailPage() {
             flex: '1',
             minWidth: '200px',
             padding: '14px 24px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: '#DC2626',
             color: 'white',
             border: 'none',
-            borderRadius: '10px',
+            borderRadius: '8px',
             fontSize: '15px',
             fontWeight: 600,
             cursor: 'pointer',
-            transition: 'all 0.3s'
+            transition: 'background 0.2s'
           }}
+          onMouseEnter={(e) => e.currentTarget.style.background = '#B91C1C'}
+          onMouseLeave={(e) => e.currentTarget.style.background = '#DC2626'}
         >
-          🔍 Rechercher des véhicules
+          Rechercher des véhicules
         </button>
 
         <button
@@ -145,16 +159,27 @@ export default function ExpertRequestDetailPage() {
           disabled={request.status === 'TERMINEE'}
           style={{
             padding: '14px 24px',
-            background: request.status === 'TERMINEE' ? '#ccc' : '#28a745',
+            background: request.status === 'TERMINEE' ? '#CCCCCC' : '#222222',
             color: 'white',
             border: 'none',
-            borderRadius: '10px',
+            borderRadius: '8px',
             fontSize: '15px',
             fontWeight: 600,
-            cursor: request.status === 'TERMINEE' ? 'not-allowed' : 'pointer'
+            cursor: request.status === 'TERMINEE' ? 'not-allowed' : 'pointer',
+            transition: 'background 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            if (request.status !== 'TERMINEE') {
+              e.currentTarget.style.background = '#000000';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (request.status !== 'TERMINEE') {
+              e.currentTarget.style.background = '#222222';
+            }
           }}
         >
-          ✅ Terminer la demande
+          Terminer la demande
         </button>
       </div>
 
@@ -199,20 +224,22 @@ export default function ExpertRequestDetailPage() {
 function RequestCard({ request }) {
   const getStatusBadge = (status) => {
     const badges = {
-      'PENDING': { text: '⏳ En attente', color: '#ffc107' },
-      'IN_PROGRESS': { text: '🔄 En cours', color: '#17a2b8' },
-      'COMPLETED': { text: '✅ Terminée', color: '#28a745' },
-      'CANCELLED': { text: '❌ Annulée', color: '#dc3545' }
+      'PENDING': { text: 'En attente', color: '#666666' },
+      'IN_PROGRESS': { text: 'En cours', color: '#DC2626' },
+      'COMPLETED': { text: 'Terminée', color: '#222222' },
+      'CANCELLED': { text: 'Annulée', color: '#999999' }
     }
     const badge = badges[status] || badges['IN_PROGRESS']
     return (
       <span style={{
         background: badge.color,
         color: 'white',
-        padding: '6px 14px',
-        borderRadius: '20px',
-        fontSize: '13px',
-        fontWeight: 600
+        padding: '4px 10px',
+        borderRadius: '4px',
+        fontSize: '11px',
+        fontWeight: 600,
+        letterSpacing: '0.5px',
+        textTransform: 'uppercase'
       }}>
         {badge.text}
       </span>
@@ -223,8 +250,9 @@ function RequestCard({ request }) {
     <div style={{
       background: 'white',
       padding: '24px',
-      borderRadius: '16px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+      borderRadius: '12px',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      border: '1px solid #EEEEEE'
     }}>
       <div style={{
         display: 'flex',
@@ -322,16 +350,17 @@ function StatCard({ icon, label, value, color }) {
       background: 'white',
       padding: '20px',
       borderRadius: '12px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      border: '1px solid #EEEEEE',
       display: 'flex',
       alignItems: 'center',
       gap: '16px'
     }}>
-      <div style={{ fontSize: '40px', lineHeight: 1 }}>{icon}</div>
+      <div style={{ fontSize: '32px', lineHeight: 1 }}>{icon}</div>
       <div>
         <div style={{
           fontSize: '12px',
-          color: '#6a737d',
+          color: '#666666',
           marginBottom: '4px',
           textTransform: 'uppercase',
           fontWeight: 600,
@@ -339,7 +368,7 @@ function StatCard({ icon, label, value, color }) {
         }}>
           {label}
         </div>
-        <div style={{ fontSize: '28px', fontWeight: 700, color }}>{value}</div>
+        <div style={{ fontSize: '24px', fontWeight: 700, color }}>{value}</div>
       </div>
     </div>
   )
@@ -348,10 +377,10 @@ function StatCard({ icon, label, value, color }) {
 function ProposalCard({ proposal, onViewVehicle }) {
   const getStatusBadge = (status) => {
     const badges = {
-      'PENDING': { text: '⏱️ En attente', color: '#6c757d' },
-      'LIKED': { text: '👍 Aimé', color: '#28a745' },
-      'SUPER_LIKED': { text: '❤️ Coup de cœur', color: '#e91e63' },
-      'REJECTED': { text: '❌ Refusé', color: '#dc3545' }
+      'PENDING': { text: 'En attente', color: '#666666' },
+      'LIKED': { text: 'Aimé', color: '#222222' },
+      'SUPER_LIKED': { text: 'Coup de cœur', color: '#DC2626' },
+      'REJECTED': { text: 'Refusé', color: '#999999' }
     }
     const badge = badges[status] || badges['PENDING']
     return (
@@ -359,9 +388,11 @@ function ProposalCard({ proposal, onViewVehicle }) {
         background: badge.color,
         color: 'white',
         padding: '4px 10px',
-        borderRadius: '12px',
-        fontSize: '12px',
-        fontWeight: 600
+        borderRadius: '4px',
+        fontSize: '11px',
+        fontWeight: 600,
+        letterSpacing: '0.5px',
+        textTransform: 'uppercase'
       }}>
         {badge.text}
       </span>
@@ -373,8 +404,8 @@ function ProposalCard({ proposal, onViewVehicle }) {
       background: 'white',
       borderRadius: '12px',
       padding: '20px',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-      border: proposal.status === 'SUPER_LIKED' ? '2px solid #e91e63' : '2px solid transparent'
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      border: proposal.status === 'SUPER_LIKED' ? '2px solid #DC2626' : '1px solid #EEEEEE'
     }}>
       <div style={{
         display: 'flex',
@@ -413,33 +444,35 @@ function ProposalCard({ proposal, onViewVehicle }) {
 
       {proposal.message && (
         <div style={{
-          background: '#e7f3ff',
-          padding: '10px',
-          borderRadius: '8px',
-          marginBottom: '12px',
-          fontSize: '13px',
-          lineHeight: 1.5
-        }}>
-          <strong style={{ display: 'block', marginBottom: '4px', color: '#667eea' }}>
-            Votre message :
-          </strong>
-          {proposal.message}
-        </div>
-      )}
-
-      {proposal.rejection_reason && (
-        <div style={{
-          background: '#ffe7e7',
+          background: '#FAFAFA',
           padding: '10px',
           borderRadius: '8px',
           marginBottom: '12px',
           fontSize: '13px',
           lineHeight: 1.5,
+          border: '1px solid #EEEEEE'
         }}>
-          <strong style={{ display: 'block', marginBottom: '4px', color: '#dc3545' }}>
+          <strong style={{ display: 'block', marginBottom: '4px', color: '#222222' }}>
+            Votre message :
+          </strong>
+          <div style={{ color: '#666666' }}>{proposal.message}</div>
+        </div>
+      )}
+
+      {proposal.rejection_reason && (
+        <div style={{
+          background: '#FAFAFA',
+          padding: '10px',
+          borderRadius: '8px',
+          marginBottom: '12px',
+          fontSize: '13px',
+          lineHeight: 1.5,
+          border: '1px solid #DC2626'
+        }}>
+          <strong style={{ display: 'block', marginBottom: '4px', color: '#DC2626' }}>
             Raison du refus :
           </strong>
-          {proposal.rejection_reason}
+          <div style={{ color: '#666666' }}>{proposal.rejection_reason}</div>
         </div>
       )}
 
@@ -449,15 +482,24 @@ function ProposalCard({ proposal, onViewVehicle }) {
           width: '100%',
           padding: '10px',
           background: 'white',
-          border: '2px solid #667eea',
-          color: '#667eea',
+          border: '1px solid #EEEEEE',
+          color: '#222222',
           borderRadius: '8px',
           fontSize: '13px',
           fontWeight: 600,
-          cursor: 'pointer'
+          cursor: 'pointer',
+          transition: 'all 0.2s'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = '#222222';
+          e.currentTarget.style.background = '#FAFAFA';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = '#EEEEEE';
+          e.currentTarget.style.background = 'white';
         }}
       >
-        👁️ Voir le véhicule
+        Voir le véhicule
       </button>
     </div>
   )
