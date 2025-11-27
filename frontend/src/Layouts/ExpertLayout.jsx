@@ -22,47 +22,39 @@ export default function ExpertLayout() {
     <div style={{
       display: 'flex',
       minHeight: '100vh',
-      background: '#f5f7fa',
+      background: '#FAFAFA',
     }}>
       {/* Sidebar */}
       <aside style={{
-        width: '280px',
-        background: 'linear-gradient(180deg, #667eea 0%, #764ba2 100%)',
+        width: '260px',
+        background: '#222222',
         padding: '24px 0',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: '4px 0 12px rgba(0,0,0,0.1)',
+        borderRight: '1px solid #EEEEEE',
         position: 'fixed',
         height: '100vh',
         zIndex: 100,
       }}>
         {/* Logo */}
         <div style={{
-          padding: '0 24px',
-          marginBottom: '32px',
+          padding: '0 20px',
+          marginBottom: '40px',
         }}>
           <Link to="/expert" style={{
             textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
           }}>
             <div style={{
-              fontSize: '32px',
-              lineHeight: 1,
-            }}>⭐</div>
-            <div>
-              <div style={{
-                color: 'white',
-                fontSize: '20px',
-                fontWeight: 700,
-                lineHeight: 1.2,
-              }}>Expert Panel</div>
-              <div style={{
-                color: 'rgba(255,255,255,0.8)',
-                fontSize: '12px',
-              }}>Recherche Personnalisée</div>
-            </div>
+              color: 'white',
+              fontSize: '18px',
+              fontWeight: 600,
+              letterSpacing: '-0.5px',
+            }}>Expert Panel</div>
+            <div style={{
+              color: 'rgba(255,255,255,0.5)',
+              fontSize: '12px',
+              marginTop: '4px',
+            }}>Recherche Personnalisée</div>
           </Link>
         </div>
 
@@ -71,8 +63,8 @@ export default function ExpertLayout() {
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          gap: '4px',
-          padding: '0 12px',
+          gap: '2px',
+          padding: '0 16px',
         }}>
           <NavLink
             to="/expert"
@@ -114,14 +106,14 @@ export default function ExpertLayout() {
 
         {/* User Menu */}
         <div style={{
-          padding: '0 12px',
+          padding: '0 16px',
           marginTop: 'auto',
-          borderTop: '1px solid rgba(255,255,255,0.2)',
+          borderTop: '1px solid rgba(255,255,255,0.1)',
           paddingTop: '16px',
         }}>
           <div style={{
-            background: 'rgba(255,255,255,0.1)',
-            borderRadius: '12px',
+            background: 'rgba(255,255,255,0.05)',
+            borderRadius: '8px',
             padding: '12px',
             position: 'relative',
           }}>
@@ -135,27 +127,27 @@ export default function ExpertLayout() {
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '12px',
+                gap: '10px',
                 padding: 0,
               }}
             >
               <div style={{
-                width: '40px',
-                height: '40px',
+                width: '32px',
+                height: '32px',
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, #ffd89b 0%, #19547b 100%)',
+                background: '#DC2626',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '18px',
+                fontSize: '14px',
                 fontWeight: 600,
               }}>
                 {user?.full_name?.[0] || user?.email?.[0] || 'E'}
               </div>
               <div style={{ flex: 1, textAlign: 'left' }}>
                 <div style={{
-                  fontSize: '14px',
-                  fontWeight: 600,
+                  fontSize: '13px',
+                  fontWeight: 500,
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
@@ -163,45 +155,46 @@ export default function ExpertLayout() {
                   {user?.full_name || user?.email}
                 </div>
                 <div style={{
-                  fontSize: '12px',
-                  opacity: 0.8,
+                  fontSize: '11px',
+                  opacity: 0.5,
                 }}>Expert</div>
               </div>
-              <div style={{ fontSize: '12px' }}>▼</div>
+              <div style={{ fontSize: '10px', opacity: 0.5 }}>▼</div>
             </button>
 
             {showUserMenu && (
               <div style={{
                 position: 'absolute',
                 bottom: '100%',
-                left: '12px',
-                right: '12px',
+                left: '16px',
+                right: '16px',
                 marginBottom: '8px',
                 background: 'white',
-                borderRadius: '12px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                borderRadius: '8px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                 overflow: 'hidden',
+                border: '1px solid #EEEEEE',
               }}>
                 <button
                   onClick={handleLogout}
                   style={{
                     width: '100%',
-                    padding: '12px 16px',
+                    padding: '10px 12px',
                     background: 'none',
                     border: 'none',
-                    color: '#dc3545',
+                    color: '#DC2626',
                     cursor: 'pointer',
                     textAlign: 'left',
-                    fontSize: '14px',
-                    fontWeight: 600,
+                    fontSize: '13px',
+                    fontWeight: 500,
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = '#f8f9fa'}
+                  onMouseEnter={(e) => e.currentTarget.style.background = '#FAFAFA'}
                   onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
                 >
-                  🚪 Déconnexion
+                  Déconnexion
                 </button>
               </div>
             )}
@@ -212,7 +205,7 @@ export default function ExpertLayout() {
       {/* Main Content */}
       <main style={{
         flex: 1,
-        marginLeft: '280px',
+        marginLeft: '260px',
         minHeight: '100vh',
       }}>
         <Outlet />
