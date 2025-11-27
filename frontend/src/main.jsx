@@ -20,6 +20,7 @@ import AssistedRequestPage from './Pages/AssistedRequestPage'
 import ExpertDashboard from './Pages/ExpertDashboard'
 import ExpertRequestDetailPage from './Pages/ExpertRequestDetailPage'
 import ExpertRequestsPage from './Pages/ExpertRequestsPage'
+import ExpertVehicleSearchPage from './Pages/ExpertVehicleSearchPage'
 import TinderProposalsPage from './Pages/TinderProposalsPage'
 import AdminDashboard from './Pages/AdminDashboard'
 import MessagesPage from './Pages/MessagesPage'
@@ -128,6 +129,14 @@ createRoot(document.getElementById('root')).render(
                 element={
                   <ProtectedRoute requiredRole="EXPERT">
                     <ExpertRequestDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/expert/requests/:requestId/search"
+                element={
+                  <ProtectedRoute requiredRole="EXPERT">
+                    <ExpertVehicleSearchPage />
                   </ProtectedRoute>
                 }
               />
