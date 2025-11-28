@@ -39,7 +39,7 @@ export default function AssistedRequestDetailPage() {
 
   async function handleMarkFavorite(proposalId) {
     try {
-      await updateProposalStatus(proposalId, 'FAVORITE', null)
+      await updateProposalStatus(proposalId, 'LIKED', null)
       await loadData()
       alert('✅ Véhicule marqué comme coup de cœur !')
     } catch (error) {
@@ -86,7 +86,8 @@ export default function AssistedRequestDetailPage() {
   const getProposalStatusBadge = (status) => {
     const badges = {
       'PENDING': { text: '⏱️ En attente', color: '#6c757d' },
-      'FAVORITE': { text: '❤️ Coup de cœur', color: '#e91e63' },
+      'LIKED': { text: '❤️ Coup de cœur', color: '#e91e63' },
+      'SUPER_LIKED': { text: '💖 Coup de foudre', color: '#e91e63' },
       'REJECTED': { text: '❌ Refusé', color: '#dc3545' }
     }
     const badge = badges[status] || badges['PENDING']
@@ -108,7 +109,7 @@ export default function AssistedRequestDetailPage() {
     return <div style={{padding: '40px', textAlign: 'center'}}>Demande non trouvée</div>
   }
 
-  const favorites = proposals.filter(p => p.status === 'FAVORITE')
+  const favorites = proposals.filter(p => p.status === 'LIKED' || p.status === 'SUPER_LIKED')
   const rejected = proposals.filter(p => p.status === 'REJECTED')
   const pending = proposals.filter(p => p.status === 'PENDING')
 
