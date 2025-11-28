@@ -255,13 +255,13 @@ async def cancel_request(
 
 # ============ ROUTES PROPOSITIONS (CLIENT) ============
 
-@router.get("/requests/{request_id}/proposals", response_model=List[ProposedVehicleOut])
+@router.get("/requests/{request_id}/proposals", response_model=List[ProposedVehicleWithDetails])
 async def get_my_proposals(
     request_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Voir les véhicules proposés (client OU expert assigné)"""
+    """Voir les véhicules proposés avec détails complets (client OU expert assigné)"""
     request = db.query(AssistedRequest).filter(
         AssistedRequest.id == request_id
     ).first()
@@ -278,12 +278,50 @@ async def get_my_proposals(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Accès non autorisé à cette demande"
         )
-    
+
     proposals = db.query(ProposedVehicle).filter(
         ProposedVehicle.request_id == request_id
     ).order_by(ProposedVehicle.created_at.desc()).all()
-    
-    return proposals
+
+    # Enrichir chaque proposition avec les détails du véhicule
+    result = []
+    for proposal in proposals:
+        vehicle = db.query(Vehicle).filter(Vehicle.id == proposal.vehicle_id).first()
+
+        vehicle_data = None
+        if vehicle:
+            # Extraire les métadonnées depuis source_ids
+            source_data = vehicle.source_ids or {}
+            vehicle_data = {
+                'id': vehicle.id,
+                'title': vehicle.title,
+                'make': vehicle.make,
+                'model': vehicle.model,
+                'price': vehicle.price,
+                'year': vehicle.year,
+                'mileage': vehicle.mileage,
+                'fuel_type': source_data.get('fuel_type'),
+                'transmission': source_data.get('transmission'),
+                'description': source_data.get('description'),
+                'images': source_data.get('images', []),
+                'location_city': source_data.get('location_city'),
+                'url': source_data.get('url')
+            }
+
+        result.append({
+            'id': proposal.id,
+            'request_id': proposal.request_id,
+            'vehicle_id': proposal.vehicle_id,
+            'status': proposal.status,
+            'message': proposal.message,
+            'rejection_reason': proposal.rejection_reason,
+            'client_feedback': proposal.client_feedback,
+            'created_at': proposal.created_at,
+            'updated_at': proposal.updated_at,
+            'vehicle': vehicle_data
+        })
+
+    return result
 
 @router.patch("/proposals/{proposal_id}", response_model=ProposedVehicleOut)
 async def update_proposal_status(

@@ -18,6 +18,7 @@ import RegisterPage from './Pages/RegisterPage'
 import ProfilePage from './Pages/ProfilePage'
 import FavoritesPage from './Pages/FavoritesPage'
 import AssistedRequestPage from './Pages/AssistedRequestPage'
+import AssistedRequestDetailPage from './Pages/AssistedRequestDetailPage'
 import ExpertDashboard from './Pages/ExpertDashboard'
 import ExpertRequestDetailPage from './Pages/ExpertRequestDetailPage'
 import ExpertRequestsPage from './Pages/ExpertRequestsPage'
@@ -181,6 +182,16 @@ createRoot(document.getElementById('root')).render(
                 element={
                   <ProtectedRoute>
                     <AssistedRequestPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Route détail demande assistée */}
+              <Route
+                path="/assisted/:requestId"
+                element={
+                  <ProtectedRoute>
+                    <AssistedRequestDetailPage />
                   </ProtectedRoute>
                 }
               />
