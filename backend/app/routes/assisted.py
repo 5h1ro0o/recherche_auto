@@ -533,26 +533,49 @@ async def accept_request(
     current_user: User = Depends(require_expert),
     db: Session = Depends(get_db)
 ):
-    """Accepter une demande (expert)"""
+    """Accepter une demande (expert) et créer automatiquement une conversation"""
     request = db.query(AssistedRequest).filter(
         AssistedRequest.id == request_id,
         AssistedRequest.status == RequestStatus.PENDING,
         AssistedRequest.expert_id.is_(None)
     ).first()
-    
+
     if not request:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Demande non trouvée ou déjà prise en charge"
         )
-    
+
     request.expert_id = current_user.id
     request.status = RequestStatus.IN_PROGRESS
     request.accepted_at = datetime.utcnow()
-    
+
+    # Créer automatiquement une conversation entre l'expert et le client
+    from app.models import Message
+    conversation_id = f"{min(current_user.id, request.client_id)}_{max(current_user.id, request.client_id)}"
+
+    # Vérifier si une conversation existe déjà
+    existing_message = db.query(Message).filter(
+        Message.conversation_id == conversation_id
+    ).first()
+
+    # Si aucune conversation n'existe, créer un premier message de bienvenue
+    if not existing_message:
+        welcome_message = Message(
+            id=str(uuid.uuid4()),
+            conversation_id=conversation_id,
+            sender_id=current_user.id,
+            recipient_id=request.client_id,
+            content=f"Bonjour ! J'ai accepté votre demande de recherche de véhicule. Je vais analyser vos critères et vous proposer des véhicules correspondant à vos besoins. N'hésitez pas à me poser des questions !",
+            attachments=[],
+            is_read=False
+        )
+        db.add(welcome_message)
+        logger.info(f"Conversation créée entre expert {current_user.id} et client {request.client_id}")
+
     db.commit()
     db.refresh(request)
-    
+
     logger.info(f"Demande {request_id} acceptée par expert {current_user.email}")
     return request
 

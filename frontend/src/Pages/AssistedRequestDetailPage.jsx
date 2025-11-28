@@ -38,8 +38,14 @@ export default function AssistedRequestDetailPage() {
   }
 
   async function handleMarkFavorite(proposalId) {
-    await updateProposalStatus(proposalId, 'FAVORITE', null)
-    await loadData()
+    try {
+      await updateProposalStatus(proposalId, 'FAVORITE', null)
+      await loadData()
+      alert('✅ Véhicule marqué comme coup de cœur !')
+    } catch (error) {
+      console.error('Error marking favorite:', error)
+      alert('❌ Erreur lors de la mise en favori : ' + (error.response?.data?.detail || error.message))
+    }
   }
 
   async function handleReject(proposalId) {
@@ -47,10 +53,16 @@ export default function AssistedRequestDetailPage() {
       alert('Veuillez indiquer une raison')
       return
     }
-    await updateProposalStatus(proposalId, 'REJECTED', rejectReason)
-    setShowRejectModal(null)
-    setRejectReason('')
-    await loadData()
+    try {
+      await updateProposalStatus(proposalId, 'REJECTED', rejectReason)
+      setShowRejectModal(null)
+      setRejectReason('')
+      await loadData()
+      alert('✅ Véhicule refusé avec succès')
+    } catch (error) {
+      console.error('Error rejecting proposal:', error)
+      alert('❌ Erreur lors du refus : ' + (error.response?.data?.detail || error.message))
+    }
   }
 
   const getStatusBadge = (status) => {
