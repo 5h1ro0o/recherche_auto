@@ -552,11 +552,13 @@ async def propose_vehicle(
             else:
                 images_list = [vdata.get('image_url')]
 
-        # Stocker les infos de source dans source_ids
+        # Stocker les infos de source ET les métadonnées dans source_ids (JSON)
         source_data = {
             'source': vdata.get('source', 'scraping'),
             'url': vdata.get('url'),
-            'original_id': vdata.get('original_id')
+            'original_id': vdata.get('original_id'),
+            'fuel_type': vdata.get('fuel_type'),
+            'transmission': vdata.get('transmission')
         }
 
         vehicle = Vehicle(
@@ -567,8 +569,6 @@ async def propose_vehicle(
             price=vdata.get('price'),
             year=vdata.get('year'),
             mileage=vdata.get('mileage'),
-            fuel_type=vdata.get('fuel_type'),
-            transmission=vdata.get('transmission'),
             images=images_list,
             source_ids=source_data,
             description=vdata.get('description'),

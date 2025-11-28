@@ -45,12 +45,13 @@ class Vehicle(Base):
     price = Column(Integer, index=True)
     mileage = Column(Integer)
     year = Column(Integer)
-    # vin = Column(String, unique=True, index=True, nullable=True)  # Colonne non présente en DB
-    fuel_type = Column(String)  # essence, diesel, electrique, hybride
-    transmission = Column(String)  # manuelle, automatique
+    # Colonnes commentées car non présentes dans le schéma DB réel
+    # vin = Column(String, unique=True, index=True, nullable=True)
+    # fuel_type = Column(String)  # essence, diesel, electrique, hybride
+    # transmission = Column(String)  # manuelle, automatique
     description = Column(Text)
     images = Column(JSON, default=list)
-    source_ids = Column(JSON, default=dict)
+    source_ids = Column(JSON, default=dict)  # Utiliser ce champ JSON pour stocker fuel_type, transmission, etc.
     location_lat = Column(String)
     location_lon = Column(String)
     location_city = Column(String)
