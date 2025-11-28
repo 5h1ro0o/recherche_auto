@@ -178,148 +178,459 @@ export default function EncyclopediaPage() {
   }
 
   return (
-    <div className="encyclopedia-page">
-      <div className="encyclopedia-header">
-        <h1>📚 Encyclopédie Automobile</h1>
-        <p>
-          Toutes les connaissances nécessaires pour choisir et acheter votre véhicule
-          en toute confiance
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
+      paddingBottom: '60px',
+    }}>
+      {/* Header Section */}
+      <div style={{
+        background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+        color: 'white',
+        padding: '60px 20px',
+        textAlign: 'center',
+        marginBottom: '40px',
+      }}>
+        <h1 style={{
+          fontSize: '42px',
+          fontWeight: 700,
+          margin: '0 0 16px 0',
+          lineHeight: 1.2,
+        }}>
+          📚 Encyclopédie Automobile
+        </h1>
+        <p style={{
+          fontSize: '18px',
+          margin: 0,
+          opacity: 0.95,
+        }}>
+          Toutes les connaissances nécessaires pour choisir et acheter votre véhicule en toute confiance
         </p>
       </div>
 
-      {/* Search Bar */}
-      <div className="encyclopedia-search">
-        <input
-          type="text"
-          placeholder="Rechercher dans l'encyclopédie..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="search-input"
-        />
-      </div>
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '0 20px',
+      }}>
+        {/* Search Bar */}
+        <div style={{
+          marginBottom: '32px',
+        }}>
+          <input
+            type="text"
+            placeholder="🔍 Rechercher dans l'encyclopédie..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: '100%',
+              maxWidth: '600px',
+              padding: '14px 20px',
+              fontSize: '16px',
+              border: '2px solid #E5E7EB',
+              borderRadius: '12px',
+              outline: 'none',
+              transition: 'all 0.2s',
+              fontFamily: 'inherit',
+              display: 'block',
+              margin: '0 auto',
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#4F46E5'
+              e.target.style.boxShadow = '0 0 0 3px rgba(79, 70, 229, 0.1)'
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#E5E7EB'
+              e.target.style.boxShadow = 'none'
+            }}
+          />
+        </div>
 
-      {/* Category Tabs */}
-      <div className="category-tabs">
-        <button
-          className={`tab ${selectedCategory === 'brands' ? 'active' : ''}`}
-          onClick={() => setSelectedCategory('brands')}
-        >
-          🏭 Marques
-        </button>
-        <button
-          className={`tab ${selectedCategory === 'fuelTypes' ? 'active' : ''}`}
-          onClick={() => setSelectedCategory('fuelTypes')}
-        >
-          ⛽ Types de carburant
-        </button>
-        <button
-          className={`tab ${selectedCategory === 'buyingGuide' ? 'active' : ''}`}
-          onClick={() => setSelectedCategory('buyingGuide')}
-        >
-          📖 Guide d'achat
-        </button>
-        <button
-          className={`tab ${selectedCategory === 'glossary' ? 'active' : ''}`}
-          onClick={() => setSelectedCategory('glossary')}
-        >
-          📝 Glossaire
-        </button>
-      </div>
+        {/* Category Tabs */}
+        <div style={{
+          display: 'flex',
+          gap: '12px',
+          marginBottom: '32px',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+        }}>
+          {[
+            { id: 'brands', label: '🏭 Marques' },
+            { id: 'fuelTypes', label: '⛽ Types de carburant' },
+            { id: 'buyingGuide', label: '📖 Guide d\'achat' },
+            { id: 'glossary', label: '📝 Glossaire' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setSelectedCategory(tab.id)}
+              style={{
+                padding: '12px 24px',
+                background: selectedCategory === tab.id ? '#4F46E5' : 'white',
+                color: selectedCategory === tab.id ? 'white' : '#222222',
+                border: selectedCategory === tab.id ? 'none' : '2px solid #E5E7EB',
+                borderRadius: '12px',
+                fontSize: '15px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                if (selectedCategory !== tab.id) {
+                  e.target.style.borderColor = '#4F46E5'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedCategory !== tab.id) {
+                  e.target.style.borderColor = '#E5E7EB'
+                }
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-      {/* Content */}
-      <div className="encyclopedia-content">
-        {/* Brands */}
-        {selectedCategory === 'brands' && (
-          <div className="brands-grid">
-            {filteredData().map(brand => (
-              <div key={brand.id} className="brand-card">
-                <div className="brand-header">
-                  <span className="brand-logo">{brand.logo}</span>
-                  <h3>{brand.name}</h3>
-                </div>
-                <p className="brand-description">{brand.description}</p>
-                <div className="brand-section">
-                  <strong>Modèles populaires :</strong>
-                  <div className="model-tags">
-                    {brand.popularModels.map((model, idx) => (
-                      <span key={idx} className="model-tag">{model}</span>
-                    ))}
+        {/* Content */}
+        <div>
+          {/* Brands */}
+          {selectedCategory === 'brands' && (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gap: '24px',
+            }}>
+              {filteredData().map(brand => (
+                <div
+                  key={brand.id}
+                  style={{
+                    background: 'white',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                    border: '1px solid #EEEEEE',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)'
+                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.12)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)'
+                  }}
+                >
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    marginBottom: '16px',
+                  }}>
+                    <span style={{ fontSize: '32px' }}>{brand.logo}</span>
+                    <h3 style={{
+                      margin: 0,
+                      fontSize: '22px',
+                      fontWeight: 700,
+                      color: '#222222',
+                    }}>
+                      {brand.name}
+                    </h3>
+                  </div>
+                  <p style={{
+                    fontSize: '14px',
+                    lineHeight: 1.6,
+                    color: '#6B7280',
+                    marginBottom: '16px',
+                  }}>
+                    {brand.description}
+                  </p>
+                  <div style={{ marginBottom: '16px' }}>
+                    <strong style={{
+                      fontSize: '13px',
+                      color: '#222222',
+                      display: 'block',
+                      marginBottom: '8px',
+                    }}>
+                      Modèles populaires :
+                    </strong>
+                    <div style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '8px',
+                    }}>
+                      {brand.popularModels.map((model, idx) => (
+                        <span
+                          key={idx}
+                          style={{
+                            background: '#EEF2FF',
+                            color: '#4F46E5',
+                            padding: '4px 12px',
+                            borderRadius: '12px',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                          }}
+                        >
+                          {model}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{
+                    padding: '12px',
+                    background: '#F9FAFB',
+                    borderRadius: '8px',
+                    fontSize: '13px',
+                    color: '#6B7280',
+                  }}>
+                    <strong style={{ color: '#222222' }}>Réputation :</strong> {brand.reputation}
                   </div>
                 </div>
-                <div className="brand-reputation">
-                  <strong>Réputation :</strong> {brand.reputation}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Fuel Types */}
-        {selectedCategory === 'fuelTypes' && (
-          <div className="fuel-types-grid">
-            {filteredData().map(fuel => (
-              <div key={fuel.id} className="fuel-card">
-                <div className="fuel-header">
-                  <span className="fuel-icon">{fuel.icon}</span>
-                  <h3>{fuel.name}</h3>
-                </div>
-                <div className="fuel-section">
-                  <h4 className="pros-title">✅ Avantages</h4>
-                  <ul>
-                    {fuel.pros.map((pro, idx) => (
-                      <li key={idx}>{pro}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="fuel-section">
-                  <h4 className="cons-title">❌ Inconvénients</h4>
-                  <ul>
-                    {fuel.cons.map((con, idx) => (
-                      <li key={idx}>{con}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="fuel-ideal">
-                  <strong>Idéal pour :</strong> {fuel.idealFor}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Buying Guide */}
-        {selectedCategory === 'buyingGuide' && (
-          <div className="buying-guide">
-            {filteredData().map(step => (
-              <div key={step.id} className="guide-step">
-                <div className="step-icon">{step.icon}</div>
-                <div className="step-content">
-                  <h3>{step.id}. {step.title}</h3>
-                  <p>{step.content}</p>
-                </div>
-              </div>
-            ))}
-            <div className="guide-cta">
-              <h3>Prêt à chercher votre véhicule ?</h3>
-              <p>Utilisez notre recherche avancée pour trouver le véhicule qui correspond à tous ces critères</p>
-              <Link to="/search" className="btn-primary">
-                Lancer une recherche
-              </Link>
+              ))}
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Glossary */}
-        {selectedCategory === 'glossary' && (
-          <div className="glossary-list">
-            {filteredData().map((item, idx) => (
-              <div key={idx} className="glossary-item">
-                <dt className="glossary-term">{item.term}</dt>
-                <dd className="glossary-definition">{item.definition}</dd>
+          {/* Fuel Types */}
+          {selectedCategory === 'fuelTypes' && (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+              gap: '24px',
+            }}>
+              {filteredData().map(fuel => (
+                <div
+                  key={fuel.id}
+                  style={{
+                    background: 'white',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                    border: '1px solid #EEEEEE',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)'
+                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.12)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)'
+                  }}
+                >
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    marginBottom: '20px',
+                  }}>
+                    <span style={{ fontSize: '32px' }}>{fuel.icon}</span>
+                    <h3 style={{
+                      margin: 0,
+                      fontSize: '22px',
+                      fontWeight: 700,
+                      color: '#222222',
+                    }}>
+                      {fuel.name}
+                    </h3>
+                  </div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <h4 style={{
+                      margin: '0 0 12px 0',
+                      fontSize: '15px',
+                      fontWeight: 600,
+                      color: '#10B981',
+                    }}>
+                      ✅ Avantages
+                    </h4>
+                    <ul style={{
+                      margin: 0,
+                      paddingLeft: '20px',
+                      fontSize: '14px',
+                      color: '#6B7280',
+                      lineHeight: 1.8,
+                    }}>
+                      {fuel.pros.map((pro, idx) => (
+                        <li key={idx}>{pro}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <h4 style={{
+                      margin: '0 0 12px 0',
+                      fontSize: '15px',
+                      fontWeight: 600,
+                      color: '#EF4444',
+                    }}>
+                      ❌ Inconvénients
+                    </h4>
+                    <ul style={{
+                      margin: 0,
+                      paddingLeft: '20px',
+                      fontSize: '14px',
+                      color: '#6B7280',
+                      lineHeight: 1.8,
+                    }}>
+                      {fuel.cons.map((con, idx) => (
+                        <li key={idx}>{con}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div style={{
+                    padding: '12px',
+                    background: '#EEF2FF',
+                    borderRadius: '8px',
+                    fontSize: '13px',
+                    color: '#4F46E5',
+                    borderLeft: '4px solid #4F46E5',
+                  }}>
+                    <strong>Idéal pour :</strong> {fuel.idealFor}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Buying Guide */}
+          {selectedCategory === 'buyingGuide' && (
+            <div style={{
+              maxWidth: '900px',
+              margin: '0 auto',
+            }}>
+              {filteredData().map((step, idx) => (
+                <div
+                  key={step.id}
+                  style={{
+                    background: 'white',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    marginBottom: '16px',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                    border: '1px solid #EEEEEE',
+                    display: 'flex',
+                    gap: '20px',
+                    alignItems: 'flex-start',
+                  }}
+                >
+                  <div style={{
+                    fontSize: '40px',
+                    flexShrink: 0,
+                  }}>
+                    {step.icon}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{
+                      margin: '0 0 12px 0',
+                      fontSize: '20px',
+                      fontWeight: 700,
+                      color: '#222222',
+                    }}>
+                      {step.id}. {step.title}
+                    </h3>
+                    <p style={{
+                      margin: 0,
+                      fontSize: '15px',
+                      lineHeight: 1.7,
+                      color: '#6B7280',
+                    }}>
+                      {step.content}
+                    </p>
+                  </div>
+                </div>
+              ))}
+              <div style={{
+                background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+                borderRadius: '16px',
+                padding: '40px',
+                textAlign: 'center',
+                color: 'white',
+                marginTop: '32px',
+              }}>
+                <h3 style={{
+                  fontSize: '28px',
+                  fontWeight: 700,
+                  margin: '0 0 12px 0',
+                }}>
+                  Prêt à chercher votre véhicule ?
+                </h3>
+                <p style={{
+                  fontSize: '16px',
+                  margin: '0 0 24px 0',
+                  opacity: 0.95,
+                }}>
+                  Utilisez notre recherche avancée pour trouver le véhicule qui correspond à tous ces critères
+                </p>
+                <Link
+                  to="/search"
+                  style={{
+                    display: 'inline-block',
+                    padding: '14px 32px',
+                    background: 'white',
+                    color: '#4F46E5',
+                    textDecoration: 'none',
+                    borderRadius: '12px',
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)'
+                    e.target.style.boxShadow = '0 8px 24px rgba(0,0,0,0.2)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)'
+                    e.target.style.boxShadow = 'none'
+                  }}
+                >
+                  🔍 Lancer une recherche
+                </Link>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          )}
+
+          {/* Glossary */}
+          {selectedCategory === 'glossary' && (
+            <div style={{
+              maxWidth: '900px',
+              margin: '0 auto',
+            }}>
+              {filteredData().map((item, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    background: 'white',
+                    borderRadius: '12px',
+                    padding: '20px 24px',
+                    marginBottom: '12px',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                    border: '1px solid #EEEEEE',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#4F46E5'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#EEEEEE'
+                  }}
+                >
+                  <dt style={{
+                    fontSize: '17px',
+                    fontWeight: 700,
+                    color: '#4F46E5',
+                    marginBottom: '8px',
+                  }}>
+                    {item.term}
+                  </dt>
+                  <dd style={{
+                    margin: 0,
+                    fontSize: '15px',
+                    lineHeight: 1.7,
+                    color: '#6B7280',
+                  }}>
+                    {item.definition}
+                  </dd>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
