@@ -175,7 +175,7 @@ export default function EnhancedVehiclePage() {
           onClick={() => navigate('/')}
           style={{
             padding: '12px 24px',
-            background: '#4F46E5',
+            background: '#DC2626',
             color: 'white',
             border: 'none',
             borderRadius: '8px',
@@ -205,7 +205,7 @@ export default function EnhancedVehiclePage() {
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
       {/* Breadcrumb */}
       <div style={{ marginBottom: '20px', fontSize: '14px', color: '#666666' }}>
-        <a href="/" style={{ color: '#4F46E5', textDecoration: 'none' }}>Accueil</a>
+        <a href="/" style={{ color: '#DC2626', textDecoration: 'none' }}>Accueil</a>
         {' > '}
         <span>{vehicle.title || 'Véhicule'}</span>
       </div>
@@ -229,7 +229,7 @@ export default function EnhancedVehiclePage() {
             </span>
             {vehicle.seller_type === 'PRO' && (
               <span style={{
-                background: '#4F46E5',
+                background: '#DC2626',
                 color: 'white',
                 padding: '4px 12px',
                 borderRadius: '4px',
@@ -247,8 +247,8 @@ export default function EnhancedVehiclePage() {
             onClick={() => setIsFavorite(!isFavorite)}
             style={{
               padding: '12px 20px',
-              background: isFavorite ? '#4F46E5' : 'white',
-              border: `1px solid ${isFavorite ? '#4F46E5' : '#EEEEEE'}`,
+              background: isFavorite ? '#DC2626' : 'white',
+              border: `1px solid ${isFavorite ? '#DC2626' : '#EEEEEE'}`,
               color: isFavorite ? 'white' : '#222222',
               borderRadius: '8px',
               fontSize: '14px',
@@ -452,7 +452,7 @@ function PhotoGallery({ images, currentIndex, onPrev, onNext, onImageClick }) {
                 borderRadius: '8px',
                 overflow: 'hidden',
                 cursor: 'pointer',
-                border: idx === currentIndex ? '2px solid #4F46E5' : '2px solid #EEEEEE',
+                border: idx === currentIndex ? '2px solid #DC2626' : '2px solid #EEEEEE',
                 flexShrink: 0
               }}
             >
@@ -649,7 +649,7 @@ function PriceHistory({ history }) {
               <div style={{
                 width: `${(entry.price / maxPrice) * 100}%`,
                 height: '100%',
-                background: '#4F46E5',
+                background: '#DC2626',
                 transition: 'width 0.5s ease'
               }} />
             </div>
@@ -719,7 +719,7 @@ function ExpertOpinion({ opinion }) {
             <div style={{
               width: `${opinion.score * 10}%`,
               height: '100%',
-              background: '#4F46E5'
+              background: '#DC2626'
             }} />
           </div>
         </div>
@@ -770,7 +770,7 @@ function ExpertOpinion({ opinion }) {
         background: '#FAFAFA',
         borderRadius: '8px',
         border: '1px solid #EEEEEE',
-        borderLeft: '4px solid #4F46E5'
+        borderLeft: '4px solid #DC2626'
       }}>
         <strong style={{ display: 'block', marginBottom: '8px', color: '#222222' }}>
           Verdict de l'expert :
@@ -809,7 +809,7 @@ function SimilarVehicles({ vehicles }) {
             transition: 'all 0.2s'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#4F46E5'
+            e.currentTarget.style.borderColor = '#DC2626'
             e.currentTarget.style.transform = 'translateY(-4px)'
             e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'
           }}
@@ -909,7 +909,7 @@ function ContactCard({ seller, onContact }) {
         style={{
           width: '100%',
           padding: '14px',
-          background: '#4F46E5',
+          background: '#DC2626',
           color: 'white',
           border: 'none',
           borderRadius: '8px',
@@ -920,11 +920,11 @@ function ContactCard({ seller, onContact }) {
           transition: 'all 0.2s'
         }}
         onMouseEnter={(e) => {
-          e.target.style.background = '#4338CA'
+          e.target.style.background = '#B91C1C'
           e.target.style.transform = 'translateY(-2px)'
         }}
         onMouseLeave={(e) => {
-          e.target.style.background = '#4F46E5'
+          e.target.style.background = '#DC2626'
           e.target.style.transform = 'translateY(0)'
         }}
       >
@@ -1204,7 +1204,7 @@ function ContactModal({ seller, vehicle, onClose }) {
               type="submit"
               style={{
                 padding: '10px 20px',
-                background: '#4F46E5',
+                background: '#DC2626',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',

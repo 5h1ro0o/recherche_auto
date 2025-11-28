@@ -185,7 +185,7 @@ export default function EncyclopediaPage() {
     }}>
       {/* Header Section */}
       <div style={{
-        background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+        background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
         color: 'white',
         padding: '60px 20px',
         textAlign: 'center',
@@ -236,8 +236,8 @@ export default function EncyclopediaPage() {
               margin: '0 auto',
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = '#4F46E5'
-              e.target.style.boxShadow = '0 0 0 3px rgba(79, 70, 229, 0.1)'
+              e.target.style.borderColor = '#DC2626'
+              e.target.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)'
             }}
             onBlur={(e) => {
               e.target.style.borderColor = '#E5E7EB'
@@ -265,7 +265,7 @@ export default function EncyclopediaPage() {
               onClick={() => setSelectedCategory(tab.id)}
               style={{
                 padding: '12px 24px',
-                background: selectedCategory === tab.id ? '#4F46E5' : 'white',
+                background: selectedCategory === tab.id ? '#DC2626' : 'white',
                 color: selectedCategory === tab.id ? 'white' : '#222222',
                 border: selectedCategory === tab.id ? 'none' : '2px solid #E5E7EB',
                 borderRadius: '12px',
@@ -276,7 +276,7 @@ export default function EncyclopediaPage() {
               }}
               onMouseEnter={(e) => {
                 if (selectedCategory !== tab.id) {
-                  e.target.style.borderColor = '#4F46E5'
+                  e.target.style.borderColor = '#DC2626'
                 }
               }}
               onMouseLeave={(e) => {
@@ -361,8 +361,8 @@ export default function EncyclopediaPage() {
                         <span
                           key={idx}
                           style={{
-                            background: '#EEF2FF',
-                            color: '#4F46E5',
+                            background: '#FEE2E2',
+                            color: '#DC2626',
                             padding: '4px 12px',
                             borderRadius: '12px',
                             fontSize: '13px',
@@ -475,11 +475,11 @@ export default function EncyclopediaPage() {
                   </div>
                   <div style={{
                     padding: '12px',
-                    background: '#EEF2FF',
+                    background: '#FEE2E2',
                     borderRadius: '8px',
                     fontSize: '13px',
-                    color: '#4F46E5',
-                    borderLeft: '4px solid #4F46E5',
+                    color: '#DC2626',
+                    borderLeft: '4px solid #DC2626',
                   }}>
                     <strong>Idéal pour :</strong> {fuel.idealFor}
                   </div>
@@ -536,7 +536,7 @@ export default function EncyclopediaPage() {
                 </div>
               ))}
               <div style={{
-                background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+                background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
                 borderRadius: '16px',
                 padding: '40px',
                 textAlign: 'center',
@@ -563,7 +563,7 @@ export default function EncyclopediaPage() {
                     display: 'inline-block',
                     padding: '14px 32px',
                     background: 'white',
-                    color: '#4F46E5',
+                    color: '#DC2626',
                     textDecoration: 'none',
                     borderRadius: '12px',
                     fontSize: '16px',
@@ -604,7 +604,7 @@ export default function EncyclopediaPage() {
                     transition: 'all 0.2s',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = '#4F46E5'
+                    e.currentTarget.style.borderColor = '#DC2626'
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.borderColor = '#EEEEEE'
@@ -613,7 +613,7 @@ export default function EncyclopediaPage() {
                   <dt style={{
                     fontSize: '17px',
                     fontWeight: 700,
-                    color: '#4F46E5',
+                    color: '#DC2626',
                     marginBottom: '8px',
                   }}>
                     {item.term}

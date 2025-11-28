@@ -43,7 +43,7 @@ export default function SearchPage() {
     }}>
       {/* Header Section */}
       <div style={{
-        background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+        background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
         color: 'white',
         padding: '60px 20px',
         textAlign: 'center',
@@ -101,8 +101,8 @@ export default function SearchPage() {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '6px',
-                    background: '#EEF2FF',
-                    color: '#4F46E5',
+                    background: '#FEE2E2',
+                    color: '#DC2626',
                     padding: '6px 14px',
                     borderRadius: '20px',
                     fontSize: '14px',

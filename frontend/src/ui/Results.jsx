@@ -115,7 +115,7 @@ export default function EnrichedResults({
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '14px' }}>
                   {vehicle.price && (
                     <div>
-                      <span style={{ fontWeight: 600, fontSize: '20px', color: '#4F46E5' }}>
+                      <span style={{ fontWeight: 600, fontSize: '20px', color: '#DC2626' }}>
                         {typeof vehicle.price === 'number'
                           ? vehicle.price.toLocaleString('fr-FR')
                           : vehicle.price}{' '}
@@ -162,8 +162,8 @@ export default function EnrichedResults({
                         style={{
                           padding: '4px 8px',
                           fontSize: '12px',
-                          backgroundColor: '#EEF2FF',
-                          color: '#4F46E5',
+                          backgroundColor: '#FEE2E2',
+                          color: '#DC2626',
                           borderRadius: '3px',
                           fontWeight: 500,
                         }}
@@ -181,7 +181,7 @@ export default function EnrichedResults({
                     state={{ vehicle }}
                     style={{
                       padding: '8px 16px',
-                      backgroundColor: '#4F46E5',
+                      backgroundColor: '#DC2626',
                       color: '#fff',
                       textDecoration: 'none',
                       borderRadius: '8px',
@@ -190,8 +190,8 @@ export default function EnrichedResults({
                       display: 'inline-block',
                       transition: 'background 0.2s'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = '#4338CA'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = '#4F46E5'}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#B91C1C'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = '#DC2626'}
                   >
                     Voir les détails
                   </Link>
@@ -237,7 +237,7 @@ export default function EnrichedResults({
                           ? '#10B981'
                           : proposing[vehicle.id]
                             ? '#9CA3AF'
-                            : '#4F46E5',
+                            : '#DC2626',
                         color: '#fff',
                         border: 'none',
                         borderRadius: '8px',
@@ -249,12 +249,12 @@ export default function EnrichedResults({
                       }}
                       onMouseEnter={(e) => {
                         if (!proposing[vehicle.id] && !vehicle.proposed) {
-                          e.currentTarget.style.background = '#4338CA';
+                          e.currentTarget.style.background = '#B91C1C';
                         }
                       }}
                       onMouseLeave={(e) => {
                         if (!proposing[vehicle.id] && !vehicle.proposed) {
-                          e.currentTarget.style.background = '#4F46E5';
+                          e.currentTarget.style.background = '#DC2626';
                         }
                       }}
                     >
@@ -287,7 +287,7 @@ export default function EnrichedResults({
             disabled={page <= 1}
             style={{
               padding: '10px 20px',
-              backgroundColor: page <= 1 ? '#E5E7EB' : '#4F46E5',
+              backgroundColor: page <= 1 ? '#E5E7EB' : '#DC2626',
               color: page <= 1 ? '#9CA3AF' : '#fff',
               border: 'none',
               borderRadius: '8px',
@@ -297,12 +297,12 @@ export default function EnrichedResults({
             }}
             onMouseEnter={(e) => {
               if (page > 1) {
-                e.currentTarget.style.background = '#4338CA'
+                e.currentTarget.style.background = '#B91C1C'
               }
             }}
             onMouseLeave={(e) => {
               if (page > 1) {
-                e.currentTarget.style.background = '#4F46E5'
+                e.currentTarget.style.background = '#DC2626'
               }
             }}
           >
@@ -326,7 +326,7 @@ export default function EnrichedResults({
             disabled={page * 20 >= total}
             style={{
               padding: '10px 20px',
-              backgroundColor: page * 20 >= total ? '#E5E7EB' : '#4F46E5',
+              backgroundColor: page * 20 >= total ? '#E5E7EB' : '#DC2626',
               color: page * 20 >= total ? '#9CA3AF' : '#fff',
               border: 'none',
               borderRadius: '8px',
@@ -336,12 +336,12 @@ export default function EnrichedResults({
             }}
             onMouseEnter={(e) => {
               if (page * 20 < total) {
-                e.currentTarget.style.background = '#4338CA'
+                e.currentTarget.style.background = '#B91C1C'
               }
             }}
             onMouseLeave={(e) => {
               if (page * 20 < total) {
-                e.currentTarget.style.background = '#4F46E5'
+                e.currentTarget.style.background = '#DC2626'
               }
             }}
           >

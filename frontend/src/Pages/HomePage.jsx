@@ -9,7 +9,7 @@ export default function HomePage() {
     <div>
       {/* Hero Section */}
       <section style={{
-        background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+        background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
         color: 'white',
         padding: '80px 20px',
         textAlign: 'center',
@@ -46,7 +46,7 @@ export default function HomePage() {
               style={{
                 padding: '16px 32px',
                 background: 'white',
-                color: '#4F46E5',
+                color: '#DC2626',
                 textDecoration: 'none',
                 borderRadius: '12px',
                 fontSize: '18px',
@@ -307,24 +307,24 @@ export default function HomePage() {
               to="/search"
               style={{
                 padding: '16px 32px',
-                background: '#4F46E5',
+                background: '#DC2626',
                 color: 'white',
                 textDecoration: 'none',
                 borderRadius: '12px',
                 fontSize: '18px',
                 fontWeight: 600,
                 transition: 'all 0.2s',
-                boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)',
+                boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)',
               }}
               onMouseEnter={(e) => {
-                e.target.style.background = '#4338CA'
+                e.target.style.background = '#B91C1C'
                 e.target.style.transform = 'translateY(-2px)'
-                e.target.style.boxShadow = '0 8px 24px rgba(79, 70, 229, 0.4)'
+                e.target.style.boxShadow = '0 8px 24px rgba(220, 38, 38, 0.4)'
               }}
               onMouseLeave={(e) => {
-                e.target.style.background = '#4F46E5'
+                e.target.style.background = '#DC2626'
                 e.target.style.transform = 'translateY(0)'
-                e.target.style.boxShadow = '0 4px 12px rgba(79, 70, 229, 0.3)'
+                e.target.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.3)'
               }}
             >
               Lancer une recherche
@@ -335,21 +335,21 @@ export default function HomePage() {
                 style={{
                   padding: '16px 32px',
                   background: 'white',
-                  color: '#4F46E5',
+                  color: '#DC2626',
                   textDecoration: 'none',
                   borderRadius: '12px',
                   fontSize: '18px',
                   fontWeight: 600,
-                  border: '2px solid #4F46E5',
+                  border: '2px solid #DC2626',
                   transition: 'all 0.2s',
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.background = '#4F46E5'
+                  e.target.style.background = '#DC2626'
                   e.target.style.color = 'white'
                 }}
                 onMouseLeave={(e) => {
                   e.target.style.background = 'white'
-                  e.target.style.color = '#4F46E5'
+                  e.target.style.color = '#DC2626'
                 }}
               >
                 Créer un compte
@@ -410,7 +410,7 @@ function ServiceCard({ icon, title, description, link, linkText }) {
       <Link
         to={link}
         style={{
-          color: '#4F46E5',
+          color: '#DC2626',
           textDecoration: 'none',
           fontWeight: 600,
           fontSize: '15px',
@@ -433,7 +433,7 @@ function StepCard({ number, title, description }) {
         width: '72px',
         height: '72px',
         borderRadius: '50%',
-        background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+        background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -441,7 +441,7 @@ function StepCard({ number, title, description }) {
         fontSize: '32px',
         fontWeight: 700,
         color: 'white',
-        boxShadow: '0 4px 16px rgba(79, 70, 229, 0.3)',
+        boxShadow: '0 4px 16px rgba(220, 38, 38, 0.3)',
       }}>
         {number}
       </div>
@@ -470,7 +470,7 @@ function ArrowSeparator() {
     <div style={{
       textAlign: 'center',
       fontSize: '32px',
-      color: '#4F46E5',
+      color: '#DC2626',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',

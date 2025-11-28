@@ -90,24 +90,24 @@ export default function FavoritesPage() {
             style={{
               display: 'inline-block',
               padding: '14px 32px',
-              background: '#4F46E5',
+              background: '#DC2626',
               color: 'white',
               textDecoration: 'none',
               borderRadius: '12px',
               fontSize: '16px',
               fontWeight: 600,
               transition: 'all 0.2s',
-              boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)',
+              boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)',
             }}
             onMouseEnter={(e) => {
-              e.target.style.background = '#4338CA'
+              e.target.style.background = '#B91C1C'
               e.target.style.transform = 'translateY(-2px)'
-              e.target.style.boxShadow = '0 8px 24px rgba(79, 70, 229, 0.4)'
+              e.target.style.boxShadow = '0 8px 24px rgba(220, 38, 38, 0.4)'
             }}
             onMouseLeave={(e) => {
-              e.target.style.background = '#4F46E5'
+              e.target.style.background = '#DC2626'
               e.target.style.transform = 'translateY(0)'
-              e.target.style.boxShadow = '0 4px 12px rgba(79, 70, 229, 0.3)'
+              e.target.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.3)'
             }}
           >
             🔍 Rechercher des véhicules
@@ -125,7 +125,7 @@ export default function FavoritesPage() {
     }}>
       {/* Header Section */}
       <div style={{
-        background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+        background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
         color: 'white',
         padding: '60px 20px',
         textAlign: 'center',
@@ -237,7 +237,7 @@ export default function FavoritesPage() {
                 <div style={{
                   fontSize: '24px',
                   fontWeight: 700,
-                  color: '#4F46E5',
+                  color: '#DC2626',
                   marginBottom: '12px',
                 }}>
                   {typeof v.price === 'number'

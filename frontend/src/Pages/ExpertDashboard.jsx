@@ -100,7 +100,7 @@ export default function ExpertDashboard() {
           icon="📋"
           label="Total demandes"
           value={totalRequests}
-          color="#4F46E5"
+          color="#DC2626"
           trend="+12%"
         />
         <KPICard
@@ -241,7 +241,7 @@ export default function ExpertDashboard() {
             <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '4px' }}>
               Performance globale
             </div>
-            <div style={{ fontSize: '24px', fontWeight: 700, color: '#4F46E5' }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#DC2626' }}>
               {Math.round((completionRate + acceptanceRate) / 2)}%
             </div>
           </div>
@@ -528,7 +528,7 @@ function ActionCard({ icon, title, description, count, onClick }) {
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)';
-        e.currentTarget.style.borderColor = '#4F46E5';
+        e.currentTarget.style.borderColor = '#DC2626';
         e.currentTarget.style.transform = 'translateY(-2px)';
       }}
       onMouseLeave={(e) => {
