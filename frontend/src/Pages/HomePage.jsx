@@ -339,7 +339,7 @@ export default function HomePage() {
                   textDecoration: 'none',
                   borderRadius: '12px',
                   fontSize: '18px',
-                  fontWeight: 600',
+                  fontWeight: 600,
                   border: '2px solid #4F46E5',
                   transition: 'all 0.2s',
                 }}
