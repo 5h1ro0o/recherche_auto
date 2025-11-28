@@ -11,11 +11,13 @@ export default function MessagesPage() {
   const { data: conversations, error, mutate } = useSWR('/messages/conversations', getConversations)
   const [selectedFilter, setSelectedFilter] = useState('all')
 
+  const isExpert = user && user.role === 'EXPERT'
+
   if (error) {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
+        background: '#F9FAFB',
         padding: '80px 20px',
       }}>
         <div style={{
@@ -43,7 +45,7 @@ export default function MessagesPage() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
+        background: '#F9FAFB',
         padding: '80px 20px',
       }}>
         <div style={{
@@ -70,53 +72,56 @@ export default function MessagesPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
-      paddingBottom: '60px',
+      background: '#F9FAFB',
+      padding: isExpert ? '20px' : '0',
+      paddingBottom: isExpert ? '20px' : '60px',
     }}>
-      {/* Header Section */}
-      <div style={{
-        background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
-        color: 'white',
-        padding: '60px 20px',
-        marginBottom: '40px',
-      }}>
+      {/* Header Section - Only for non-experts */}
+      {!isExpert && (
         <div style={{
-          maxWidth: '900px',
-          margin: '0 auto',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '16px',
+          background: '#DC2626',
+          color: 'white',
+          padding: '60px 20px',
+          marginBottom: '40px',
         }}>
-          <h1 style={{
-            fontSize: '42px',
-            fontWeight: 700,
-            margin: 0,
-            lineHeight: 1.2,
+          <div style={{
+            maxWidth: '900px',
+            margin: '0 auto',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '16px',
           }}>
-            💬 Mes Conversations
-          </h1>
-          {totalUnread > 0 && (
-            <div style={{
-              background: '#EF4444',
-              color: 'white',
-              padding: '8px 20px',
-              borderRadius: '20px',
-              fontSize: '16px',
-              fontWeight: 600,
-              boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
+            <h1 style={{
+              fontSize: '42px',
+              fontWeight: 700,
+              margin: 0,
+              lineHeight: 1.2,
             }}>
-              {totalUnread} non lu{totalUnread > 1 ? 's' : ''}
-            </div>
-          )}
+              💬 Mes Conversations
+            </h1>
+            {totalUnread > 0 && (
+              <div style={{
+                background: 'white',
+                color: '#DC2626',
+                padding: '8px 20px',
+                borderRadius: '20px',
+                fontSize: '16px',
+                fontWeight: 600,
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+              }}>
+                {totalUnread} non lu{totalUnread > 1 ? 's' : ''}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       <div style={{
         maxWidth: '900px',
         margin: '0 auto',
-        padding: '0 20px',
+        padding: isExpert ? '0' : '0 20px',
       }}>
         {/* Filters */}
         <div style={{
@@ -128,7 +133,7 @@ export default function MessagesPage() {
             onClick={() => setSelectedFilter('all')}
             style={{
               padding: '12px 24px',
-              background: selectedFilter === 'all' ? '#4F46E5' : 'white',
+              background: selectedFilter === 'all' ? '#DC2626' : 'white',
               color: selectedFilter === 'all' ? 'white' : '#222222',
               border: selectedFilter === 'all' ? 'none' : '2px solid #E5E7EB',
               borderRadius: '12px',
@@ -139,7 +144,7 @@ export default function MessagesPage() {
             }}
             onMouseEnter={(e) => {
               if (selectedFilter !== 'all') {
-                e.target.style.borderColor = '#4F46E5'
+                e.target.style.borderColor = '#DC2626'
               }
             }}
             onMouseLeave={(e) => {
@@ -154,7 +159,7 @@ export default function MessagesPage() {
             onClick={() => setSelectedFilter('unread')}
             style={{
               padding: '12px 24px',
-              background: selectedFilter === 'unread' ? '#4F46E5' : 'white',
+              background: selectedFilter === 'unread' ? '#DC2626' : 'white',
               color: selectedFilter === 'unread' ? 'white' : '#222222',
               border: selectedFilter === 'unread' ? 'none' : '2px solid #E5E7EB',
               borderRadius: '12px',
@@ -165,7 +170,7 @@ export default function MessagesPage() {
             }}
             onMouseEnter={(e) => {
               if (selectedFilter !== 'unread') {
-                e.target.style.borderColor = '#4F46E5'
+                e.target.style.borderColor = '#DC2626'
               }
             }}
             onMouseLeave={(e) => {
@@ -247,7 +252,7 @@ function ConversationCard({ conversation, currentUserId, onClick }) {
         cursor: 'pointer',
         transition: 'all 0.2s',
         boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-        border: isUnread ? '2px solid #4F46E5' : '2px solid #E5E7EB',
+        border: isUnread ? '2px solid #DC2626' : '2px solid #E5E7EB',
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateX(4px)'
@@ -263,7 +268,7 @@ function ConversationCard({ conversation, currentUserId, onClick }) {
         width: '56px',
         height: '56px',
         borderRadius: '50%',
-        background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+        background: '#DC2626',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -361,7 +366,7 @@ function getRoleBadge(role) {
   const badges = {
     'PRO': (
       <span style={{
-        background: '#4F46E5',
+        background: '#DC2626',
         color: 'white',
         padding: '2px 8px',
         borderRadius: '12px',
@@ -385,7 +390,7 @@ function getRoleBadge(role) {
     ),
     'ADMIN': (
       <span style={{
-        background: '#EF4444',
+        background: '#222222',
         color: 'white',
         padding: '2px 8px',
         borderRadius: '12px',
