@@ -51,7 +51,7 @@ class AssistedRequestOut(BaseModel):
     preferred_transmission: Optional[str]
     max_mileage: Optional[int]
     min_year: Optional[int]
-    ai_parsed_criteria: Dict[str, Any]
+    ai_parsed_criteria: Optional[Dict[str, Any]] = None
     created_at: datetime
     accepted_at: Optional[datetime]
     completed_at: Optional[datetime]
