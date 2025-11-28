@@ -16,8 +16,13 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      await login(email, password)
-      navigate('/')
+      const loginData = await login(email, password)
+      // Rediriger vers le dashboard expert si c'est un expert
+      if (loginData?.user?.role === 'EXPERT') {
+        navigate('/expert')
+      } else {
+        navigate('/')
+      }
     } catch (err) {
       setError(err.response?.data?.detail || 'Erreur de connexion')
     } finally {
