@@ -552,13 +552,19 @@ async def propose_vehicle(
             else:
                 images_list = [vdata.get('image_url')]
 
-        # Stocker les infos de source ET les métadonnées dans source_ids (JSON)
+        # Stocker TOUTES les métadonnées dans source_ids (JSON)
+        # car la plupart des colonnes n'existent pas en DB
         source_data = {
             'source': vdata.get('source', 'scraping'),
             'url': vdata.get('url'),
             'original_id': vdata.get('original_id'),
             'fuel_type': vdata.get('fuel_type'),
-            'transmission': vdata.get('transmission')
+            'transmission': vdata.get('transmission'),
+            'description': vdata.get('description'),
+            'images': images_list,
+            'location_city': vdata.get('location_city'),
+            'location_lat': vdata.get('location_lat'),
+            'location_lon': vdata.get('location_lon')
         }
 
         vehicle = Vehicle(
@@ -569,10 +575,7 @@ async def propose_vehicle(
             price=vdata.get('price'),
             year=vdata.get('year'),
             mileage=vdata.get('mileage'),
-            images=images_list,
-            source_ids=source_data,
-            description=vdata.get('description'),
-            location_city=vdata.get('location_city')
+            source_ids=source_data
         )
         db.add(vehicle)
         db.flush()  # Pour obtenir l'ID sans commit
