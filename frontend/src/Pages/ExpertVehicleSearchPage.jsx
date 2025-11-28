@@ -159,13 +159,20 @@ export default function ExpertVehicleSearchPage() {
           vehicle_id: vehicle.id,
           vehicle_data: {
             title: vehicle.title,
+            make: vehicle.make,
+            model: vehicle.model,
             price: vehicle.price,
             year: vehicle.year,
             mileage: vehicle.mileage,
             fuel_type: vehicle.fuel_type,
             transmission: vehicle.transmission,
+            description: vehicle.description,
             url: vehicle.url,
-            image_url: vehicle.images?.[0] || null,
+            image_url: vehicle.images,
+            location_city: vehicle.location_city,
+            location_lat: vehicle.location_lat,
+            location_lon: vehicle.location_lon,
+            original_id: vehicle.original_id,
             source: vehicle.source
           },
           message: `Ce véhicule correspond parfaitement à vos critères de recherche. ${vehicle.title} - ${vehicle.price}€`
