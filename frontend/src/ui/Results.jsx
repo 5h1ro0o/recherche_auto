@@ -115,7 +115,7 @@ export default function EnrichedResults({
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '14px' }}>
                   {vehicle.price && (
                     <div>
-                      <span style={{ fontWeight: 600, fontSize: '20px', color: '#0366d6' }}>
+                      <span style={{ fontWeight: 600, fontSize: '20px', color: '#4F46E5' }}>
                         {typeof vehicle.price === 'number'
                           ? vehicle.price.toLocaleString('fr-FR')
                           : vehicle.price}{' '}
@@ -162,8 +162,8 @@ export default function EnrichedResults({
                         style={{
                           padding: '4px 8px',
                           fontSize: '12px',
-                          backgroundColor: '#f1f8ff',
-                          color: '#0366d6',
+                          backgroundColor: '#EEF2FF',
+                          color: '#4F46E5',
                           borderRadius: '3px',
                           fontWeight: 500,
                         }}
@@ -181,7 +181,7 @@ export default function EnrichedResults({
                     state={{ vehicle }}
                     style={{
                       padding: '8px 16px',
-                      backgroundColor: '#DC2626',
+                      backgroundColor: '#4F46E5',
                       color: '#fff',
                       textDecoration: 'none',
                       borderRadius: '8px',
@@ -190,8 +190,8 @@ export default function EnrichedResults({
                       display: 'inline-block',
                       transition: 'background 0.2s'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = '#B91C1C'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = '#DC2626'}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#4338CA'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = '#4F46E5'}
                   >
                     Voir les détails
                   </Link>
@@ -234,10 +234,10 @@ export default function EnrichedResults({
                       style={{
                         padding: '8px 16px',
                         backgroundColor: vehicle.proposed
-                          ? '#222222'
+                          ? '#10B981'
                           : proposing[vehicle.id]
-                            ? '#CCCCCC'
-                            : '#DC2626',
+                            ? '#9CA3AF'
+                            : '#4F46E5',
                         color: '#fff',
                         border: 'none',
                         borderRadius: '8px',
@@ -249,12 +249,12 @@ export default function EnrichedResults({
                       }}
                       onMouseEnter={(e) => {
                         if (!proposing[vehicle.id] && !vehicle.proposed) {
-                          e.currentTarget.style.background = '#B91C1C';
+                          e.currentTarget.style.background = '#4338CA';
                         }
                       }}
                       onMouseLeave={(e) => {
                         if (!proposing[vehicle.id] && !vehicle.proposed) {
-                          e.currentTarget.style.background = '#DC2626';
+                          e.currentTarget.style.background = '#4F46E5';
                         }
                       }}
                     >
@@ -286,13 +286,24 @@ export default function EnrichedResults({
             onClick={() => onPageChange(page - 1)}
             disabled={page <= 1}
             style={{
-              padding: '8px 16px',
-              backgroundColor: page <= 1 ? '#f6f8fa' : '#0366d6',
-              color: page <= 1 ? '#959da5' : '#fff',
+              padding: '10px 20px',
+              backgroundColor: page <= 1 ? '#E5E7EB' : '#4F46E5',
+              color: page <= 1 ? '#9CA3AF' : '#fff',
               border: 'none',
-              borderRadius: '6px',
+              borderRadius: '8px',
               cursor: page <= 1 ? 'not-allowed' : 'pointer',
-              fontWeight: 500,
+              fontWeight: 600,
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              if (page > 1) {
+                e.currentTarget.style.background = '#4338CA'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (page > 1) {
+                e.currentTarget.style.background = '#4F46E5'
+              }
             }}
           >
             ← Précédent
@@ -300,10 +311,11 @@ export default function EnrichedResults({
 
           <span
             style={{
-              padding: '8px 16px',
+              padding: '10px 20px',
               display: 'flex',
               alignItems: 'center',
-              color: '#586069',
+              color: '#222222',
+              fontWeight: 600,
             }}
           >
             Page {page}
@@ -313,13 +325,24 @@ export default function EnrichedResults({
             onClick={() => onPageChange(page + 1)}
             disabled={page * 20 >= total}
             style={{
-              padding: '8px 16px',
-              backgroundColor: page * 20 >= total ? '#f6f8fa' : '#0366d6',
-              color: page * 20 >= total ? '#959da5' : '#fff',
+              padding: '10px 20px',
+              backgroundColor: page * 20 >= total ? '#E5E7EB' : '#4F46E5',
+              color: page * 20 >= total ? '#9CA3AF' : '#fff',
               border: 'none',
-              borderRadius: '6px',
+              borderRadius: '8px',
               cursor: page * 20 >= total ? 'not-allowed' : 'pointer',
-              fontWeight: 500,
+              fontWeight: 600,
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              if (page * 20 < total) {
+                e.currentTarget.style.background = '#4338CA'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (page * 20 < total) {
+                e.currentTarget.style.background = '#4F46E5'
+              }
             }}
           >
             Suivant →
