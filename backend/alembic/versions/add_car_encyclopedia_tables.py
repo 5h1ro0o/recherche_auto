@@ -1,7 +1,7 @@
 """add car encyclopedia tables
 
 Revision ID: a1b2c3d4e5f6
-Revises: ebb543dd0499
+Revises: df5ee69f89fe
 Create Date: 2025-11-29 00:00:00.000000
 
 """
@@ -14,7 +14,7 @@ from sqlalchemy.dialects.postgresql import JSON
 
 # revision identifiers, used by Alembic.
 revision: str = 'a1b2c3d4e5f6'
-down_revision: Union[str, Sequence[str], None] = 'ebb543dd0499'
+down_revision: Union[str, Sequence[str], None] = 'df5ee69f89fe'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
