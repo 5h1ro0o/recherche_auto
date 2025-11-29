@@ -270,8 +270,15 @@ class BaseScraper(ABC):
 
     def normalize_data(self, raw_data: Dict[str, Any]) -> Dict[str, Any]:
         """Normalise les données scrapées"""
+        source_name = self.get_source_name()
+        source_id = raw_data.get('id')
+
+        # Créer un ID unique en combinant source + id
+        unique_id = f"{source_name}_{source_id}" if source_id else None
+
         return {
-            'source_ids': {self.get_source_name(): raw_data.get('id')},
+            'id': unique_id,  # ID unique pour le frontend
+            'source_ids': {source_name: source_id},
             'title': raw_data.get('title', ''),
             'make': raw_data.get('make'),
             'model': raw_data.get('model'),

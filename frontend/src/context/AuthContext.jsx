@@ -34,8 +34,9 @@ export function AuthProvider({ children }) {
     localStorage.setItem('access_token', data.access_token)
     localStorage.setItem('refresh_token', data.refresh_token)
     setToken(data.access_token)
-    await loadUser()
-    return data
+    const userData = await getCurrentUser()
+    setUser(userData)
+    return { ...data, user: userData }
   }
 
   async function register(userData) {

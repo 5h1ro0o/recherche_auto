@@ -35,9 +35,16 @@ class User(Base):
     alerts = relationship("Alert", back_populates="user")
 
 class Vehicle(Base):
-    """Modèle véhicule enrichi"""
+    """Modèle véhicule - ALIGNÉ SUR LE SCHEMA DB RÉEL (selon migrations Alembic)
+
+    Colonnes réelles en DB (depuis les migrations):
+    - create_vehicles.py: id, title, make, model, price, mileage, year, source_ids, created_at
+    - add_users_roles.py: professional_user_id
+    - add_vehicle_is_active.py: is_active
+    """
     __tablename__ = "vehicles"
-    
+
+    # ===== COLONNES QUI EXISTENT EN DB =====
     id = Column(String, primary_key=True)
     title = Column(String)
     make = Column(String, index=True)
@@ -45,23 +52,25 @@ class Vehicle(Base):
     price = Column(Integer, index=True)
     mileage = Column(Integer)
     year = Column(Integer)
-    vin = Column(String, unique=True, index=True)
-    fuel_type = Column(String)  # essence, diesel, electrique, hybride
-    transmission = Column(String)  # manuelle, automatique
-    description = Column(Text)
-    images = Column(JSON, default=list)
-    source_ids = Column(JSON, default=dict)
-    location_lat = Column(String)
-    location_lon = Column(String)
-    location_city = Column(String)
+    source_ids = Column(JSON, default=dict)  # Utiliser pour stocker: fuel_type, transmission, description, images, location, url, etc.
     created_at = Column(TIMESTAMP, default=datetime.utcnow, index=True)
-    updated_at = Column(TIMESTAMP, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    # Lien avec le professionnel
     professional_user_id = Column(String, ForeignKey('users.id', ondelete='SET NULL'), nullable=True, index=True)
-    professional_user = relationship("User", back_populates="vehicles", foreign_keys=[professional_user_id])
-    
+    is_active = Column(Boolean, default=True, nullable=False)
+
+    # ===== COLONNES COMMENTÉES CAR N'EXISTENT PAS EN DB =====
+    # Stocker ces données dans le JSON source_ids
+    # vin = Column(String)
+    # fuel_type = Column(String)
+    # transmission = Column(String)
+    # description = Column(Text)
+    # images = Column(JSON)
+    # location_lat = Column(String)
+    # location_lon = Column(String)
+    # location_city = Column(String)
+    # updated_at = Column(TIMESTAMP)
+
     # Relations
+    professional_user = relationship("User", back_populates="vehicles", foreign_keys=[professional_user_id])
     favorites = relationship("Favorite", back_populates="vehicle")
 
 class Favorite(Base):
@@ -107,15 +116,16 @@ class SearchHistory(Base):
 
 class RequestStatus(str, enum.Enum):
     """Statuts des demandes assistées"""
-    PENDING = "EN_ATTENTE"
-    IN_PROGRESS = "EN_COURS"
-    COMPLETED = "TERMINEE"
-    CANCELLED = "ANNULEE"
+    PENDING = "PENDING"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
 
 class ProposalStatus(str, enum.Enum):
     """Statuts des propositions de véhicules"""
     PENDING = "PENDING"
-    FAVORITE = "FAVORITE"
+    LIKED = "LIKED"
+    SUPER_LIKED = "SUPER_LIKED"  # Coup de foudre
     REJECTED = "REJECTED"
 
 class AssistedRequest(Base):
@@ -150,18 +160,19 @@ class AssistedRequest(Base):
 class ProposedVehicle(Base):
     """Véhicules proposés par l'expert au client"""
     __tablename__ = "proposed_vehicles"
-    
+
     id = Column(String, primary_key=True)
     request_id = Column(String, ForeignKey('assisted_requests.id', ondelete='CASCADE'), nullable=False, index=True)
     vehicle_id = Column(String, ForeignKey('vehicles.id', ondelete='CASCADE'), nullable=False, index=True)
-    
+
     status = Column(SQLEnum(ProposalStatus), nullable=False, default=ProposalStatus.PENDING, index=True)
     message = Column(Text, nullable=True)  # Message de l'expert
     rejection_reason = Column(Text, nullable=True)  # Raison du refus par le client
-    
+    client_feedback = Column(Text, nullable=True)  # Feedback du client pour affiner la recherche
+
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
     updated_at = Column(TIMESTAMP, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     # Relations
     request = relationship("AssistedRequest", back_populates="proposals")
     vehicle = relationship("Vehicle")

@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react'
 
-export default function AdvancedSearchForm({ onSearch, loading }) {
+export default function AdvancedSearchForm({ onSearch, loading, initialFilters = null }) {
   const [makes, setMakes] = useState([])
   const [models, setModels] = useState([])
   const [years, setYears] = useState([])
+
+  // Mode de recherche: 'classic' ou 'natural'
+  const [searchMode, setSearchMode] = useState('classic')
+  const [naturalQuery, setNaturalQuery] = useState('')
+  const [parsedFiltersExplanation, setParsedFiltersExplanation] = useState('')
+
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
+  const [showEquipmentFilters, setShowEquipementFilters] = useState(false)
 
   const [filters, setFilters] = useState({
     make: '',
@@ -16,6 +24,63 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
     mileage_max: '',
     fuel_type: '',
     transmission: '',
+    body_type: '',
+    horsepower_min: '',
+    horsepower_max: '',
+    horsepower_fiscal_min: '',
+    horsepower_fiscal_max: '',
+    seller_type: '',
+    first_registration: false,
+    nb_doors: '',
+    nb_seats: '',
+    color: '',
+    color_interior: '',
+    metallic_color: false,
+    emission_class: '',
+    critair: '',
+    co2_max: '',
+    technical_control_ok: false,
+    non_smoker: false,
+    no_accident: false,
+    service_history: false,
+    warranty: false,
+    manufacturer_warranty: false,
+    // Équipements confort
+    climate_control: '',
+    leather_interior: false,
+    sunroof: false,
+    panoramic_roof: false,
+    heated_seats: false,
+    electric_seats: false,
+    parking_sensors: false,
+    parking_camera: false,
+    // Équipements technologie
+    gps: false,
+    bluetooth: false,
+    apple_carplay: false,
+    android_auto: false,
+    cruise_control: false,
+    adaptive_cruise_control: false,
+    keyless_entry: false,
+    head_up_display: false,
+    // Équipements sécurité
+    abs: false,
+    esp: false,
+    airbags: '',
+    lane_assist: false,
+    blind_spot: false,
+    automatic_emergency_braking: false,
+    // Autres équipements
+    alloy_wheels: false,
+    led_headlights: false,
+    xenon_headlights: false,
+    tow_bar: false,
+    ski_rack: false,
+    roof_rack: false,
+    // Motorisation
+    cylinders: '',
+    engine_size: '',
+    drive_type: '',
     sources: ['leboncoin', 'autoscout24']
   })
 
@@ -32,6 +97,16 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
       .then(data => setYears(data.years))
       .catch(err => console.error('Erreur chargement années:', err))
   }, [])
+
+  // Appliquer les filtres initiaux (pour pré-remplissage depuis une demande expert par exemple)
+  useEffect(() => {
+    if (initialFilters) {
+      setFilters(prev => ({
+        ...prev,
+        ...initialFilters
+      }))
+    }
+  }, [initialFilters])
 
   // Charger les modèles quand la marque change
   useEffect(() => {
@@ -50,13 +125,62 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
     setFilters(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Nettoyer les valeurs vides
-    const cleanedFilters = Object.fromEntries(
-      Object.entries(filters).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
-    )
-    onSearch(cleanedFilters)
+
+    if (searchMode === 'natural') {
+      // Mode recherche naturelle avec IA
+      await handleNaturalSearch()
+    } else {
+      // Mode recherche classique
+      const cleanedFilters = Object.fromEntries(
+        Object.entries(filters).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
+      )
+      onSearch(cleanedFilters)
+    }
+  }
+
+  const handleNaturalSearch = async () => {
+    if (!naturalQuery.trim()) {
+      alert('Veuillez entrer une recherche')
+      return
+    }
+
+    try {
+      // Appeler l'API pour lancer la recherche naturelle directement
+      const response = await fetch('http://localhost:8000/api/search-advanced/search-natural', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: naturalQuery,
+          sources: filters.sources,
+          max_pages: 20
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Afficher l'explication des filtres parsés
+        if (data.filters_applied) {
+          const explanation = Object.entries(data.filters_applied)
+            .filter(([_, v]) => v !== '' && v !== null && v !== undefined)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join(', ')
+          setParsedFiltersExplanation(explanation)
+        }
+
+        // Appeler onSearch avec les résultats
+        onSearch(data.filters_applied, data.results)
+      } else {
+        alert('Erreur lors de la recherche naturelle')
+      }
+    } catch (error) {
+      console.error('Erreur recherche naturelle:', error)
+      alert('Erreur lors de la recherche naturelle')
+    }
   }
 
   const handleReset = () => {
@@ -71,6 +195,58 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
       mileage_max: '',
       fuel_type: '',
       transmission: '',
+      body_type: '',
+      horsepower_min: '',
+      horsepower_max: '',
+      horsepower_fiscal_min: '',
+      horsepower_fiscal_max: '',
+      seller_type: '',
+      first_registration: false,
+      nb_doors: '',
+      nb_seats: '',
+      color: '',
+      color_interior: '',
+      metallic_color: false,
+      emission_class: '',
+      critair: '',
+      co2_max: '',
+      technical_control_ok: false,
+      non_smoker: false,
+      no_accident: false,
+      service_history: false,
+      warranty: false,
+      manufacturer_warranty: false,
+      climate_control: '',
+      leather_interior: false,
+      sunroof: false,
+      panoramic_roof: false,
+      heated_seats: false,
+      electric_seats: false,
+      parking_sensors: false,
+      parking_camera: false,
+      gps: false,
+      bluetooth: false,
+      apple_carplay: false,
+      android_auto: false,
+      cruise_control: false,
+      adaptive_cruise_control: false,
+      keyless_entry: false,
+      head_up_display: false,
+      abs: false,
+      esp: false,
+      airbags: '',
+      lane_assist: false,
+      blind_spot: false,
+      automatic_emergency_braking: false,
+      alloy_wheels: false,
+      led_headlights: false,
+      xenon_headlights: false,
+      tow_bar: false,
+      ski_rack: false,
+      roof_rack: false,
+      cylinders: '',
+      engine_size: '',
+      drive_type: '',
       sources: ['leboncoin', 'autoscout24']
     })
   }
@@ -86,7 +262,21 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
 
   return (
     <form onSubmit={handleSubmit} style={styles.form}>
-      <h2 style={styles.title}>🔍 Recherche Multi-Sources</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2 style={{ ...styles.title, marginBottom: 0 }}>🔍 Recherche Multi-Sources</h2>
+
+        {/* Bouton de basculement de mode */}
+        <button
+          type="button"
+          onClick={() => {
+            setSearchMode(searchMode === 'classic' ? 'natural' : 'classic')
+            setParsedFiltersExplanation('')
+          }}
+          style={styles.modeToggleButton}
+        >
+          {searchMode === 'classic' ? '🤖 Passer en recherche IA' : '📋 Passer en recherche classique'}
+        </button>
+      </div>
 
       {/* Sources */}
       <div style={styles.section}>
@@ -111,8 +301,38 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
         </div>
       </div>
 
-      {/* Marque et Modèle */}
-      <div style={styles.row}>
+      {/* Mode recherche naturelle avec IA */}
+      {searchMode === 'natural' && (
+        <div style={styles.naturalSearchSection}>
+          <div style={styles.section}>
+            <label style={styles.label}>
+              🤖 Décrivez votre recherche en langage naturel
+            </label>
+            <textarea
+              value={naturalQuery}
+              onChange={(e) => setNaturalQuery(e.target.value)}
+              placeholder="Exemple: BMW Série 3 diesel de 2018 à moins de 20000€ avec GPS et toit ouvrant&#10;&#10;Ou: Volkswagen Golf automatique récente première main avec caméra de recul&#10;&#10;Ou: SUV électrique avec moins de 50000 km"
+              style={styles.textarea}
+              rows={5}
+            />
+            <p style={styles.hint}>
+              💡 L'IA comprendra votre demande et appliquera automatiquement les filtres appropriés
+            </p>
+          </div>
+
+          {parsedFiltersExplanation && (
+            <div style={styles.explanationBox}>
+              <strong>Filtres appliqués:</strong> {parsedFiltersExplanation}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Filtres classiques (cachés en mode natural) */}
+      {searchMode === 'classic' && (
+        <>
+          {/* Marque et Modèle */}
+          <div style={styles.row}>
         <div style={styles.field}>
           <label style={styles.label}>Marque</label>
           <select
@@ -262,6 +482,402 @@ export default function AdvancedSearchForm({ onSearch, loading }) {
         </select>
       </div>
 
+      {/* Bouton pour afficher plus de filtres */}
+      <div style={styles.section}>
+        <button
+          type="button"
+          onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+          style={styles.toggleButton}
+        >
+          {showAdvancedFilters ? '− Masquer les filtres avancés' : '+ Afficher les filtres avancés'}
+        </button>
+      </div>
+
+      {/* Filtres avancés (repliables) */}
+      {showAdvancedFilters && (
+        <div style={styles.advancedSection}>
+          {/* Carrosserie */}
+          <div style={styles.field}>
+            <label style={styles.label}>Type de carrosserie</label>
+            <select
+              value={filters.body_type}
+              onChange={(e) => handleChange('body_type', e.target.value)}
+              style={styles.select}
+            >
+              <option value="">Tous</option>
+              <option value="berline">Berline</option>
+              <option value="break">Break</option>
+              <option value="suv">SUV</option>
+              <option value="coupe">Coupé</option>
+              <option value="cabriolet">Cabriolet</option>
+              <option value="monospace">Monospace</option>
+              <option value="utilitaire">Utilitaire</option>
+            </select>
+          </div>
+
+          {/* Puissance */}
+          <div style={styles.section}>
+            <label style={styles.label}>Puissance (chevaux)</label>
+            <div style={styles.row}>
+              <div style={styles.field}>
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={filters.horsepower_min}
+                  onChange={(e) => handleChange('horsepower_min', e.target.value)}
+                  style={styles.input}
+                  min="0"
+                />
+              </div>
+              <span style={styles.separator}>→</span>
+              <div style={styles.field}>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={filters.horsepower_max}
+                  onChange={(e) => handleChange('horsepower_max', e.target.value)}
+                  style={styles.input}
+                  min="0"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Puissance fiscale */}
+          <div style={styles.section}>
+            <label style={styles.label}>Puissance fiscale (CV)</label>
+            <div style={styles.row}>
+              <div style={styles.field}>
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={filters.horsepower_fiscal_min}
+                  onChange={(e) => handleChange('horsepower_fiscal_min', e.target.value)}
+                  style={styles.input}
+                  min="0"
+                />
+              </div>
+              <span style={styles.separator}>→</span>
+              <div style={styles.field}>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={filters.horsepower_fiscal_max}
+                  onChange={(e) => handleChange('horsepower_fiscal_max', e.target.value)}
+                  style={styles.input}
+                  min="0"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Type de vendeur */}
+          <div style={styles.field}>
+            <label style={styles.label}>Type de vendeur</label>
+            <select
+              value={filters.seller_type}
+              onChange={(e) => handleChange('seller_type', e.target.value)}
+              style={styles.select}
+            >
+              <option value="">Tous</option>
+              <option value="particulier">Particulier</option>
+              <option value="professionnel">Professionnel</option>
+            </select>
+          </div>
+
+          {/* Caractéristiques */}
+          <div style={styles.row}>
+            <div style={styles.field}>
+              <label style={styles.label}>Nombre de portes</label>
+              <select
+                value={filters.nb_doors}
+                onChange={(e) => handleChange('nb_doors', e.target.value)}
+                style={styles.select}
+              >
+                <option value="">Toutes</option>
+                <option value="2">2 portes</option>
+                <option value="3">3 portes</option>
+                <option value="4">4 portes</option>
+                <option value="5">5 portes</option>
+              </select>
+            </div>
+
+            <div style={styles.field}>
+              <label style={styles.label}>Nombre de places</label>
+              <select
+                value={filters.nb_seats}
+                onChange={(e) => handleChange('nb_seats', e.target.value)}
+                style={styles.select}
+              >
+                <option value="">Toutes</option>
+                <option value="2">2 places</option>
+                <option value="4">4 places</option>
+                <option value="5">5 places</option>
+                <option value="7">7 places</option>
+                <option value="9">9 places</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Couleur */}
+          <div style={styles.field}>
+            <label style={styles.label}>Couleur</label>
+            <input
+              type="text"
+              placeholder="Ex: noir, blanc, rouge..."
+              value={filters.color}
+              onChange={(e) => handleChange('color', e.target.value)}
+              style={styles.input}
+            />
+          </div>
+
+          {/* Options historique */}
+          <div style={styles.section}>
+            <label style={styles.label}>Historique et garanties</label>
+            <div style={styles.checkboxGroup}>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.first_registration}
+                  onChange={(e) => handleChange('first_registration', e.target.checked)}
+                />
+                Première main
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.no_accident}
+                  onChange={(e) => handleChange('no_accident', e.target.checked)}
+                />
+                Jamais accidenté
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.service_history}
+                  onChange={(e) => handleChange('service_history', e.target.checked)}
+                />
+                Carnet d'entretien
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.warranty}
+                  onChange={(e) => handleChange('warranty', e.target.checked)}
+                />
+                Sous garantie
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.technical_control_ok}
+                  onChange={(e) => handleChange('technical_control_ok', e.target.checked)}
+                />
+                Contrôle technique OK
+              </label>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bouton pour afficher les équipements */}
+      <div style={styles.section}>
+        <button
+          type="button"
+          onClick={() => setShowEquipmentFilters(!showEquipmentFilters)}
+          style={styles.toggleButton}
+        >
+          {showEquipmentFilters ? '− Masquer les équipements' : '+ Afficher les équipements'}
+        </button>
+      </div>
+
+      {/* Filtres équipements (repliables) */}
+      {showEquipmentFilters && (
+        <div style={styles.advancedSection}>
+          {/* Équipements confort */}
+          <div style={styles.section}>
+            <label style={styles.label}>Confort</label>
+            <div style={styles.checkboxGroup}>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.leather_interior}
+                  onChange={(e) => handleChange('leather_interior', e.target.checked)}
+                />
+                Intérieur cuir
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.sunroof}
+                  onChange={(e) => handleChange('sunroof', e.target.checked)}
+                />
+                Toit ouvrant
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.panoramic_roof}
+                  onChange={(e) => handleChange('panoramic_roof', e.target.checked)}
+                />
+                Toit panoramique
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.heated_seats}
+                  onChange={(e) => handleChange('heated_seats', e.target.checked)}
+                />
+                Sièges chauffants
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.parking_camera}
+                  onChange={(e) => handleChange('parking_camera', e.target.checked)}
+                />
+                Caméra de recul
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.parking_sensors}
+                  onChange={(e) => handleChange('parking_sensors', e.target.checked)}
+                />
+                Capteurs de stationnement
+              </label>
+            </div>
+          </div>
+
+          {/* Équipements technologie */}
+          <div style={styles.section}>
+            <label style={styles.label}>Technologie</label>
+            <div style={styles.checkboxGroup}>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.gps}
+                  onChange={(e) => handleChange('gps', e.target.checked)}
+                />
+                GPS / Navigation
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.bluetooth}
+                  onChange={(e) => handleChange('bluetooth', e.target.checked)}
+                />
+                Bluetooth
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.apple_carplay}
+                  onChange={(e) => handleChange('apple_carplay', e.target.checked)}
+                />
+                Apple CarPlay
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.android_auto}
+                  onChange={(e) => handleChange('android_auto', e.target.checked)}
+                />
+                Android Auto
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.cruise_control}
+                  onChange={(e) => handleChange('cruise_control', e.target.checked)}
+                />
+                Régulateur de vitesse
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.keyless_entry}
+                  onChange={(e) => handleChange('keyless_entry', e.target.checked)}
+                />
+                Démarrage sans clé
+              </label>
+            </div>
+          </div>
+
+          {/* Équipements sécurité */}
+          <div style={styles.section}>
+            <label style={styles.label}>Sécurité</label>
+            <div style={styles.checkboxGroup}>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.abs}
+                  onChange={(e) => handleChange('abs', e.target.checked)}
+                />
+                ABS
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.esp}
+                  onChange={(e) => handleChange('esp', e.target.checked)}
+                />
+                ESP
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.lane_assist}
+                  onChange={(e) => handleChange('lane_assist', e.target.checked)}
+                />
+                Aide au maintien de voie
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.blind_spot}
+                  onChange={(e) => handleChange('blind_spot', e.target.checked)}
+                />
+                Détection angle mort
+              </label>
+            </div>
+          </div>
+
+          {/* Autres équipements */}
+          <div style={styles.section}>
+            <label style={styles.label}>Autres</label>
+            <div style={styles.checkboxGroup}>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.alloy_wheels}
+                  onChange={(e) => handleChange('alloy_wheels', e.target.checked)}
+                />
+                Jantes alliage
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.led_headlights}
+                  onChange={(e) => handleChange('led_headlights', e.target.checked)}
+                />
+                Phares LED
+              </label>
+              <label style={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.tow_bar}
+                  onChange={(e) => handleChange('tow_bar', e.target.checked)}
+                />
+                Attelage
+              </label>
+            </div>
+          </div>
+        </div>
+      )}
+        </>
+      )}
+
       {/* Boutons d'action */}
       <div style={styles.actions}>
         <button
@@ -379,5 +995,68 @@ const styles = {
     fontWeight: 500,
     cursor: 'pointer',
     transition: 'background-color 0.2s'
+  },
+  toggleButton: {
+    width: '100%',
+    padding: '12px',
+    backgroundColor: '#f6f8fa',
+    border: '1px solid #d1d5db',
+    borderRadius: '6px',
+    fontSize: '14px',
+    fontWeight: 500,
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+    textAlign: 'left',
+    color: '#0366d6'
+  },
+  advancedSection: {
+    padding: '20px',
+    backgroundColor: '#f6f8fa',
+    borderRadius: '6px',
+    marginBottom: '20px'
+  },
+  modeToggleButton: {
+    padding: '10px 20px',
+    backgroundColor: '#28a745',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '6px',
+    fontSize: '14px',
+    fontWeight: 500,
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+    whiteSpace: 'nowrap'
+  },
+  naturalSearchSection: {
+    padding: '20px',
+    backgroundColor: '#f0f8ff',
+    borderRadius: '8px',
+    marginBottom: '20px',
+    border: '2px solid #0366d6'
+  },
+  textarea: {
+    width: '100%',
+    padding: '12px',
+    border: '1px solid #d1d5db',
+    borderRadius: '6px',
+    fontSize: '14px',
+    fontFamily: 'inherit',
+    resize: 'vertical',
+    minHeight: '120px'
+  },
+  hint: {
+    fontSize: '13px',
+    color: '#6a737d',
+    marginTop: '8px',
+    fontStyle: 'italic'
+  },
+  explanationBox: {
+    padding: '12px',
+    backgroundColor: '#e6f7ff',
+    border: '1px solid #91d5ff',
+    borderRadius: '6px',
+    fontSize: '14px',
+    color: '#0366d6',
+    marginTop: '12px'
   }
 }

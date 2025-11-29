@@ -13,11 +13,15 @@ httpx
 
 # Authentification
 python-jose[cryptography]
-passlib[bcrypt]
+passlib[bcrypt]>=1.7.4
+bcrypt==3.2.2
 pydantic[email]
 
 # OpenAI pour le chatbot IA
 openai>=1.0.0
+
+# Anthropic pour la recherche naturelle avec IA
+anthropic>=0.18.0
 
 # Scraping - Versions compatibles multi-plateformes
 playwright>=1.41.0

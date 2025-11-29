@@ -11,18 +11,51 @@ export default function MessagesPage() {
   const { data: conversations, error, mutate } = useSWR('/messages/conversations', getConversations)
   const [selectedFilter, setSelectedFilter] = useState('all')
 
+  const isExpert = user && user.role === 'EXPERT'
+
   if (error) {
     return (
-      <div className="messages-page">
-        <div className="error-message">Erreur lors du chargement des conversations</div>
+      <div style={{
+        minHeight: '100vh',
+        background: '#F9FAFB',
+        padding: '80px 20px',
+      }}>
+        <div style={{
+          maxWidth: '600px',
+          margin: '0 auto',
+          textAlign: 'center',
+          background: 'white',
+          borderRadius: '16px',
+          padding: '40px',
+          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
+        }}>
+          <div style={{ fontSize: '64px', marginBottom: '20px' }}>⚠️</div>
+          <h3 style={{ fontSize: '24px', color: '#222222', marginBottom: '12px' }}>
+            Erreur de chargement
+          </h3>
+          <p style={{ color: '#6B7280' }}>
+            Impossible de charger vos conversations
+          </p>
+        </div>
       </div>
     )
   }
 
   if (!conversations) {
     return (
-      <div className="messages-page">
-        <div className="loading">Chargement de vos conversations...</div>
+      <div style={{
+        minHeight: '100vh',
+        background: '#F9FAFB',
+        padding: '80px 20px',
+      }}>
+        <div style={{
+          maxWidth: '600px',
+          margin: '0 auto',
+          textAlign: 'center',
+        }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔄</div>
+          <p style={{ color: '#6B7280', fontSize: '18px' }}>Chargement de vos conversations...</p>
+        </div>
       </div>
     )
   }
@@ -37,92 +70,284 @@ export default function MessagesPage() {
   const totalUnread = conversations.reduce((sum, conv) => sum + conv.unread_count, 0)
 
   return (
-    <div className="messages-page">
-      <div className="messages-header">
-        <h1>💬 Mes Conversations</h1>
-        {totalUnread > 0 && (
-          <span className="unread-badge">{totalUnread} non lu(s)</span>
-        )}
-      </div>
-
-      <div className="messages-filters">
-        <button
-          className={`filter-btn ${selectedFilter === 'all' ? 'active' : ''}`}
-          onClick={() => setSelectedFilter('all')}
-        >
-          Toutes ({conversations.length})
-        </button>
-        <button
-          className={`filter-btn ${selectedFilter === 'unread' ? 'active' : ''}`}
-          onClick={() => setSelectedFilter('unread')}
-        >
-          Non lues ({totalUnread})
-        </button>
-      </div>
-
-      {filteredConversations.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon">📭</div>
-          <h3>Aucune conversation</h3>
-          <p>
-            {selectedFilter === 'unread' 
-              ? 'Vous n\'avez pas de messages non lus'
-              : 'Vous n\'avez pas encore de conversations'
-            }
-          </p>
-        </div>
-      ) : (
-        <div className="conversations-list">
-          {filteredConversations.map(conv => (
-            <ConversationCard
-              key={conv.conversation_id}
-              conversation={conv}
-              currentUserId={user.id}
-              onClick={() => navigate(`/messages/${conv.conversation_id}`)}
-            />
-          ))}
+    <div style={{
+      minHeight: '100vh',
+      background: '#F9FAFB',
+      padding: isExpert ? '20px' : '0',
+      paddingBottom: isExpert ? '20px' : '60px',
+    }}>
+      {/* Header Section - Only for non-experts */}
+      {!isExpert && (
+        <div style={{
+          background: '#DC2626',
+          color: 'white',
+          padding: '60px 20px',
+          marginBottom: '40px',
+        }}>
+          <div style={{
+            maxWidth: '900px',
+            margin: '0 auto',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '16px',
+          }}>
+            <h1 style={{
+              fontSize: '42px',
+              fontWeight: 700,
+              margin: 0,
+              lineHeight: 1.2,
+            }}>
+              💬 Mes Conversations
+            </h1>
+            {totalUnread > 0 && (
+              <div style={{
+                background: 'white',
+                color: '#DC2626',
+                padding: '8px 20px',
+                borderRadius: '20px',
+                fontSize: '16px',
+                fontWeight: 600,
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+              }}>
+                {totalUnread} non lu{totalUnread > 1 ? 's' : ''}
+              </div>
+            )}
+          </div>
         </div>
       )}
+
+      <div style={{
+        maxWidth: '900px',
+        margin: '0 auto',
+        padding: isExpert ? '0' : '0 20px',
+      }}>
+        {/* Filters */}
+        <div style={{
+          display: 'flex',
+          gap: '12px',
+          marginBottom: '24px',
+        }}>
+          <button
+            onClick={() => setSelectedFilter('all')}
+            style={{
+              padding: '12px 24px',
+              background: selectedFilter === 'all' ? '#DC2626' : 'white',
+              color: selectedFilter === 'all' ? 'white' : '#222222',
+              border: selectedFilter === 'all' ? 'none' : '2px solid #E5E7EB',
+              borderRadius: '12px',
+              fontSize: '15px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              if (selectedFilter !== 'all') {
+                e.target.style.borderColor = '#DC2626'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (selectedFilter !== 'all') {
+                e.target.style.borderColor = '#E5E7EB'
+              }
+            }}
+          >
+            Toutes ({conversations.length})
+          </button>
+          <button
+            onClick={() => setSelectedFilter('unread')}
+            style={{
+              padding: '12px 24px',
+              background: selectedFilter === 'unread' ? '#DC2626' : 'white',
+              color: selectedFilter === 'unread' ? 'white' : '#222222',
+              border: selectedFilter === 'unread' ? 'none' : '2px solid #E5E7EB',
+              borderRadius: '12px',
+              fontSize: '15px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              if (selectedFilter !== 'unread') {
+                e.target.style.borderColor = '#DC2626'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (selectedFilter !== 'unread') {
+                e.target.style.borderColor = '#E5E7EB'
+              }
+            }}
+          >
+            Non lues ({totalUnread})
+          </button>
+        </div>
+
+        {filteredConversations.length === 0 ? (
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '60px 40px',
+            textAlign: 'center',
+            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
+          }}>
+            <div style={{ fontSize: '80px', marginBottom: '24px' }}>📭</div>
+            <h3 style={{
+              fontSize: '28px',
+              fontWeight: 700,
+              color: '#222222',
+              margin: '0 0 12px 0',
+            }}>
+              Aucune conversation
+            </h3>
+            <p style={{
+              fontSize: '16px',
+              color: '#6B7280',
+              margin: 0,
+            }}>
+              {selectedFilter === 'unread'
+                ? 'Vous n\'avez pas de messages non lus'
+                : 'Vous n\'avez pas encore de conversations'
+              }
+            </p>
+          </div>
+        ) : (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+          }}>
+            {filteredConversations.map(conv => (
+              <ConversationCard
+                key={conv.conversation_id}
+                conversation={conv}
+                currentUserId={user.id}
+                onClick={() => navigate(`/messages/${conv.conversation_id}`)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
 
 function ConversationCard({ conversation, currentUserId, onClick }) {
   const { other_user, last_message, unread_count } = conversation
-  
+
   const isUnread = last_message.sender_id !== currentUserId && !last_message.is_read
   const timestamp = new Date(last_message.created_at)
   const timeAgo = formatTimeAgo(timestamp)
 
   return (
-    <div 
-      className={`conversation-card ${isUnread ? 'unread' : ''}`}
+    <div
       onClick={onClick}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px',
+        background: 'white',
+        borderRadius: '12px',
+        padding: '20px',
+        cursor: 'pointer',
+        transition: 'all 0.2s',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+        border: isUnread ? '2px solid #DC2626' : '2px solid #E5E7EB',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateX(4px)'
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateX(0)'
+        e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)'
+      }}
     >
-      <div className="conversation-avatar">
+      {/* Avatar */}
+      <div style={{
+        width: '56px',
+        height: '56px',
+        borderRadius: '50%',
+        background: '#DC2626',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        fontWeight: 700,
+        color: 'white',
+        flexShrink: 0,
+      }}>
         {getInitials(other_user.full_name || other_user.email)}
       </div>
-      
-      <div className="conversation-content">
-        <div className="conversation-header">
-          <div className="conversation-name">
-            {other_user.full_name || other_user.email}
+
+      {/* Content */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '6px',
+          gap: '12px',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            flex: 1,
+            minWidth: 0,
+          }}>
+            <div style={{
+              fontSize: '16px',
+              fontWeight: 600,
+              color: '#222222',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              {other_user.full_name || other_user.email}
+            </div>
             {getRoleBadge(other_user.role)}
           </div>
-          <div className="conversation-time">{timeAgo}</div>
+          <div style={{
+            fontSize: '13px',
+            color: '#6B7280',
+            whiteSpace: 'nowrap',
+          }}>
+            {timeAgo}
+          </div>
         </div>
-        
-        <div className="conversation-preview">
-          <span className={isUnread ? 'unread-text' : ''}>
-            {last_message.sender_id === currentUserId && '✓ '}
-            {last_message.content.slice(0, 60)}
-            {last_message.content.length > 60 && '...'}
-          </span>
+
+        <div style={{
+          fontSize: '14px',
+          color: isUnread ? '#222222' : '#6B7280',
+          fontWeight: isUnread ? 600 : 400,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}>
+          {last_message.sender_id === currentUserId && '✓ '}
+          {last_message.content.slice(0, 60)}
+          {last_message.content.length > 60 && '...'}
         </div>
       </div>
-      
+
+      {/* Unread Badge */}
       {unread_count > 0 && (
-        <div className="unread-count">{unread_count}</div>
+        <div style={{
+          minWidth: '28px',
+          height: '28px',
+          borderRadius: '50%',
+          background: '#EF4444',
+          color: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '13px',
+          fontWeight: 700,
+          flexShrink: 0,
+        }}>
+          {unread_count}
+        </div>
       )}
     </div>
   )
@@ -139,20 +364,53 @@ function getInitials(name) {
 
 function getRoleBadge(role) {
   const badges = {
-    'PRO': <span className="role-badge pro">🏢 Pro</span>,
-    'EXPERT': <span className="role-badge expert">⭐ Expert</span>,
-    'ADMIN': <span className="role-badge admin">🔧 Admin</span>
+    'PRO': (
+      <span style={{
+        background: '#DC2626',
+        color: 'white',
+        padding: '2px 8px',
+        borderRadius: '12px',
+        fontSize: '11px',
+        fontWeight: 600,
+      }}>
+        🏢 Pro
+      </span>
+    ),
+    'EXPERT': (
+      <span style={{
+        background: '#F59E0B',
+        color: 'white',
+        padding: '2px 8px',
+        borderRadius: '12px',
+        fontSize: '11px',
+        fontWeight: 600,
+      }}>
+        ⭐ Expert
+      </span>
+    ),
+    'ADMIN': (
+      <span style={{
+        background: '#222222',
+        color: 'white',
+        padding: '2px 8px',
+        borderRadius: '12px',
+        fontSize: '11px',
+        fontWeight: 600,
+      }}>
+        🔧 Admin
+      </span>
+    )
   }
   return badges[role] || null
 }
 
 function formatTimeAgo(date) {
   const seconds = Math.floor((new Date() - date) / 1000)
-  
+
   if (seconds < 60) return 'À l\'instant'
   if (seconds < 3600) return `Il y a ${Math.floor(seconds / 60)} min`
   if (seconds < 86400) return `Il y a ${Math.floor(seconds / 3600)} h`
   if (seconds < 604800) return `Il y a ${Math.floor(seconds / 86400)} j`
-  
+
   return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
 }

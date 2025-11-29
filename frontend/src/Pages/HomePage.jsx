@@ -1,4 +1,3 @@
-// frontend/src/Pages/HomePage.jsx
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -7,23 +6,90 @@ export default function HomePage() {
   const { isAuthenticated } = useAuth()
 
   return (
-    <div className="home-page">
+    <div>
       {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-content">
-          <h1 className="hero-title">
+      <section style={{
+        background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
+        color: 'white',
+        padding: '80px 20px',
+        textAlign: 'center',
+      }}>
+        <div style={{
+          maxWidth: '900px',
+          margin: '0 auto',
+        }}>
+          <h1 style={{
+            fontSize: '48px',
+            fontWeight: 700,
+            margin: '0 0 24px 0',
+            lineHeight: 1.2,
+          }}>
             Trouvez votre véhicule idéal avec l'intelligence artificielle
           </h1>
-          <p className="hero-subtitle">
+          <p style={{
+            fontSize: '20px',
+            margin: '0 0 40px 0',
+            opacity: 0.95,
+            lineHeight: 1.6,
+          }}>
             La première plateforme française qui combine recherche intelligente multi-sources
             et accompagnement personnalisé par des experts automobiles
           </p>
-          <div className="hero-actions">
-            <Link to="/search" className="btn-primary btn-large">
-              🔍 Commencer ma recherche
+          <div style={{
+            display: 'flex',
+            gap: '16px',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+          }}>
+            <Link
+              to="/search"
+              style={{
+                padding: '16px 32px',
+                background: 'white',
+                color: '#DC2626',
+                textDecoration: 'none',
+                borderRadius: '12px',
+                fontSize: '18px',
+                fontWeight: 600,
+                boxShadow: '0 4px 24px rgba(0, 0, 0, 0.15)',
+                transition: 'all 0.2s',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'translateY(-2px)'
+                e.target.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.2)'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0)'
+                e.target.style.boxShadow = '0 4px 24px rgba(0, 0, 0, 0.15)'
+              }}
+            >
+              <span>🔍</span>
+              <span>Commencer ma recherche</span>
             </Link>
             {!isAuthenticated && (
-              <Link to="/register" className="btn-secondary btn-large">
+              <Link
+                to="/register"
+                style={{
+                  padding: '16px 32px',
+                  background: 'transparent',
+                  color: 'white',
+                  textDecoration: 'none',
+                  borderRadius: '12px',
+                  fontSize: '18px',
+                  fontWeight: 600,
+                  border: '2px solid white',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'rgba(255, 255, 255, 0.1)'
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'transparent'
+                }}
+              >
                 Créer mon compte gratuit
               </Link>
             )}
@@ -32,194 +98,408 @@ export default function HomePage() {
       </section>
 
       {/* Services Section */}
-      <section className="services-section">
-        <h2 className="section-title">Nos Services</h2>
-        <div className="services-grid">
-          <div className="service-card">
-            <div className="service-icon">🔍</div>
-            <h3>Recherche Multi-Sources</h3>
-            <p>
-              Accédez simultanément à des milliers d'annonces provenant de LeBonCoin,
-              AutoScout24 et bien d'autres plateformes. Un seul formulaire,
-              tous les résultats.
-            </p>
-            <Link to="/search" className="service-link">
-              Essayer maintenant →
-            </Link>
-          </div>
+      <section style={{
+        padding: '80px 20px',
+        background: '#F9FAFB',
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+        }}>
+          <h2 style={{
+            fontSize: '36px',
+            fontWeight: 700,
+            textAlign: 'center',
+            margin: '0 0 16px 0',
+            color: '#222222',
+          }}>
+            Nos Services
+          </h2>
+          <p style={{
+            fontSize: '18px',
+            textAlign: 'center',
+            color: '#6B7280',
+            margin: '0 0 48px 0',
+          }}>
+            Tout ce dont vous avez besoin pour trouver votre véhicule
+          </p>
 
-          <div className="service-card">
-            <div className="service-icon">🤖</div>
-            <h3>Filtres Intelligents</h3>
-            <p>
-              Notre IA analyse vos critères et vous propose uniquement les véhicules
-              qui correspondent vraiment à vos besoins : budget, kilométrage,
-              année, carburant et plus encore.
-            </p>
-            <Link to="/search" className="service-link">
-              Découvrir les filtres →
-            </Link>
-          </div>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '24px',
+          }}>
+            <ServiceCard
+              icon="🔍"
+              title="Recherche Multi-Sources"
+              description="Accédez simultanément à des milliers d'annonces provenant de LeBonCoin, AutoScout24 et bien d'autres plateformes. Un seul formulaire, tous les résultats."
+              link="/search"
+              linkText="Essayer maintenant →"
+            />
 
-          <div className="service-card">
-            <div className="service-icon">🤝</div>
-            <h3>Mode Assisté</h3>
-            <p>
-              Vous ne savez pas par où commencer ? Nos experts automobiles analysent
-              votre demande et vous proposent une sélection personnalisée de véhicules
-              adaptés à votre profil.
-            </p>
-            {isAuthenticated ? (
-              <Link to="/assisted" className="service-link">
-                Faire une demande →
-              </Link>
-            ) : (
-              <Link to="/register" className="service-link">
-                S'inscrire pour y accéder →
-              </Link>
-            )}
-          </div>
+            <ServiceCard
+              icon="🤖"
+              title="Filtres Intelligents"
+              description="Notre IA analyse vos critères et vous propose uniquement les véhicules qui correspondent vraiment à vos besoins : budget, kilométrage, année, carburant et plus encore."
+              link="/search"
+              linkText="Découvrir les filtres →"
+            />
 
-          <div className="service-card">
-            <div className="service-icon">📚</div>
-            <h3>Encyclopédie Auto</h3>
-            <p>
-              Consultez notre base de connaissances complète sur les marques,
-              modèles, motorisations et conseils d'achat. Tout ce qu'il faut
-              savoir avant d'acheter.
-            </p>
-            <Link to="/encyclopedia" className="service-link">
-              Explorer l'encyclopédie →
-            </Link>
-          </div>
+            <ServiceCard
+              icon="🤝"
+              title="Mode Assisté"
+              description="Vous ne savez pas par où commencer ? Nos experts automobiles analysent votre demande et vous proposent une sélection personnalisée de véhicules adaptés à votre profil."
+              link={isAuthenticated ? "/assisted" : "/register"}
+              linkText={isAuthenticated ? "Faire une demande →" : "S'inscrire pour y accéder →"}
+            />
 
-          <div className="service-card">
-            <div className="service-icon">❤️</div>
-            <h3>Favoris & Alertes</h3>
-            <p>
-              Sauvegardez vos annonces préférées et recevez des alertes en temps
-              réel quand de nouveaux véhicules correspondant à vos critères sont
-              publiés.
-            </p>
-            {isAuthenticated ? (
-              <Link to="/favorites" className="service-link">
-                Voir mes favoris →
-              </Link>
-            ) : (
-              <Link to="/register" className="service-link">
-                S'inscrire pour y accéder →
-              </Link>
-            )}
-          </div>
+            <ServiceCard
+              icon="📚"
+              title="Encyclopédie Auto"
+              description="Consultez notre base de connaissances complète sur les marques, modèles, motorisations et conseils d'achat. Tout ce qu'il faut savoir avant d'acheter."
+              link="/encyclopedia"
+              linkText="Explorer l'encyclopédie →"
+            />
 
-          <div className="service-card">
-            <div className="service-icon">💬</div>
-            <h3>Messagerie Intégrée</h3>
-            <p>
-              Communiquez directement avec nos experts pour affiner votre recherche,
-              poser des questions techniques ou obtenir des conseils personnalisés.
-            </p>
-            {isAuthenticated ? (
-              <Link to="/messages" className="service-link">
-                Mes messages →
-              </Link>
-            ) : (
-              <Link to="/register" className="service-link">
-                S'inscrire pour y accéder →
-              </Link>
-            )}
+            <ServiceCard
+              icon="❤️"
+              title="Favoris & Alertes"
+              description="Sauvegardez vos annonces préférées et recevez des alertes en temps réel quand de nouveaux véhicules correspondant à vos critères sont publiés."
+              link={isAuthenticated ? "/favorites" : "/register"}
+              linkText={isAuthenticated ? "Voir mes favoris →" : "S'inscrire pour y accéder →"}
+            />
+
+            <ServiceCard
+              icon="💬"
+              title="Messagerie Intégrée"
+              description="Communiquez directement avec nos experts pour affiner votre recherche, poser des questions techniques ou obtenir des conseils personnalisés."
+              link={isAuthenticated ? "/messages" : "/register"}
+              linkText={isAuthenticated ? "Mes messages →" : "S'inscrire pour y accéder →"}
+            />
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section className="how-it-works-section">
-        <h2 className="section-title">Comment ça marche ?</h2>
-        <div className="steps-container">
-          <div className="step">
-            <div className="step-number">1</div>
-            <h3>Définissez vos critères</h3>
-            <p>
-              Renseignez votre budget, le type de véhicule souhaité,
-              le kilométrage maximal, l'année minimum et d'autres filtres précis.
-            </p>
-          </div>
+      <section style={{
+        padding: '80px 20px',
+        background: 'white',
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+        }}>
+          <h2 style={{
+            fontSize: '36px',
+            fontWeight: 700,
+            textAlign: 'center',
+            margin: '0 0 16px 0',
+            color: '#222222',
+          }}>
+            Comment ça marche ?
+          </h2>
+          <p style={{
+            fontSize: '18px',
+            textAlign: 'center',
+            color: '#6B7280',
+            margin: '0 0 64px 0',
+          }}>
+            Trouvez votre véhicule en 4 étapes simples
+          </p>
 
-          <div className="step-arrow">→</div>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '32px',
+            alignItems: 'center',
+          }}>
+            <StepCard
+              number="1"
+              title="Définissez vos critères"
+              description="Renseignez votre budget, le type de véhicule souhaité, le kilométrage maximal, l'année minimum et d'autres filtres précis."
+            />
 
-          <div className="step">
-            <div className="step-number">2</div>
-            <h3>Notre IA recherche pour vous</h3>
-            <p>
-              En quelques secondes, nous parcourons des milliers d'annonces
-              sur plusieurs plateformes et ne gardons que celles qui correspondent.
-            </p>
-          </div>
+            <ArrowSeparator />
 
-          <div className="step-arrow">→</div>
+            <StepCard
+              number="2"
+              title="Notre IA recherche pour vous"
+              description="En quelques secondes, nous parcourons des milliers d'annonces sur plusieurs plateformes et ne gardons que celles qui correspondent."
+            />
 
-          <div className="step">
-            <div className="step-number">3</div>
-            <h3>Consultez et comparez</h3>
-            <p>
-              Visualisez tous les résultats au même endroit, ajoutez vos favoris,
-              et demandez l'aide d'un expert si besoin.
-            </p>
-          </div>
+            <ArrowSeparator />
 
-          <div className="step-arrow">→</div>
+            <StepCard
+              number="3"
+              title="Consultez et comparez"
+              description="Visualisez tous les résultats au même endroit, ajoutez vos favoris, et demandez l'aide d'un expert si besoin."
+            />
 
-          <div className="step">
-            <div className="step-number">4</div>
-            <h3>Trouvez votre véhicule</h3>
-            <p>
-              Contactez le vendeur directement via le lien de l'annonce
-              et finalisez votre achat en toute confiance.
-            </p>
+            <ArrowSeparator />
+
+            <StepCard
+              number="4"
+              title="Trouvez votre véhicule"
+              description="Contactez le vendeur directement via le lien de l'annonce et finalisez votre achat en toute confiance."
+            />
           </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="stats-section">
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-number">500K+</div>
-            <div className="stat-label">Annonces analysées</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">3</div>
-            <div className="stat-label">Plateformes connectées</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">24/7</div>
-            <div className="stat-label">Veille automatique</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">100%</div>
-            <div className="stat-label">Gratuit</div>
+      <section style={{
+        padding: '64px 20px',
+        background: 'linear-gradient(135deg, #1F2937 0%, #111827 100%)',
+        color: 'white',
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+        }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '40px',
+            textAlign: 'center',
+          }}>
+            <StatCard number="500K+" label="Annonces analysées" />
+            <StatCard number="3" label="Plateformes connectées" />
+            <StatCard number="24/7" label="Veille automatique" />
+            <StatCard number="100%" label="Gratuit" />
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="cta-section">
-        <h2>Prêt à trouver votre prochaine voiture ?</h2>
-        <p>
-          Rejoignez des milliers d'utilisateurs qui ont simplifié leur recherche
-          de véhicule grâce à notre plateforme.
-        </p>
-        <div className="cta-actions">
-          <Link to="/search" className="btn-primary btn-large">
-            Lancer une recherche
-          </Link>
-          {!isAuthenticated && (
-            <Link to="/register" className="btn-outline btn-large">
-              Créer un compte
+      <section style={{
+        padding: '80px 20px',
+        background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
+        textAlign: 'center',
+      }}>
+        <div style={{
+          maxWidth: '700px',
+          margin: '0 auto',
+        }}>
+          <h2 style={{
+            fontSize: '36px',
+            fontWeight: 700,
+            margin: '0 0 16px 0',
+            color: '#222222',
+          }}>
+            Prêt à trouver votre prochaine voiture ?
+          </h2>
+          <p style={{
+            fontSize: '18px',
+            color: '#6B7280',
+            margin: '0 0 40px 0',
+            lineHeight: 1.6,
+          }}>
+            Rejoignez des milliers d'utilisateurs qui ont simplifié leur recherche
+            de véhicule grâce à notre plateforme.
+          </p>
+          <div style={{
+            display: 'flex',
+            gap: '16px',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+          }}>
+            <Link
+              to="/search"
+              style={{
+                padding: '16px 32px',
+                background: '#DC2626',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '12px',
+                fontSize: '18px',
+                fontWeight: 600,
+                transition: 'all 0.2s',
+                boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)',
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = '#B91C1C'
+                e.target.style.transform = 'translateY(-2px)'
+                e.target.style.boxShadow = '0 8px 24px rgba(220, 38, 38, 0.4)'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = '#DC2626'
+                e.target.style.transform = 'translateY(0)'
+                e.target.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.3)'
+              }}
+            >
+              Lancer une recherche
             </Link>
-          )}
+            {!isAuthenticated && (
+              <Link
+                to="/register"
+                style={{
+                  padding: '16px 32px',
+                  background: 'white',
+                  color: '#DC2626',
+                  textDecoration: 'none',
+                  borderRadius: '12px',
+                  fontSize: '18px',
+                  fontWeight: 600,
+                  border: '2px solid #DC2626',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = '#DC2626'
+                  e.target.style.color = 'white'
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'white'
+                  e.target.style.color = '#DC2626'
+                }}
+              >
+                Créer un compte
+              </Link>
+            )}
+          </div>
         </div>
       </section>
+    </div>
+  )
+}
+
+function ServiceCard({ icon, title, description, link, linkText }) {
+  return (
+    <div
+      style={{
+        background: 'white',
+        borderRadius: '16px',
+        padding: '32px',
+        boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
+        transition: 'all 0.3s',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-8px)'
+        e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.15)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)'
+        e.currentTarget.style.boxShadow = '0 4px 24px rgba(0, 0, 0, 0.08)'
+      }}
+    >
+      <div style={{
+        fontSize: '48px',
+        marginBottom: '16px',
+      }}>
+        {icon}
+      </div>
+      <h3 style={{
+        fontSize: '22px',
+        fontWeight: 600,
+        margin: '0 0 12px 0',
+        color: '#222222',
+      }}>
+        {title}
+      </h3>
+      <p style={{
+        fontSize: '15px',
+        color: '#6B7280',
+        lineHeight: 1.6,
+        margin: '0 0 20px 0',
+        flex: 1,
+      }}>
+        {description}
+      </p>
+      <Link
+        to={link}
+        style={{
+          color: '#DC2626',
+          textDecoration: 'none',
+          fontWeight: 600,
+          fontSize: '15px',
+          display: 'inline-flex',
+          alignItems: 'center',
+        }}
+        onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
+        onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+      >
+        {linkText}
+      </Link>
+    </div>
+  )
+}
+
+function StepCard({ number, title, description }) {
+  return (
+    <div style={{ textAlign: 'center' }}>
+      <div style={{
+        width: '72px',
+        height: '72px',
+        borderRadius: '50%',
+        background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '0 auto 20px auto',
+        fontSize: '32px',
+        fontWeight: 700,
+        color: 'white',
+        boxShadow: '0 4px 16px rgba(220, 38, 38, 0.3)',
+      }}>
+        {number}
+      </div>
+      <h3 style={{
+        fontSize: '20px',
+        fontWeight: 600,
+        margin: '0 0 12px 0',
+        color: '#222222',
+      }}>
+        {title}
+      </h3>
+      <p style={{
+        fontSize: '14px',
+        color: '#6B7280',
+        lineHeight: 1.6,
+        margin: 0,
+      }}>
+        {description}
+      </p>
+    </div>
+  )
+}
+
+function ArrowSeparator() {
+  return (
+    <div style={{
+      textAlign: 'center',
+      fontSize: '32px',
+      color: '#DC2626',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      →
+    </div>
+  )
+}
+
+function StatCard({ number, label }) {
+  return (
+    <div>
+      <div style={{
+        fontSize: '48px',
+        fontWeight: 700,
+        marginBottom: '8px',
+        background: 'linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+      }}>
+        {number}
+      </div>
+      <div style={{
+        fontSize: '16px',
+        opacity: 0.9,
+      }}>
+        {label}
+      </div>
     </div>
   )
 }

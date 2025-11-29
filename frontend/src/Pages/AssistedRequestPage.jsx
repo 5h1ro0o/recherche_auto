@@ -21,7 +21,7 @@ export default function AssistedRequestPage() {
   const [success, setSuccess] = useState(false)
 
   // Charger mes demandes existantes
-  const { data: myRequests, mutate } = useSWR('/assisted/requests/me', getMyRequests)
+  const { data: myRequests, mutate } = useSWR('/assisted/requests/me', () => getMyRequests())
 
   async function handleSubmit(e) {
     e.preventDefault()

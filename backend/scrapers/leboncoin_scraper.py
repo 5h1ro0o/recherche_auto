@@ -404,8 +404,17 @@ class LeBonCoinScraper(BaseScraper):
                     value = str(attr.value)
                     value_label = attr.value_label if hasattr(attr, 'value_label') and attr.value_label else None
 
+                    # MARQUE (brand / make)
+                    if attr.key in ('brand', 'make', 'car_brand', 'regmarque'):
+                        data['brand'] = value_label or value
+                        data['make'] = value_label or value  # Aussi copier dans make
+
+                    # MODÈLE (model)
+                    elif attr.key in ('model', 'car_model'):
+                        data['model'] = value_label or value
+
                     # ANNÉE (regdate)
-                    if attr.key == 'regdate':
+                    elif attr.key == 'regdate':
                         try:
                             data['year'] = int(value)
                         except (ValueError, TypeError):
@@ -533,6 +542,16 @@ class LeBonCoinScraper(BaseScraper):
             # Validation minimale
             if not data['title']:
                 return None
+
+            # Mapper 'brand' vers 'make' pour compatibilité avec base_scraper
+            if data.get('brand') and not data.get('make'):
+                data['make'] = data['brand']
+
+            # DEBUG: Log pour vérifier l'extraction des champs
+            if data.get('make') or data.get('brand'):
+                logger.debug(f"✓ Véhicule extrait: make={data.get('make')}, model={data.get('model')}, title={data.get('title', '')[:50]}")
+            else:
+                logger.warning(f"⚠️ Véhicule SANS marque: title={data.get('title', '')[:50]}")
 
             return data
 

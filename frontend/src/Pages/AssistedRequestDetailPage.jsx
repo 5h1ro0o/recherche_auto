@@ -1,69 +1,16 @@
 import { useState, useEffect } from 'react'
-
-// Simulated API calls (replace with real ones)
-const getRequestDetail = async (id) => {
-  // Call backend: GET /api/assisted/requests/{id}
-  return {
-    id,
-    status: 'EN_COURS',
-    description: 'Je cherche une citadine économique pour trajets domicile-travail. Budget max 15000€.',
-    budget_max: 15000,
-    preferred_fuel_type: 'essence',
-    max_mileage: 80000,
-    min_year: 2018,
-    created_at: new Date().toISOString(),
-    expert: {
-      id: 'expert1',
-      full_name: 'Jean Expert',
-      email: 'jean@expert.fr'
-    }
-  }
-}
-
-const getProposals = async (requestId) => {
-  // Call backend: GET /api/assisted/requests/{requestId}/proposals
-  return [
-    {
-      id: 'prop1',
-      vehicle_id: 'v1',
-      status: 'PENDING',
-      message: 'Peugeot 208 parfaite pour vous : économique et fiable',
-      vehicle: {
-        title: 'Peugeot 208 Active 1.2',
-        price: 12500,
-        year: 2019,
-        mileage: 45000,
-        fuel_type: 'essence'
-      },
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 'prop2',
-      vehicle_id: 'v2',
-      status: 'FAVORITE',
-      message: 'Renault Clio très bon état',
-      vehicle: {
-        title: 'Renault Clio Zen',
-        price: 11000,
-        year: 2018,
-        mileage: 52000,
-        fuel_type: 'essence'
-      },
-      created_at: new Date().toISOString()
-    }
-  ]
-}
-
-const updateProposalStatus = async (proposalId, status, reason) => {
-  // Call backend: PATCH /api/assisted/proposals/{proposalId}
-  console.log('Updating proposal', proposalId, status, reason)
-}
+import { useParams, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import {
+  getRequestDetail,
+  getMyProposals,
+  updateProposalStatus
+} from '../services/assisted'
 
 export default function AssistedRequestDetailPage() {
-  // Simulated params and user (replace with your actual implementation)
-  const requestId = 'req123' // From URL params
-  const user = { id: 'user1', full_name: 'John Doe' } // From auth context
-  const goBack = () => window.history.back() // Navigation
+  const { requestId } = useParams()
+  const navigate = useNavigate()
+  const { user } = useAuth()
   
   const [request, setRequest] = useState(null)
   const [proposals, setProposals] = useState([])
@@ -79,7 +26,7 @@ export default function AssistedRequestDetailPage() {
     try {
       const [reqData, propsData] = await Promise.all([
         getRequestDetail(requestId),
-        getProposals(requestId)
+        getMyProposals(requestId)
       ])
       setRequest(reqData)
       setProposals(propsData)
@@ -91,8 +38,14 @@ export default function AssistedRequestDetailPage() {
   }
 
   async function handleMarkFavorite(proposalId) {
-    await updateProposalStatus(proposalId, 'FAVORITE', null)
-    await loadData()
+    try {
+      await updateProposalStatus(proposalId, 'LIKED', null)
+      await loadData()
+      alert('✅ Véhicule marqué comme coup de cœur !')
+    } catch (error) {
+      console.error('Error marking favorite:', error)
+      alert('❌ Erreur lors de la mise en favori : ' + (error.response?.data?.detail || error.message))
+    }
   }
 
   async function handleReject(proposalId) {
@@ -100,10 +53,16 @@ export default function AssistedRequestDetailPage() {
       alert('Veuillez indiquer une raison')
       return
     }
-    await updateProposalStatus(proposalId, 'REJECTED', rejectReason)
-    setShowRejectModal(null)
-    setRejectReason('')
-    await loadData()
+    try {
+      await updateProposalStatus(proposalId, 'REJECTED', rejectReason)
+      setShowRejectModal(null)
+      setRejectReason('')
+      await loadData()
+      alert('✅ Véhicule refusé avec succès')
+    } catch (error) {
+      console.error('Error rejecting proposal:', error)
+      alert('❌ Erreur lors du refus : ' + (error.response?.data?.detail || error.message))
+    }
   }
 
   const getStatusBadge = (status) => {
@@ -127,7 +86,8 @@ export default function AssistedRequestDetailPage() {
   const getProposalStatusBadge = (status) => {
     const badges = {
       'PENDING': { text: '⏱️ En attente', color: '#6c757d' },
-      'FAVORITE': { text: '❤️ Coup de cœur', color: '#e91e63' },
+      'LIKED': { text: '❤️ Coup de cœur', color: '#e91e63' },
+      'SUPER_LIKED': { text: '💖 Coup de foudre', color: '#e91e63' },
       'REJECTED': { text: '❌ Refusé', color: '#dc3545' }
     }
     const badge = badges[status] || badges['PENDING']
@@ -149,7 +109,7 @@ export default function AssistedRequestDetailPage() {
     return <div style={{padding: '40px', textAlign: 'center'}}>Demande non trouvée</div>
   }
 
-  const favorites = proposals.filter(p => p.status === 'FAVORITE')
+  const favorites = proposals.filter(p => p.status === 'LIKED' || p.status === 'SUPER_LIKED')
   const rejected = proposals.filter(p => p.status === 'REJECTED')
   const pending = proposals.filter(p => p.status === 'PENDING')
 
@@ -157,8 +117,8 @@ export default function AssistedRequestDetailPage() {
     <div style={{maxWidth: '1200px', margin: '0 auto', padding: '20px'}}>
       {/* Header */}
       <div style={{marginBottom: '30px'}}>
-        <button 
-          onClick={goBack}
+        <button
+          onClick={() => navigate('/assisted')}
           style={{
             background: 'none',
             border: '1px solid #ddd',

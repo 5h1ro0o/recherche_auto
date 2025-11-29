@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 
 const API_BASE = import.meta.env.VITE_API_BASE || '/api'
 
@@ -74,11 +74,15 @@ const mockVehicleData = {
 }
 
 export default function EnhancedVehiclePage() {
-  const { vehicleId } = useParams()
+  const { id: vehicleId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
 
-  const [vehicle, setVehicle] = useState(null)
-  const [loading, setLoading] = useState(true)
+  // Use vehicle data from navigation state if available
+  const vehicleFromState = location.state?.vehicle
+
+  const [vehicle, setVehicle] = useState(vehicleFromState || null)
+  const [loading, setLoading] = useState(!vehicleFromState)
   const [error, setError] = useState(null)
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -86,8 +90,13 @@ export default function EnhancedVehiclePage() {
   const [showContactModal, setShowContactModal] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
 
-  // Charger les données du véhicule depuis l'API
+  // Charger les données du véhicule depuis l'API si pas déjà disponible
   useEffect(() => {
+    // Skip if we already have vehicle data from navigation state
+    if (vehicleFromState) {
+      return
+    }
+
     async function loadVehicle() {
       try {
         setLoading(true)
@@ -128,7 +137,7 @@ export default function EnhancedVehiclePage() {
     if (vehicleId) {
       loadVehicle()
     }
-  }, [vehicleId])
+  }, [vehicleId, vehicleFromState])
 
   function nextImage() {
     if (!vehicle || !vehicle.images || vehicle.images.length === 0) return
@@ -149,7 +158,7 @@ export default function EnhancedVehiclePage() {
     return (
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 20px', textAlign: 'center' }}>
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔄</div>
-        <p style={{ color: '#6a737d', fontSize: '18px' }}>Chargement du véhicule...</p>
+        <p style={{ color: '#666666', fontSize: '18px' }}>Chargement du véhicule...</p>
       </div>
     )
   }
@@ -159,14 +168,14 @@ export default function EnhancedVehiclePage() {
     return (
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 20px', textAlign: 'center' }}>
         <div style={{ fontSize: '64px', marginBottom: '20px' }}>⚠️</div>
-        <h3 style={{ fontSize: '24px', color: '#24292e', marginBottom: '12px' }}>
+        <h3 style={{ fontSize: '24px', color: '#222222', marginBottom: '12px' }}>
           {error}
         </h3>
         <button
           onClick={() => navigate('/')}
           style={{
             padding: '12px 24px',
-            background: '#667eea',
+            background: '#DC2626',
             color: 'white',
             border: 'none',
             borderRadius: '8px',
@@ -190,13 +199,13 @@ export default function EnhancedVehiclePage() {
   // S'assurer que vehicle.images est un tableau
   const images = Array.isArray(vehicle.images) && vehicle.images.length > 0
     ? vehicle.images
-    : ['https://via.placeholder.com/800x600/667eea/ffffff?text=Pas+d\'image']
+    : ['https://via.placeholder.com/800x600/EEEEEE/222222?text=Pas+d\'image']
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
       {/* Breadcrumb */}
-      <div style={{ marginBottom: '20px', fontSize: '14px', color: '#6a737d' }}>
-        <a href="/" style={{ color: '#667eea', textDecoration: 'none' }}>Accueil</a>
+      <div style={{ marginBottom: '20px', fontSize: '14px', color: '#666666' }}>
+        <a href="/" style={{ color: '#DC2626', textDecoration: 'none' }}>Accueil</a>
         {' > '}
         <span>{vehicle.title || 'Véhicule'}</span>
       </div>
@@ -215,15 +224,15 @@ export default function EnhancedVehiclePage() {
             {vehicle.title}
           </h1>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '14px', color: '#6a737d' }}>
+            <span style={{ fontSize: '14px', color: '#666666' }}>
               📍 {vehicle.location}
             </span>
             {vehicle.seller_type === 'PRO' && (
               <span style={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: '#DC2626',
                 color: 'white',
                 padding: '4px 12px',
-                borderRadius: '12px',
+                borderRadius: '4px',
                 fontSize: '12px',
                 fontWeight: 600
               }}>
@@ -238,10 +247,10 @@ export default function EnhancedVehiclePage() {
             onClick={() => setIsFavorite(!isFavorite)}
             style={{
               padding: '12px 20px',
-              background: isFavorite ? '#e91e63' : 'white',
-              border: `2px solid ${isFavorite ? '#e91e63' : '#ddd'}`,
-              color: isFavorite ? 'white' : '#24292e',
-              borderRadius: '10px',
+              background: isFavorite ? '#DC2626' : 'white',
+              border: `1px solid ${isFavorite ? '#DC2626' : '#EEEEEE'}`,
+              color: isFavorite ? 'white' : '#222222',
+              borderRadius: '8px',
               fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',
@@ -256,9 +265,9 @@ export default function EnhancedVehiclePage() {
             style={{
               padding: '12px 20px',
               background: 'white',
-              border: '2px solid #e1e4e8',
-              color: '#24292e',
-              borderRadius: '10px',
+              border: '1px solid #EEEEEE',
+              color: '#222222',
+              borderRadius: '8px',
               fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',
@@ -284,7 +293,7 @@ export default function EnhancedVehiclePage() {
           <PriceSection vehicle={vehicle} />
 
           <Section title="📝 Description">
-            <p style={{ lineHeight: 1.8, color: '#24292e', margin: 0 }}>
+            <p style={{ lineHeight: 1.8, color: '#222222', margin: 0 }}>
               {vehicle.description}
             </p>
           </Section>
@@ -345,15 +354,16 @@ function PhotoGallery({ images, currentIndex, onPrev, onNext, onImageClick }) {
   return (
     <div style={{
       background: 'white',
-      borderRadius: '16px',
+      borderRadius: '12px',
       overflow: 'hidden',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      border: '1px solid #EEEEEE',
       marginBottom: '24px'
     }}>
       <div style={{
         position: 'relative',
         height: '500px',
-        background: '#f0f0f0',
+        background: '#FAFAFA',
         cursor: 'zoom-in'
       }}
       onClick={onImageClick}>
@@ -442,7 +452,7 @@ function PhotoGallery({ images, currentIndex, onPrev, onNext, onImageClick }) {
                 borderRadius: '8px',
                 overflow: 'hidden',
                 cursor: 'pointer',
-                border: idx === currentIndex ? '3px solid #667eea' : '3px solid transparent',
+                border: idx === currentIndex ? '2px solid #DC2626' : '2px solid #EEEEEE',
                 flexShrink: 0
               }}
             >
@@ -467,18 +477,19 @@ function PriceSection({ vehicle }) {
   return (
     <div style={{
       background: 'white',
-      borderRadius: '16px',
+      borderRadius: '12px',
       padding: '24px',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      border: '1px solid #EEEEEE',
       marginBottom: '24px'
     }}>
       <div style={{
         fontSize: '40px',
         fontWeight: 700,
-        color: '#28a745',
+        color: '#222222',
         marginBottom: '20px'
       }}>
-        {vehicle.price.toLocaleString()} €
+        {vehicle.price ? vehicle.price.toLocaleString() : 'Prix non disponible'} €
       </div>
 
       <div style={{
@@ -486,11 +497,11 @@ function PriceSection({ vehicle }) {
         gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '16px'
       }}>
-        <InfoItem icon="📅" label="Année" value={vehicle.year} />
-        <InfoItem icon="🛣️" label="Kilométrage" value={`${vehicle.mileage.toLocaleString()} km`} />
-        <InfoItem icon="⛽" label="Carburant" value={vehicle.fuel_type} />
-        <InfoItem icon="⚙️" label="Transmission" value={vehicle.transmission} />
-        <InfoItem icon="🔢" label="VIN" value={vehicle.vin.slice(0, 10) + '...'} />
+        {vehicle.year && <InfoItem icon="📅" label="Année" value={vehicle.year} />}
+        {vehicle.mileage && <InfoItem icon="🛣️" label="Kilométrage" value={`${vehicle.mileage.toLocaleString()} km`} />}
+        {vehicle.fuel_type && <InfoItem icon="⛽" label="Carburant" value={vehicle.fuel_type} />}
+        {vehicle.transmission && <InfoItem icon="⚙️" label="Transmission" value={vehicle.transmission} />}
+        {vehicle.vin && <InfoItem icon="🔢" label="VIN" value={vehicle.vin.slice(0, 10) + '...'} />}
       </div>
     </div>
   )
@@ -501,7 +512,7 @@ function InfoItem({ icon, label, value }) {
     <div>
       <div style={{
         fontSize: '12px',
-        color: '#6a737d',
+        color: '#666666',
         marginBottom: '4px',
         fontWeight: 500
       }}>
@@ -510,7 +521,7 @@ function InfoItem({ icon, label, value }) {
       <div style={{
         fontSize: '16px',
         fontWeight: 600,
-        color: '#24292e'
+        color: '#222222'
       }}>
         {value}
       </div>
@@ -522,9 +533,10 @@ function Section({ title, children }) {
   return (
     <div style={{
       background: 'white',
-      borderRadius: '16px',
+      borderRadius: '12px',
       padding: '24px',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      border: '1px solid #EEEEEE',
       marginBottom: '24px'
     }}>
       <h2 style={{
@@ -540,6 +552,10 @@ function Section({ title, children }) {
 }
 
 function SpecsGrid({ specs }) {
+  if (!specs || Object.keys(specs).length === 0) {
+    return <p style={{ color: '#666666' }}>Informations techniques non disponibles</p>
+  }
+
   return (
     <div style={{
       display: 'grid',
@@ -548,13 +564,14 @@ function SpecsGrid({ specs }) {
     }}>
       {Object.entries(specs).map(([key, value]) => (
         <div key={key} style={{
-          background: '#f8f9fa',
+          background: '#FAFAFA',
           padding: '12px',
-          borderRadius: '8px'
+          borderRadius: '8px',
+          border: '1px solid #EEEEEE'
         }}>
           <div style={{
             fontSize: '12px',
-            color: '#6a737d',
+            color: '#666666',
             marginBottom: '4px',
             textTransform: 'capitalize'
           }}>
@@ -563,7 +580,7 @@ function SpecsGrid({ specs }) {
           <div style={{
             fontSize: '15px',
             fontWeight: 600,
-            color: '#24292e'
+            color: '#222222'
           }}>
             {value}
           </div>
@@ -574,6 +591,10 @@ function SpecsGrid({ specs }) {
 }
 
 function FeaturesList({ features }) {
+  if (!features || features.length === 0) {
+    return <p style={{ color: '#666666' }}>Équipements non disponibles</p>
+  }
+
   return (
     <div style={{
       display: 'grid',
@@ -586,11 +607,12 @@ function FeaturesList({ features }) {
           alignItems: 'center',
           gap: '8px',
           padding: '10px',
-          background: '#f8f9fa',
-          borderRadius: '8px'
+          background: '#FAFAFA',
+          borderRadius: '8px',
+          border: '1px solid #EEEEEE'
         }}>
           <span style={{ fontSize: '18px' }}>✓</span>
-          <span style={{ fontSize: '14px', color: '#24292e' }}>{feature}</span>
+          <span style={{ fontSize: '14px', color: '#222222' }}>{feature}</span>
         </div>
       ))}
     </div>
@@ -598,8 +620,12 @@ function FeaturesList({ features }) {
 }
 
 function PriceHistory({ history }) {
+  if (!history || history.length === 0) {
+    return <p style={{ color: '#666666' }}>Historique des prix non disponible</p>
+  }
+
   const maxPrice = Math.max(...history.map(h => h.price))
-  
+
   return (
     <div>
       {history.map((entry, idx) => (
@@ -608,22 +634,22 @@ function PriceHistory({ history }) {
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: '12px 0',
-          borderBottom: idx < history.length - 1 ? '1px solid #e1e4e8' : 'none'
+          borderBottom: idx < history.length - 1 ? '1px solid #EEEEEE' : 'none'
         }}>
-          <span style={{ fontSize: '14px', color: '#6a737d' }}>
+          <span style={{ fontSize: '14px', color: '#666666' }}>
             {new Date(entry.date).toLocaleDateString('fr-FR')}
           </span>
           <div style={{ flex: 1, margin: '0 20px' }}>
             <div style={{
               height: '8px',
-              background: '#e1e4e8',
+              background: '#EEEEEE',
               borderRadius: '4px',
               overflow: 'hidden'
             }}>
               <div style={{
                 width: `${(entry.price / maxPrice) * 100}%`,
                 height: '100%',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: '#DC2626',
                 transition: 'width 0.5s ease'
               }} />
             </div>
@@ -631,7 +657,7 @@ function PriceHistory({ history }) {
           <span style={{
             fontSize: '16px',
             fontWeight: 600,
-            color: '#28a745'
+            color: '#222222'
           }}>
             {entry.price.toLocaleString()} €
           </span>
@@ -640,10 +666,11 @@ function PriceHistory({ history }) {
       <div style={{
         marginTop: '12px',
         padding: '12px',
-        background: '#d4edda',
+        background: '#FAFAFA',
         borderRadius: '8px',
+        border: '1px solid #EEEEEE',
         fontSize: '14px',
-        color: '#155724'
+        color: '#222222'
       }}>
         💰 Baisse de {(history[0].price - history[history.length - 1].price).toLocaleString()} € depuis le début
       </div>
@@ -652,6 +679,10 @@ function PriceHistory({ history }) {
 }
 
 function ExpertOpinion({ opinion }) {
+  if (!opinion) {
+    return <p style={{ color: '#666666' }}>Avis expert non disponible</p>
+  }
+
   return (
     <div>
       <div style={{
@@ -660,13 +691,14 @@ function ExpertOpinion({ opinion }) {
         gap: '16px',
         marginBottom: '20px',
         padding: '16px',
-        background: 'linear-gradient(135deg, #fff9e6 0%, #ffe8cc 100%)',
-        borderRadius: '12px'
+        background: '#FAFAFA',
+        borderRadius: '8px',
+        border: '1px solid #EEEEEE'
       }}>
         <div style={{
           fontSize: '48px',
           fontWeight: 700,
-          color: '#ffc107'
+          color: '#222222'
         }}>
           {opinion.score}/10
         </div>
@@ -674,20 +706,20 @@ function ExpertOpinion({ opinion }) {
           <div style={{
             fontWeight: 600,
             marginBottom: '4px',
-            color: '#856404'
+            color: '#222222'
           }}>
             Note globale
           </div>
           <div style={{
             height: '8px',
-            background: '#fff',
+            background: '#EEEEEE',
             borderRadius: '4px',
             overflow: 'hidden'
           }}>
             <div style={{
               width: `${opinion.score * 10}%`,
               height: '100%',
-              background: '#ffc107'
+              background: '#DC2626'
             }} />
           </div>
         </div>
@@ -698,7 +730,7 @@ function ExpertOpinion({ opinion }) {
           margin: '0 0 12px 0',
           fontSize: '16px',
           fontWeight: 600,
-          color: '#28a745'
+          color: '#222222'
         }}>
           ✓ Points forts
         </h4>
@@ -706,7 +738,7 @@ function ExpertOpinion({ opinion }) {
           <div key={idx} style={{
             padding: '8px 0',
             fontSize: '14px',
-            color: '#24292e'
+            color: '#222222'
           }}>
             • {pro}
           </div>
@@ -718,7 +750,7 @@ function ExpertOpinion({ opinion }) {
           margin: '0 0 12px 0',
           fontSize: '16px',
           fontWeight: 600,
-          color: '#dc3545'
+          color: '#222222'
         }}>
           ✗ Points à considérer
         </h4>
@@ -726,7 +758,7 @@ function ExpertOpinion({ opinion }) {
           <div key={idx} style={{
             padding: '8px 0',
             fontSize: '14px',
-            color: '#24292e'
+            color: '#666666'
           }}>
             • {con}
           </div>
@@ -735,14 +767,15 @@ function ExpertOpinion({ opinion }) {
 
       <div style={{
         padding: '16px',
-        background: '#e7f3ff',
+        background: '#FAFAFA',
         borderRadius: '8px',
-        borderLeft: '4px solid #667eea'
+        border: '1px solid #EEEEEE',
+        borderLeft: '4px solid #DC2626'
       }}>
-        <strong style={{ display: 'block', marginBottom: '8px' }}>
+        <strong style={{ display: 'block', marginBottom: '8px', color: '#222222' }}>
           Verdict de l'expert :
         </strong>
-        <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6 }}>
+        <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#666666' }}>
           {opinion.verdict}
         </p>
       </div>
@@ -751,6 +784,10 @@ function ExpertOpinion({ opinion }) {
 }
 
 function SimilarVehicles({ vehicles }) {
+  if (!vehicles || vehicles.length === 0) {
+    return <p style={{ color: '#666666' }}>Véhicules similaires non disponibles</p>
+  }
+
   return (
     <div style={{
       display: 'grid',
@@ -763,41 +800,44 @@ function SimilarVehicles({ vehicles }) {
           href={`/vehicle/${v.id}`}
           style={{
             display: 'block',
-            background: '#f8f9fa',
-            borderRadius: '12px',
+            background: '#FAFAFA',
+            borderRadius: '8px',
             padding: '16px',
             textDecoration: 'none',
             color: 'inherit',
-            border: '2px solid transparent',
+            border: '1px solid #EEEEEE',
             transition: 'all 0.2s'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#667eea'
+            e.currentTarget.style.borderColor = '#DC2626'
             e.currentTarget.style.transform = 'translateY(-4px)'
+            e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = 'transparent'
+            e.currentTarget.style.borderColor = '#EEEEEE'
             e.currentTarget.style.transform = 'translateY(0)'
+            e.currentTarget.style.boxShadow = 'none'
           }}
         >
           <div style={{
             fontWeight: 600,
             fontSize: '14px',
-            marginBottom: '8px'
+            marginBottom: '8px',
+            color: '#222222'
           }}>
             {v.title}
           </div>
           <div style={{
             fontSize: '16px',
             fontWeight: 700,
-            color: '#28a745',
+            color: '#222222',
             marginBottom: '4px'
           }}>
             {v.price.toLocaleString()} €
           </div>
           <div style={{
             fontSize: '12px',
-            color: '#6a737d'
+            color: '#666666'
           }}>
             {v.year} • {v.mileage.toLocaleString()} km
           </div>
@@ -808,12 +848,17 @@ function SimilarVehicles({ vehicles }) {
 }
 
 function ContactCard({ seller, onContact }) {
+  if (!seller) {
+    return null
+  }
+
   return (
     <div style={{
       background: 'white',
-      borderRadius: '16px',
+      borderRadius: '12px',
       padding: '24px',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      border: '1px solid #EEEEEE',
       marginBottom: '24px',
       position: 'sticky',
       top: '20px'
@@ -821,7 +866,8 @@ function ContactCard({ seller, onContact }) {
       <h3 style={{
         margin: '0 0 16px 0',
         fontSize: '18px',
-        fontWeight: 600
+        fontWeight: 600,
+        color: '#222222'
       }}>
         {seller.is_pro ? '🏢 Vendeur professionnel' : '👤 Particulier'}
       </h3>
@@ -829,28 +875,33 @@ function ContactCard({ seller, onContact }) {
       <div style={{
         marginBottom: '16px',
         paddingBottom: '16px',
-        borderBottom: '1px solid #e1e4e8'
+        borderBottom: '1px solid #EEEEEE'
       }}>
         <div style={{
           fontWeight: 600,
           marginBottom: '8px',
-          fontSize: '16px'
+          fontSize: '16px',
+          color: '#222222'
         }}>
-          {seller.name}
+          {seller.name || 'Vendeur'}
         </div>
-        <div style={{
-          fontSize: '14px',
-          color: '#6a737d',
-          marginBottom: '4px'
-        }}>
-          📧 {seller.email}
-        </div>
-        <div style={{
-          fontSize: '14px',
-          color: '#6a737d'
-        }}>
-          📞 {seller.phone}
-        </div>
+        {seller.email && (
+          <div style={{
+            fontSize: '14px',
+            color: '#666666',
+            marginBottom: '4px'
+          }}>
+            📧 {seller.email}
+          </div>
+        )}
+        {seller.phone && (
+          <div style={{
+            fontSize: '14px',
+            color: '#666666'
+          }}>
+            📞 {seller.phone}
+          </div>
+        )}
       </div>
 
       <button
@@ -858,18 +909,24 @@ function ContactCard({ seller, onContact }) {
         style={{
           width: '100%',
           padding: '14px',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: '#DC2626',
           color: 'white',
           border: 'none',
-          borderRadius: '10px',
+          borderRadius: '8px',
           fontSize: '16px',
           fontWeight: 600,
           cursor: 'pointer',
           marginBottom: '12px',
-          transition: 'transform 0.2s'
+          transition: 'all 0.2s'
         }}
-        onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
-        onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+        onMouseEnter={(e) => {
+          e.target.style.background = '#B91C1C'
+          e.target.style.transform = 'translateY(-2px)'
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.background = '#DC2626'
+          e.target.style.transform = 'translateY(0)'
+        }}
       >
         💬 Contacter le vendeur
       </button>
@@ -879,9 +936,9 @@ function ContactCard({ seller, onContact }) {
           width: '100%',
           padding: '14px',
           background: 'white',
-          border: '2px solid #e1e4e8',
-          color: '#24292e',
-          borderRadius: '10px',
+          border: '1px solid #EEEEEE',
+          color: '#222222',
+          borderRadius: '8px',
           fontSize: '14px',
           fontWeight: 600,
           cursor: 'pointer'
@@ -897,23 +954,24 @@ function LegalInfo({ vehicle }) {
   return (
     <div style={{
       background: 'white',
-      borderRadius: '16px',
+      borderRadius: '12px',
       padding: '20px',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      border: '1px solid #EEEEEE',
       fontSize: '13px',
-      color: '#6a737d',
+      color: '#666666',
       lineHeight: 1.6
     }}>
       <h4 style={{
         margin: '0 0 12px 0',
         fontSize: '14px',
         fontWeight: 600,
-        color: '#24292e'
+        color: '#222222'
       }}>
         ℹ️ Informations légales
       </h4>
       <p style={{ margin: '0 0 12px 0' }}>
-        <strong>VIN:</strong> {vehicle.vin}
+        <strong style={{ color: '#222222' }}>VIN:</strong> {vehicle.vin}
       </p>
       <p style={{ margin: '0 0 12px 0' }}>
         Annonce publiée le {new Date(vehicle.created_at).toLocaleDateString('fr-FR')}
@@ -1054,16 +1112,17 @@ function ContactModal({ seller, vehicle, onClose }) {
       <div
         style={{
           background: 'white',
-          borderRadius: '16px',
+          borderRadius: '12px',
           padding: '24px',
           maxWidth: '500px',
           width: '100%',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.2)'
+          boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+          border: '1px solid #EEEEEE'
         }}
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ margin: 0, fontSize: '24px' }}>Contacter le vendeur</h2>
+          <h2 style={{ margin: 0, fontSize: '24px', color: '#222222' }}>Contacter le vendeur</h2>
           <button
             onClick={onClose}
             style={{
@@ -1071,7 +1130,7 @@ function ContactModal({ seller, vehicle, onClose }) {
               border: 'none',
               fontSize: '28px',
               cursor: 'pointer',
-              color: '#6a737d',
+              color: '#666666',
               padding: '0',
               width: '32px',
               height: '32px'
@@ -1081,29 +1140,29 @@ function ContactModal({ seller, vehicle, onClose }) {
           </button>
         </div>
 
-        <div style={{ marginBottom: '20px', padding: '16px', background: '#f6f8fa', borderRadius: '8px' }}>
-          <p style={{ margin: '0 0 8px 0', fontWeight: 600 }}>{seller.name}</p>
+        <div style={{ marginBottom: '20px', padding: '16px', background: '#FAFAFA', borderRadius: '8px', border: '1px solid #EEEEEE' }}>
+          <p style={{ margin: '0 0 8px 0', fontWeight: 600, color: '#222222' }}>{seller.name}</p>
           {seller.phone && (
-            <p style={{ margin: '4px 0', fontSize: '14px' }}>
+            <p style={{ margin: '4px 0', fontSize: '14px', color: '#666666' }}>
               📞 {seller.phone}
             </p>
           )}
           {seller.email && (
-            <p style={{ margin: '4px 0', fontSize: '14px' }}>
+            <p style={{ margin: '4px 0', fontSize: '14px', color: '#666666' }}>
               ✉️ {seller.email}
             </p>
           )}
         </div>
 
-        <div style={{ marginBottom: '20px', padding: '12px', background: '#f1f8ff', borderRadius: '8px', border: '1px solid #c8e1ff' }}>
-          <p style={{ margin: 0, fontSize: '14px', color: '#0366d6' }}>
+        <div style={{ marginBottom: '20px', padding: '12px', background: '#FAFAFA', borderRadius: '8px', border: '1px solid #EEEEEE' }}>
+          <p style={{ margin: 0, fontSize: '14px', color: '#222222' }}>
             <strong>Véhicule concerné :</strong> {vehicle.title}
           </p>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500, color: '#222222' }}>
               Votre message
             </label>
             <textarea
@@ -1115,8 +1174,8 @@ function ContactModal({ seller, vehicle, onClose }) {
               style={{
                 width: '100%',
                 padding: '12px',
-                borderRadius: '6px',
-                border: '1px solid #d1d5db',
+                borderRadius: '8px',
+                border: '1px solid #EEEEEE',
                 fontSize: '14px',
                 fontFamily: 'inherit',
                 resize: 'vertical'
@@ -1130,12 +1189,13 @@ function ContactModal({ seller, vehicle, onClose }) {
               onClick={onClose}
               style={{
                 padding: '10px 20px',
-                background: '#f6f8fa',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
+                background: 'white',
+                border: '1px solid #EEEEEE',
+                borderRadius: '8px',
                 cursor: 'pointer',
                 fontSize: '14px',
-                fontWeight: 500
+                fontWeight: 500,
+                color: '#222222'
               }}
             >
               Annuler
@@ -1144,10 +1204,10 @@ function ContactModal({ seller, vehicle, onClose }) {
               type="submit"
               style={{
                 padding: '10px 20px',
-                background: '#0366d6',
+                background: '#DC2626',
                 color: 'white',
                 border: 'none',
-                borderRadius: '6px',
+                borderRadius: '8px',
                 cursor: 'pointer',
                 fontSize: '14px',
                 fontWeight: 500

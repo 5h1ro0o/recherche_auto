@@ -12,18 +12,11 @@ import {
   proposeVehicle,
   completeRequest
 } from '../services/assisted'
-import { apiPost } from '../services/api'
 
 export default function ExpertRequestDetailPage() {
   const { requestId } = useParams()
   const { user } = useAuth()
   const navigate = useNavigate()
-  
-  const [showProposeModal, setShowProposeModal] = useState(false)
-  const [showSearchModal, setShowSearchModal] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState([])
-  const [searchLoading, setSearchLoading] = useState(false)
 
   // Charger la demande et les propositions existantes
   const { data: request, mutate: mutateRequest } = useSWR(
@@ -41,31 +34,16 @@ export default function ExpertRequestDetailPage() {
   }
 
   async function handleSearchVehicles() {
-    setSearchLoading(true)
-    try {
-      // Construire les filtres basés sur les critères de la demande
-      const filters = {}
-      if (request.budget_max) filters.price_max = request.budget_max
-      if (request.preferred_fuel_type) filters.fuel_type = request.preferred_fuel_type
-      if (request.preferred_transmission) filters.transmission = request.preferred_transmission
-      if (request.max_mileage) filters.mileage_max = request.max_mileage
-      if (request.min_year) filters.year_min = request.min_year
+    // Rediriger vers la page de recherche dédiée avec les critères pré-appliqués
+    const params = new URLSearchParams()
 
-      const response = await apiPost('/search', {
-        q: searchQuery || null,
-        filters,
-        page: 1,
-        size: 20
-      })
+    if (request.budget_max) params.append('budget_max', request.budget_max)
+    if (request.preferred_fuel_type) params.append('fuel_type', request.preferred_fuel_type)
+    if (request.preferred_transmission) params.append('transmission', request.preferred_transmission)
+    if (request.max_mileage) params.append('max_mileage', request.max_mileage)
+    if (request.min_year) params.append('min_year', request.min_year)
 
-      setSearchResults(response.hits || [])
-      setShowSearchModal(true)
-    } catch (error) {
-      console.error('Erreur recherche:', error)
-      alert('❌ Erreur lors de la recherche')
-    } finally {
-      setSearchLoading(false)
-    }
+    navigate(`/expert/requests/${requestId}/search?${params.toString()}`)
   }
 
   async function handleProposeVehicle(vehicleId, message) {
@@ -97,7 +75,7 @@ export default function ExpertRequestDetailPage() {
 
   const stats = {
     proposed: proposals?.length || 0,
-    favorites: proposals?.filter(p => p.status === 'FAVORITE').length || 0,
+    favorites: proposals?.filter(p => p.status === 'SUPER_LIKED' || p.status === 'LIKED').length || 0,
     rejected: proposals?.filter(p => p.status === 'REJECTED').length || 0,
     pending: proposals?.filter(p => p.status === 'PENDING').length || 0
   }
@@ -106,15 +84,27 @@ export default function ExpertRequestDetailPage() {
     <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '20px' }}>
       {/* Header */}
       <div style={{ marginBottom: '30px' }}>
-        <button 
+        <button
           onClick={() => navigate('/expert')}
           style={{
-            background: 'none',
-            border: '1px solid #ddd',
+            background: 'white',
+            border: '1px solid #EEEEEE',
             padding: '8px 16px',
             borderRadius: '8px',
             cursor: 'pointer',
-            marginBottom: '16px'
+            marginBottom: '16px',
+            color: '#222222',
+            fontSize: '14px',
+            fontWeight: 500,
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = '#222222';
+            e.currentTarget.style.background = '#FAFAFA';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = '#EEEEEE';
+            e.currentTarget.style.background = 'white';
           }}
         >
           ← Retour au dashboard
@@ -130,10 +120,10 @@ export default function ExpertRequestDetailPage() {
         gap: '16px',
         marginBottom: '30px'
       }}>
-        <StatCard icon="📋" label="Propositions" value={stats.proposed} color="#667eea" />
-        <StatCard icon="❤️" label="Coup de cœur" value={stats.favorites} color="#e91e63" />
-        <StatCard icon="⏱️" label="En attente" value={stats.pending} color="#ffc107" />
-        <StatCard icon="❌" label="Refusés" value={stats.rejected} color="#dc3545" />
+        <StatCard icon="📋" label="Propositions" value={stats.proposed} color="#222222" />
+        <StatCard icon="❤️" label="Coup de cœur" value={stats.favorites} color="#DC2626" />
+        <StatCard icon="⏱️" label="En attente" value={stats.pending} color="#666666" />
+        <StatCard icon="❌" label="Refusés" value={stats.rejected} color="#999999" />
       </div>
 
       {/* Actions principales */}
@@ -145,22 +135,23 @@ export default function ExpertRequestDetailPage() {
       }}>
         <button
           onClick={handleSearchVehicles}
-          disabled={searchLoading}
           style={{
             flex: '1',
             minWidth: '200px',
             padding: '14px 24px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: '#DC2626',
             color: 'white',
             border: 'none',
-            borderRadius: '10px',
+            borderRadius: '8px',
             fontSize: '15px',
             fontWeight: 600,
             cursor: 'pointer',
-            transition: 'all 0.3s'
+            transition: 'background 0.2s'
           }}
+          onMouseEnter={(e) => e.currentTarget.style.background = '#B91C1C'}
+          onMouseLeave={(e) => e.currentTarget.style.background = '#DC2626'}
         >
-          {searchLoading ? '🔍 Recherche...' : '🔍 Rechercher des véhicules'}
+          Rechercher des véhicules
         </button>
 
         <button
@@ -168,16 +159,27 @@ export default function ExpertRequestDetailPage() {
           disabled={request.status === 'TERMINEE'}
           style={{
             padding: '14px 24px',
-            background: request.status === 'TERMINEE' ? '#ccc' : '#28a745',
+            background: request.status === 'TERMINEE' ? '#CCCCCC' : '#222222',
             color: 'white',
             border: 'none',
-            borderRadius: '10px',
+            borderRadius: '8px',
             fontSize: '15px',
             fontWeight: 600,
-            cursor: request.status === 'TERMINEE' ? 'not-allowed' : 'pointer'
+            cursor: request.status === 'TERMINEE' ? 'not-allowed' : 'pointer',
+            transition: 'background 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            if (request.status !== 'TERMINEE') {
+              e.currentTarget.style.background = '#000000';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (request.status !== 'TERMINEE') {
+              e.currentTarget.style.background = '#222222';
+            }
           }}
         >
-          ✅ Terminer la demande
+          Terminer la demande
         </button>
       </div>
 
@@ -215,28 +217,6 @@ export default function ExpertRequestDetailPage() {
           </div>
         )}
       </div>
-
-      {/* Modal recherche véhicules */}
-      {showSearchModal && (
-        <SearchResultsModal
-          results={searchResults}
-          onClose={() => setShowSearchModal(false)}
-          onPropose={(vehicleId) => {
-            setShowProposeModal(vehicleId)
-          }}
-          alreadyProposedIds={proposals?.map(p => p.vehicle_id) || []}
-        />
-      )}
-
-      {/* Modal proposition */}
-      {showProposeModal && (
-        <ProposeVehicleModal
-          vehicleId={showProposeModal}
-          requestCriteria={request}
-          onClose={() => setShowProposeModal(false)}
-          onConfirm={(message) => handleProposeVehicle(showProposeModal, message)}
-        />
-      )}
     </div>
   )
 }
@@ -244,19 +224,22 @@ export default function ExpertRequestDetailPage() {
 function RequestCard({ request }) {
   const getStatusBadge = (status) => {
     const badges = {
-      'EN_ATTENTE': { text: '⏳ En attente', color: '#ffc107' },
-      'EN_COURS': { text: '🔄 En cours', color: '#17a2b8' },
-      'TERMINEE': { text: '✅ Terminée', color: '#28a745' }
+      'PENDING': { text: 'En attente', color: '#666666' },
+      'IN_PROGRESS': { text: 'En cours', color: '#DC2626' },
+      'COMPLETED': { text: 'Terminée', color: '#222222' },
+      'CANCELLED': { text: 'Annulée', color: '#999999' }
     }
-    const badge = badges[status] || badges['EN_COURS']
+    const badge = badges[status] || badges['IN_PROGRESS']
     return (
       <span style={{
         background: badge.color,
         color: 'white',
-        padding: '6px 14px',
-        borderRadius: '20px',
-        fontSize: '13px',
-        fontWeight: 600
+        padding: '4px 10px',
+        borderRadius: '4px',
+        fontSize: '11px',
+        fontWeight: 600,
+        letterSpacing: '0.5px',
+        textTransform: 'uppercase'
       }}>
         {badge.text}
       </span>
@@ -267,8 +250,9 @@ function RequestCard({ request }) {
     <div style={{
       background: 'white',
       padding: '24px',
-      borderRadius: '16px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+      borderRadius: '12px',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      border: '1px solid #EEEEEE'
     }}>
       <div style={{
         display: 'flex',
@@ -366,16 +350,17 @@ function StatCard({ icon, label, value, color }) {
       background: 'white',
       padding: '20px',
       borderRadius: '12px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      border: '1px solid #EEEEEE',
       display: 'flex',
       alignItems: 'center',
       gap: '16px'
     }}>
-      <div style={{ fontSize: '40px', lineHeight: 1 }}>{icon}</div>
+      <div style={{ fontSize: '32px', lineHeight: 1 }}>{icon}</div>
       <div>
         <div style={{
           fontSize: '12px',
-          color: '#6a737d',
+          color: '#666666',
           marginBottom: '4px',
           textTransform: 'uppercase',
           fontWeight: 600,
@@ -383,7 +368,7 @@ function StatCard({ icon, label, value, color }) {
         }}>
           {label}
         </div>
-        <div style={{ fontSize: '28px', fontWeight: 700, color }}>{value}</div>
+        <div style={{ fontSize: '24px', fontWeight: 700, color }}>{value}</div>
       </div>
     </div>
   )
@@ -392,9 +377,10 @@ function StatCard({ icon, label, value, color }) {
 function ProposalCard({ proposal, onViewVehicle }) {
   const getStatusBadge = (status) => {
     const badges = {
-      'PENDING': { text: '⏱️ En attente', color: '#6c757d' },
-      'FAVORITE': { text: '❤️ Coup de cœur', color: '#e91e63' },
-      'REJECTED': { text: '❌ Refusé', color: '#dc3545' }
+      'PENDING': { text: 'En attente', color: '#666666' },
+      'LIKED': { text: 'Aimé', color: '#222222' },
+      'SUPER_LIKED': { text: 'Coup de cœur', color: '#DC2626' },
+      'REJECTED': { text: 'Refusé', color: '#999999' }
     }
     const badge = badges[status] || badges['PENDING']
     return (
@@ -402,9 +388,11 @@ function ProposalCard({ proposal, onViewVehicle }) {
         background: badge.color,
         color: 'white',
         padding: '4px 10px',
-        borderRadius: '12px',
-        fontSize: '12px',
-        fontWeight: 600
+        borderRadius: '4px',
+        fontSize: '11px',
+        fontWeight: 600,
+        letterSpacing: '0.5px',
+        textTransform: 'uppercase'
       }}>
         {badge.text}
       </span>
@@ -416,8 +404,8 @@ function ProposalCard({ proposal, onViewVehicle }) {
       background: 'white',
       borderRadius: '12px',
       padding: '20px',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-      border: proposal.status === 'FAVORITE' ? '2px solid #e91e63' : '2px solid transparent'
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      border: proposal.status === 'SUPER_LIKED' ? '2px solid #DC2626' : '1px solid #EEEEEE'
     }}>
       <div style={{
         display: 'flex',
@@ -456,33 +444,35 @@ function ProposalCard({ proposal, onViewVehicle }) {
 
       {proposal.message && (
         <div style={{
-          background: '#e7f3ff',
-          padding: '10px',
-          borderRadius: '8px',
-          marginBottom: '12px',
-          fontSize: '13px',
-          lineHeight: 1.5
-        }}>
-          <strong style={{ display: 'block', marginBottom: '4px', color: '#667eea' }}>
-            Votre message :
-          </strong>
-          {proposal.message}
-        </div>
-      )}
-
-      {proposal.rejection_reason && (
-        <div style={{
-          background: '#ffe7e7',
+          background: '#FAFAFA',
           padding: '10px',
           borderRadius: '8px',
           marginBottom: '12px',
           fontSize: '13px',
           lineHeight: 1.5,
+          border: '1px solid #EEEEEE'
         }}>
-          <strong style={{ display: 'block', marginBottom: '4px', color: '#dc3545' }}>
+          <strong style={{ display: 'block', marginBottom: '4px', color: '#222222' }}>
+            Votre message :
+          </strong>
+          <div style={{ color: '#666666' }}>{proposal.message}</div>
+        </div>
+      )}
+
+      {proposal.rejection_reason && (
+        <div style={{
+          background: '#FAFAFA',
+          padding: '10px',
+          borderRadius: '8px',
+          marginBottom: '12px',
+          fontSize: '13px',
+          lineHeight: 1.5,
+          border: '1px solid #DC2626'
+        }}>
+          <strong style={{ display: 'block', marginBottom: '4px', color: '#DC2626' }}>
             Raison du refus :
           </strong>
-          {proposal.rejection_reason}
+          <div style={{ color: '#666666' }}>{proposal.rejection_reason}</div>
         </div>
       )}
 
@@ -492,304 +482,25 @@ function ProposalCard({ proposal, onViewVehicle }) {
           width: '100%',
           padding: '10px',
           background: 'white',
-          border: '2px solid #667eea',
-          color: '#667eea',
+          border: '1px solid #EEEEEE',
+          color: '#222222',
           borderRadius: '8px',
           fontSize: '13px',
           fontWeight: 600,
-          cursor: 'pointer'
+          cursor: 'pointer',
+          transition: 'all 0.2s'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = '#222222';
+          e.currentTarget.style.background = '#FAFAFA';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = '#EEEEEE';
+          e.currentTarget.style.background = 'white';
         }}
       >
-        👁️ Voir le véhicule
+        Voir le véhicule
       </button>
-    </div>
-  )
-}
-
-function SearchResultsModal({ results, onClose, onPropose, alreadyProposedIds }) {
-  return (
-    <div 
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0,0,0,0.7)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-        padding: '20px'
-      }}
-      onClick={onClose}
-    >
-      <div 
-        style={{
-          background: 'white',
-          borderRadius: '16px',
-          padding: '28px',
-          maxWidth: '1000px',
-          width: '100%',
-          maxHeight: '80vh',
-          overflow: 'auto',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '24px'
-        }}>
-          <h2 style={{ margin: 0, fontSize: '22px', fontWeight: 700 }}>
-            🔍 Résultats de recherche ({results.length})
-          </h2>
-          <button
-            onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '28px',
-              cursor: 'pointer',
-              color: '#6a737d'
-            }}
-          >
-            ✕
-          </button>
-        </div>
-
-        {results.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#6a737d' }}>
-            <p>Aucun véhicule trouvé avec ces critères</p>
-          </div>
-        ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '16px'
-          }}>
-            {results.map(result => {
-              const vehicle = result.source
-              const alreadyProposed = alreadyProposedIds.includes(result.id)
-              
-              return (
-                <div
-                  key={result.id}
-                  style={{
-                    background: alreadyProposed ? '#f0f0f0' : 'white',
-                    border: alreadyProposed ? '2px solid #ddd' : '2px solid #e1e4e8',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    opacity: alreadyProposed ? 0.6 : 1
-                  }}
-                >
-                  <div style={{
-                    fontWeight: 600,
-                    marginBottom: '8px',
-                    fontSize: '14px',
-                    color: alreadyProposed ? '#6a737d' : '#24292e'
-                  }}>
-                    {vehicle?.title || 'Sans titre'}
-                  </div>
-                  
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '6px',
-                    fontSize: '12px',
-                    color: '#6a737d',
-                    marginBottom: '12px'
-                  }}>
-                    {vehicle?.price && <div>💰 {vehicle.price.toLocaleString()} €</div>}
-                    {vehicle?.year && <div>📅 {vehicle.year}</div>}
-                    {vehicle?.mileage && <div>🛣️ {vehicle.mileage.toLocaleString()} km</div>}
-                    {vehicle?.fuel_type && <div>⛽ {vehicle.fuel_type}</div>}
-                  </div>
-
-                  <button
-                    onClick={() => onPropose(result.id)}
-                    disabled={alreadyProposed}
-                    style={{
-                      width: '100%',
-                      padding: '8px',
-                      background: alreadyProposed ? '#ddd' : '#667eea',
-                      color: alreadyProposed ? '#999' : 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      cursor: alreadyProposed ? 'not-allowed' : 'pointer'
-                    }}
-                  >
-                    {alreadyProposed ? '✅ Déjà proposé' : '➕ Proposer'}
-                  </button>
-                </div>
-              )
-            })}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-function ProposeVehicleModal({ vehicleId, requestCriteria, onClose, onConfirm }) {
-  const [message, setMessage] = useState('')
-  const [selectedTemplate, setSelectedTemplate] = useState('')
-
-  const templates = [
-    {
-      id: 'perfect',
-      label: '🎯 Correspond parfaitement',
-      text: `Ce véhicule correspond parfaitement à vos critères : ${requestCriteria.budget_max ? `budget respecté (${requestCriteria.budget_max}€)` : 'excellent rapport qualité-prix'}, ${requestCriteria.preferred_fuel_type || 'motorisation adaptée'}, et ${requestCriteria.max_mileage ? `faible kilométrage (${requestCriteria.max_mileage} km max)` : 'bon état général'}. Je vous le recommande vivement !`
-    },
-    {
-      id: 'excellent',
-      label: '⭐ Excellente opportunité',
-      text: "Excellent véhicule que je vous recommande : très bon état, entretien suivi, historique complet. C'est une opportunité à ne pas manquer !"
-    },
-    {
-      id: 'value',
-      label: '💎 Très bon rapport qualité-prix',
-      text: "Ce modèle offre un excellent rapport qualité-prix pour votre budget. Fiabilité reconnue et coûts d'entretien modérés."
-    },
-    {
-      id: 'recent',
-      label: '🆕 Modèle récent',
-      text: "Véhicule récent avec peu de kilométrage, équipements modernes et garantie constructeur. Parfait pour une utilisation longue durée."
-    }
-  ]
-
-  function useTemplate(template) {
-    setMessage(template.text)
-    setSelectedTemplate(template.id)
-  }
-
-  return (
-    <div 
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0,0,0,0.7)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1001,
-        padding: '20px'
-      }}
-      onClick={onClose}
-    >
-      <div 
-        style={{
-          background: 'white',
-          borderRadius: '16px',
-          padding: '28px',
-          maxWidth: '600px',
-          width: '100%',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 style={{ margin: '0 0 20px 0', fontSize: '22px', fontWeight: 700 }}>
-          ➕ Proposer ce véhicule
-        </h2>
-
-        <p style={{ color: '#6a737d', fontSize: '14px', marginBottom: '20px' }}>
-          Ajoutez un message personnalisé pour expliquer pourquoi ce véhicule correspond aux besoins du client.
-        </p>
-
-        {/* Templates */}
-        <div style={{ marginBottom: '20px' }}>
-          <div style={{
-            fontSize: '13px',
-            fontWeight: 600,
-            marginBottom: '10px',
-            color: '#24292e'
-          }}>
-            💬 Messages rapides :
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {templates.map(template => (
-              <button
-                key={template.id}
-                onClick={() => useTemplate(template)}
-                style={{
-                  padding: '8px 14px',
-                  background: selectedTemplate === template.id ? '#667eea' : '#f0f0f0',
-                  color: selectedTemplate === template.id ? 'white' : '#24292e',
-                  border: 'none',
-                  borderRadius: '20px',
-                  fontSize: '12px',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {template.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Message personnalisé */}
-        <textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Écrivez votre message personnalisé..."
-          style={{
-            width: '100%',
-            padding: '12px',
-            border: '2px solid #e1e4e8',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontFamily: 'inherit',
-            minHeight: '120px',
-            resize: 'vertical',
-            marginBottom: '20px'
-          }}
-        />
-
-        {/* Actions */}
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button
-            onClick={onClose}
-            style={{
-              flex: 1,
-              padding: '12px',
-              background: 'white',
-              border: '2px solid #e1e4e8',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: 600,
-              cursor: 'pointer'
-            }}
-          >
-            Annuler
-          </button>
-          <button
-            onClick={() => onConfirm(message)}
-            disabled={!message.trim()}
-            style={{
-              flex: 1,
-              padding: '12px',
-              background: message.trim() ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#ccc',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: 600,
-              cursor: message.trim() ? 'pointer' : 'not-allowed'
-            }}
-          >
-            ✅ Proposer ce véhicule
-          </button>
-        </div>
-      </div>
     </div>
   )
 }

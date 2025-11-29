@@ -60,7 +60,7 @@ export async function updateProposalStatus(proposalId, status, rejectionReason =
 
 // ============ EXPERT ROUTES ============
 
-export async function getAvailableRequests(statusFilter = 'EN_ATTENTE') {
+export async function getAvailableRequests(statusFilter = 'PENDING') {
   const params = statusFilter ? { status_filter: statusFilter } : {}
   const response = await client.get('/assisted/requests', { params })
   return response.data

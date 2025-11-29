@@ -24,34 +24,51 @@ export default function App() {
           </Link>
 
           <nav className="header-nav">
-            <Link to="/" className="nav-link">
-              Accueil
-            </Link>
+            {/* Navigation pour les EXPERTS */}
+            {user?.role === 'EXPERT' ? (
+              <>
+                <Link to="/expert" className="nav-link">
+                  🏠 Dashboard
+                </Link>
+                <Link to="/expert/market" className="nav-link">
+                  📋 Marché
+                </Link>
+                <Link to="/expert/missions" className="nav-link">
+                  🎯 Missions
+                </Link>
+              </>
+            ) : (
+              /* Navigation pour les CLIENTS */
+              <>
+                <Link to="/" className="nav-link">
+                  Accueil
+                </Link>
 
-            <Link to="/search" className="nav-link">
-              🔍 Rechercher
-            </Link>
+                <Link to="/search" className="nav-link">
+                  🔍 Rechercher
+                </Link>
 
-            <Link to="/encyclopedia" className="nav-link">
-              📚 Encyclopédie
-            </Link>
+                <Link to="/encyclopedia" className="nav-link">
+                  📚 Encyclopédie
+                </Link>
 
+                {isAuthenticated && (
+                  <>
+                    <Link to="/favorites" className="nav-link">
+                      ❤️ Favoris
+                    </Link>
+
+                    <Link to="/assisted" className="nav-link">
+                      🤝 Recherche Personnalisée
+                    </Link>
+                  </>
+                )}
+              </>
+            )}
+
+            {/* Notifications et menu utilisateur pour TOUS les utilisateurs authentifiés */}
             {isAuthenticated && (
               <>
-                <Link to="/favorites" className="nav-link">
-                  ❤️ Favoris
-                </Link>
-
-                <Link to="/assisted" className="nav-link">
-                  🤝 Recherche Personnalisée
-                </Link>
-
-                {user?.role === 'EXPERT' && (
-                  <Link to="/expert" className="nav-link expert-link">
-                    ⭐ Dashboard Expert
-                  </Link>
-                )}
-
                 <MessageNotification />
 
                 <div className="user-menu">
@@ -84,13 +101,15 @@ export default function App() {
                       >
                         💬 Messages
                       </Link>
-                      <Link
-                        to="/favorites"
-                        className="dropdown-item"
-                        onClick={() => setShowMenu(false)}
-                      >
-                        ❤️ Favoris
-                      </Link>
+                      {user?.role !== 'EXPERT' && (
+                        <Link
+                          to="/favorites"
+                          className="dropdown-item"
+                          onClick={() => setShowMenu(false)}
+                        >
+                          ❤️ Favoris
+                        </Link>
+                      )}
                       <div className="dropdown-divider" />
                       <button
                         className="dropdown-item logout"
