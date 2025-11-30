@@ -18,10 +18,24 @@ import re
 from typing import List, Dict, Optional
 from dotenv import load_dotenv
 import time
+import uuid
+import unicodedata
 
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "").replace("postgresql://", "postgresql+asyncpg://")
+
+
+def generate_slug(text: str) -> str:
+    """Generate a URL-friendly slug from text"""
+    # Normalize unicode characters
+    text = unicodedata.normalize('NFKD', text)
+    # Remove accents
+    text = ''.join([c for c in text if not unicodedata.combining(c)])
+    # Convert to lowercase and replace spaces/special chars with hyphens
+    text = re.sub(r'[^\w\s-]', '', text.lower())
+    text = re.sub(r'[-\s]+', '-', text)
+    return text.strip('-')
 
 class ImprovedScraper:
     """Scraper amélioré qui contourne les protections 403"""
@@ -177,6 +191,7 @@ class ImprovedScraper:
 
             # Données de base
             brand = {
+                'id': generate_slug(brand_data['name']),  # Generate unique ID from name
                 'name': brand_data['name'],
                 'country': brand_data['country'],
                 'founded_year': brand_data['founded_year'],
@@ -209,7 +224,10 @@ class ImprovedScraper:
             print(f"📋 {len(model_names)} modèles trouvés")
 
             for model_name in model_names:
+                # Generate unique ID combining brand and model
+                model_id = f"{generate_slug(brand_name)}-{generate_slug(model_name)}"
                 model_data = {
+                    'id': model_id,
                     'name': model_name,
                     'is_current': True,
                     'body_type': self.guess_body_type(model_name),
