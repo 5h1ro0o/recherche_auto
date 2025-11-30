@@ -26,3 +26,16 @@ try:
     from app.models import Base  # noqa: F401
 except Exception:
     Base = None
+
+
+# Dependency for FastAPI routes
+def get_db():
+    """
+    Dependency function to get database session.
+    Usage: db: Session = Depends(get_db)
+    """
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
