@@ -1,6 +1,6 @@
 # backend/app/models.py
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Integer, JSON, TIMESTAMP, Boolean, ForeignKey, Text, Enum as SQLEnum
+from sqlalchemy import Column, String, Integer, JSON, TIMESTAMP, Boolean, ForeignKey, Text, Enum as SQLEnum, Table
 from sqlalchemy.orm import relationship
 from datetime import datetime
 import enum
@@ -315,6 +315,39 @@ class CarModel(Base):
     brand = relationship("CarBrand", back_populates="models")
     specifications = relationship("TechnicalSpecification", back_populates="model", cascade="all, delete-orphan")
     reviews = relationship("ModelReview", back_populates="model", cascade="all, delete-orphan")
+    # Relations many-to-many avec moteurs et transmissions
+    engines = relationship("Engine", secondary="engine_model_associations", back_populates="models")
+    transmissions = relationship("Transmission", secondary="transmission_model_associations", back_populates="models")
+
+
+# Tables de liaison many-to-many
+
+# Liaison Engine ↔ CarModel (un moteur peut équiper plusieurs modèles)
+engine_model_association = Table(
+    'engine_model_associations',
+    Base.metadata,
+    Column('engine_id', String, ForeignKey('engines.id', ondelete='CASCADE'), primary_key=True),
+    Column('model_id', String, ForeignKey('car_models.id', ondelete='CASCADE'), primary_key=True),
+    Column('created_at', TIMESTAMP, default=datetime.utcnow)
+)
+
+# Liaison Transmission ↔ CarModel (une boîte peut équiper plusieurs modèles)
+transmission_model_association = Table(
+    'transmission_model_associations',
+    Base.metadata,
+    Column('transmission_id', String, ForeignKey('transmissions.id', ondelete='CASCADE'), primary_key=True),
+    Column('model_id', String, ForeignKey('car_models.id', ondelete='CASCADE'), primary_key=True),
+    Column('created_at', TIMESTAMP, default=datetime.utcnow)
+)
+
+# Liaison Engine ↔ Transmission (associations moteur-boîte possibles)
+engine_transmission_association = Table(
+    'engine_transmission_associations',
+    Base.metadata,
+    Column('engine_id', String, ForeignKey('engines.id', ondelete='CASCADE'), primary_key=True),
+    Column('transmission_id', String, ForeignKey('transmissions.id', ondelete='CASCADE'), primary_key=True),
+    Column('created_at', TIMESTAMP, default=datetime.utcnow)
+)
 
 
 class Engine(Base):
@@ -380,6 +413,10 @@ class Engine(Base):
 
     # Relations
     reviews = relationship("EngineReview", back_populates="engine", cascade="all, delete-orphan")
+    # Relation many-to-many avec les modèles
+    models = relationship("CarModel", secondary=engine_model_association, back_populates="engines")
+    # Relation many-to-many avec les transmissions
+    transmissions = relationship("Transmission", secondary=engine_transmission_association, back_populates="engines")
 
 
 class Transmission(Base):
@@ -421,6 +458,10 @@ class Transmission(Base):
 
     # Relations
     reviews = relationship("TransmissionReview", back_populates="transmission", cascade="all, delete-orphan")
+    # Relation many-to-many avec les modèles
+    models = relationship("CarModel", secondary=transmission_model_association, back_populates="transmissions")
+    # Relation many-to-many avec les moteurs
+    engines = relationship("Engine", secondary=engine_transmission_association, back_populates="transmissions")
 
 
 class TechnicalSpecification(Base):
