@@ -10,6 +10,7 @@ from playwright.async_api import async_playwright
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import text
 from app.models import CarBrand, CarModel
 import os
 import json
@@ -247,7 +248,7 @@ class ImprovedScraper:
                 for idx, brand_data in enumerate(brands, 1):
                     # Vérifier si la marque existe déjà
                     result = await session.execute(
-                        f"SELECT id FROM car_brands WHERE name = '{brand_data['name']}' LIMIT 1"
+                        text(f"SELECT id FROM car_brands WHERE name = '{brand_data['name']}' LIMIT 1")
                     )
                     existing = result.first()
 
@@ -290,7 +291,7 @@ class ImprovedScraper:
 
                     # Vérifier si existe
                     result = await session.execute(
-                        f"SELECT id FROM car_models WHERE brand_id = '{brand_id}' AND name = '{model_data['name']}' LIMIT 1"
+                        text(f"SELECT id FROM car_models WHERE brand_id = '{brand_id}' AND name = '{model_data['name']}' LIMIT 1")
                     )
                     existing = result.first()
 
@@ -337,7 +338,7 @@ class ImprovedScraper:
             async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
             async with async_session() as session:
-                result = await session.execute("SELECT id, name FROM car_brands")
+                result = await session.execute(text("SELECT id, name FROM car_brands"))
                 saved_brands = result.fetchall()
 
                 total_models = 0
