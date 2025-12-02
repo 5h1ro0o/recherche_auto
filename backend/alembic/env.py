@@ -56,8 +56,11 @@ if not DATABASE_URL:
 def run_migrations_offline():
     """Run migrations in 'offline' mode."""
     # Utiliser DATABASE_URL directement au lieu de config.get_main_option
+    # Alembic migrations need synchronous driver, replace asyncpg with psycopg2
+    sync_database_url = DATABASE_URL.replace("postgresql+asyncpg://", "postgresql+psycopg2://")
+
     context.configure(
-        url=DATABASE_URL,
+        url=sync_database_url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -71,8 +74,12 @@ def run_migrations_online():
     """Run migrations in 'online' mode."""
     # Créer l'engine directement avec DATABASE_URL pour éviter les problèmes d'interpolation ConfigParser
     from sqlalchemy import create_engine
+
+    # Alembic migrations need synchronous driver, replace asyncpg with psycopg2
+    sync_database_url = DATABASE_URL.replace("postgresql+asyncpg://", "postgresql+psycopg2://")
+
     connectable = create_engine(
-        DATABASE_URL,
+        sync_database_url,
         poolclass=pool.NullPool,
     )
 
