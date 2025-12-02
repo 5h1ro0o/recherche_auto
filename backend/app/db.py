@@ -1,4 +1,5 @@
 # backend/app/db.py
+import re
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -6,7 +7,12 @@ from sqlalchemy.orm import sessionmaker
 from app.config import settings
 
 # Force psycopg2 (synchronous) driver for FastAPI routes
-DATABASE_URL = settings.DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://")
+# Remove any existing driver specification and force psycopg2
+DATABASE_URL = re.sub(
+    r'postgresql(\+[a-z0-9]+)?://',
+    'postgresql+psycopg2://',
+    settings.DATABASE_URL
+)
 
 # create engine with psycopg2 (synchronous driver)
 engine = create_engine(

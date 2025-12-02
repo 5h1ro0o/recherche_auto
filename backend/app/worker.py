@@ -14,6 +14,7 @@ Usage :
 """
 
 import os
+import re
 import json
 import time
 import traceback
@@ -27,7 +28,12 @@ from math import radians, cos, sin, asin, sqrt
 from app.config import settings
 
 # Force psycopg2 (synchronous) driver for worker
-DATABASE_URL = settings.DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://")
+# Remove any existing driver specification and force psycopg2
+DATABASE_URL = re.sub(
+    r'postgresql(\+[a-z0-9]+)?://',
+    'postgresql+psycopg2://',
+    settings.DATABASE_URL
+)
 ELASTIC_HOST = settings.ELASTIC_HOST
 REDIS_URL = settings.REDIS_URL
 ES_INDEX = settings.ES_INDEX
