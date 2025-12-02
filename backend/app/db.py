@@ -7,14 +7,11 @@ from app.config import settings
 
 DATABASE_URL = settings.DATABASE_URL
 
-# create engine with UTF-8 encoding
+# create engine (asyncpg handles encoding automatically)
 engine = create_engine(
     DATABASE_URL,
     echo=False,
     future=True,
-    connect_args={
-        "client_encoding": "utf8"
-    },
     pool_pre_ping=True  # Vérifier la connexion avant utilisation
 )
 
