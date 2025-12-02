@@ -5,9 +5,10 @@ from sqlalchemy.orm import sessionmaker
 # Importer la configuration centralisée qui charge le .env
 from app.config import settings
 
-DATABASE_URL = settings.DATABASE_URL
+# Force psycopg2 (synchronous) driver for FastAPI routes
+DATABASE_URL = settings.DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://")
 
-# create engine (asyncpg handles encoding automatically)
+# create engine with psycopg2 (synchronous driver)
 engine = create_engine(
     DATABASE_URL,
     echo=False,

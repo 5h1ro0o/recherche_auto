@@ -26,7 +26,8 @@ from math import radians, cos, sin, asin, sqrt
 # Importer la configuration centralisée qui charge le .env
 from app.config import settings
 
-DATABASE_URL = settings.DATABASE_URL
+# Force psycopg2 (synchronous) driver for worker
+DATABASE_URL = settings.DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://")
 ELASTIC_HOST = settings.ELASTIC_HOST
 REDIS_URL = settings.REDIS_URL
 ES_INDEX = settings.ES_INDEX
