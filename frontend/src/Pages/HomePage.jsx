@@ -9,88 +9,85 @@ export default function HomePage() {
     <div>
       {/* Hero Section */}
       <section style={{
-        background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
-        color: 'white',
-        padding: '80px 20px',
-        textAlign: 'center',
+        background: 'var(--white)',
+        position: 'relative',
+        overflow: 'hidden',
+        borderBottom: '1px solid var(--border-light)'
       }}>
+        {/* Gloss overlay */}
         <div style={{
-          maxWidth: '900px',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '400px',
+          background: 'var(--gloss-overlay)',
+          pointerEvents: 'none'
+        }} />
+
+        <div style={{
+          maxWidth: 'var(--container-xl)',
           margin: '0 auto',
+          padding: 'var(--space-20) var(--space-6)',
+          textAlign: 'center',
+          position: 'relative',
+          zIndex: 1
         }}>
           <h1 style={{
-            fontSize: '48px',
-            fontWeight: 700,
-            margin: '0 0 24px 0',
-            lineHeight: 1.2,
+            fontSize: '56px',
+            fontWeight: 'var(--font-weight-bold)',
+            margin: '0 0 var(--space-6) 0',
+            lineHeight: 1.1,
+            color: 'var(--text-primary)',
+            letterSpacing: '-0.03em'
           }}>
-            Trouvez votre véhicule idéal avec l'intelligence artificielle
+            Trouvez votre véhicule idéal
           </h1>
           <p style={{
             fontSize: '20px',
-            margin: '0 0 40px 0',
-            opacity: 0.95,
+            margin: '0 0 var(--space-10) 0',
+            color: 'var(--text-secondary)',
             lineHeight: 1.6,
+            maxWidth: '800px',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            fontWeight: 'var(--font-weight-medium)'
           }}>
             La première plateforme française qui combine recherche intelligente multi-sources
             et accompagnement personnalisé par des experts automobiles
           </p>
           <div style={{
             display: 'flex',
-            gap: '16px',
+            gap: 'var(--space-4)',
             justifyContent: 'center',
-            flexWrap: 'wrap',
+            flexWrap: 'wrap'
           }}>
             <Link
               to="/search"
+              className="btn btn-primary"
               style={{
-                padding: '16px 32px',
-                background: 'white',
-                color: '#DC2626',
-                textDecoration: 'none',
-                borderRadius: '12px',
-                fontSize: '18px',
-                fontWeight: 600,
-                boxShadow: '0 4px 24px rgba(0, 0, 0, 0.15)',
-                transition: 'all 0.2s',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-2px)'
-                e.target.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.2)'
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(0)'
-                e.target.style.boxShadow = '0 4px 24px rgba(0, 0, 0, 0.15)'
+                padding: 'var(--space-4) var(--space-8)',
+                fontSize: '16px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                fontWeight: 'var(--font-weight-semibold)'
               }}
             >
-              <span>🔍</span>
-              <span>Commencer ma recherche</span>
+              Commencer ma recherche
             </Link>
             {!isAuthenticated && (
               <Link
                 to="/register"
+                className="btn btn-secondary"
                 style={{
-                  padding: '16px 32px',
-                  background: 'transparent',
-                  color: 'white',
-                  textDecoration: 'none',
-                  borderRadius: '12px',
-                  fontSize: '18px',
-                  fontWeight: 600,
-                  border: '2px solid white',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.background = 'rgba(255, 255, 255, 0.1)'
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = 'transparent'
+                  padding: 'var(--space-4) var(--space-8)',
+                  fontSize: '16px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontWeight: 'var(--font-weight-semibold)'
                 }}
               >
-                Créer mon compte gratuit
+                Créer mon compte
               </Link>
             )}
           </div>
@@ -99,82 +96,78 @@ export default function HomePage() {
 
       {/* Services Section */}
       <section style={{
-        padding: '80px 20px',
-        background: '#F9FAFB',
+        padding: 'var(--space-20) var(--space-6)',
+        background: 'var(--gray-50)'
       }}>
         <div style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
+          maxWidth: 'var(--container-2xl)',
+          margin: '0 auto'
         }}>
           <h2 style={{
-            fontSize: '36px',
-            fontWeight: 700,
+            fontSize: '40px',
+            fontWeight: 'var(--font-weight-semibold)',
             textAlign: 'center',
-            margin: '0 0 16px 0',
-            color: '#222222',
+            margin: '0 0 var(--space-4) 0',
+            color: 'var(--text-primary)',
+            letterSpacing: '-0.02em'
           }}>
             Nos Services
           </h2>
           <p style={{
             fontSize: '18px',
             textAlign: 'center',
-            color: '#6B7280',
-            margin: '0 0 48px 0',
+            color: 'var(--text-secondary)',
+            margin: '0 0 var(--space-12) 0',
+            fontWeight: 'var(--font-weight-medium)'
           }}>
             Tout ce dont vous avez besoin pour trouver votre véhicule
           </p>
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '24px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+            gap: 'var(--space-6)'
           }}>
             <ServiceCard
-              icon="🔍"
               title="Recherche Multi-Sources"
               description="Accédez simultanément à des milliers d'annonces provenant de LeBonCoin, AutoScout24 et bien d'autres plateformes. Un seul formulaire, tous les résultats."
               link="/search"
-              linkText="Essayer maintenant →"
+              linkText="Essayer maintenant"
             />
 
             <ServiceCard
-              icon="🤖"
               title="Filtres Intelligents"
               description="Notre IA analyse vos critères et vous propose uniquement les véhicules qui correspondent vraiment à vos besoins : budget, kilométrage, année, carburant et plus encore."
               link="/search"
-              linkText="Découvrir les filtres →"
+              linkText="Découvrir les filtres"
             />
 
             <ServiceCard
-              icon="🤝"
               title="Mode Assisté"
               description="Vous ne savez pas par où commencer ? Nos experts automobiles analysent votre demande et vous proposent une sélection personnalisée de véhicules adaptés à votre profil."
               link={isAuthenticated ? "/assisted" : "/register"}
-              linkText={isAuthenticated ? "Faire une demande →" : "S'inscrire pour y accéder →"}
+              linkText={isAuthenticated ? "Faire une demande" : "S'inscrire pour y accéder"}
             />
 
             <ServiceCard
-              icon="📚"
               title="Encyclopédie Auto"
               description="Consultez notre base de connaissances complète sur les marques, modèles, motorisations et conseils d'achat. Tout ce qu'il faut savoir avant d'acheter."
               link="/encyclopedia"
-              linkText="Explorer l'encyclopédie →"
+              linkText="Explorer l'encyclopédie"
             />
 
             <ServiceCard
-              icon="❤️"
               title="Favoris & Alertes"
               description="Sauvegardez vos annonces préférées et recevez des alertes en temps réel quand de nouveaux véhicules correspondant à vos critères sont publiés."
               link={isAuthenticated ? "/favorites" : "/register"}
-              linkText={isAuthenticated ? "Voir mes favoris →" : "S'inscrire pour y accéder →"}
+              linkText={isAuthenticated ? "Voir mes favoris" : "S'inscrire pour y accéder"}
             />
 
             <ServiceCard
-              icon="💬"
               title="Messagerie Intégrée"
               description="Communiquez directement avec nos experts pour affiner votre recherche, poser des questions techniques ou obtenir des conseils personnalisés."
               link={isAuthenticated ? "/messages" : "/register"}
-              linkText={isAuthenticated ? "Mes messages →" : "S'inscrire pour y accéder →"}
+              linkText={isAuthenticated ? "Mes messages" : "S'inscrire pour y accéder"}
             />
           </div>
         </div>
@@ -182,36 +175,38 @@ export default function HomePage() {
 
       {/* How It Works */}
       <section style={{
-        padding: '80px 20px',
-        background: 'white',
+        padding: 'var(--space-20) var(--space-6)',
+        background: 'var(--white)'
       }}>
         <div style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
+          maxWidth: 'var(--container-2xl)',
+          margin: '0 auto'
         }}>
           <h2 style={{
-            fontSize: '36px',
-            fontWeight: 700,
+            fontSize: '40px',
+            fontWeight: 'var(--font-weight-semibold)',
             textAlign: 'center',
-            margin: '0 0 16px 0',
-            color: '#222222',
+            margin: '0 0 var(--space-4) 0',
+            color: 'var(--text-primary)',
+            letterSpacing: '-0.02em'
           }}>
             Comment ça marche ?
           </h2>
           <p style={{
             fontSize: '18px',
             textAlign: 'center',
-            color: '#6B7280',
-            margin: '0 0 64px 0',
+            color: 'var(--text-secondary)',
+            margin: '0 0 var(--space-16) 0',
+            fontWeight: 'var(--font-weight-medium)'
           }}>
             Trouvez votre véhicule en 4 étapes simples
           </p>
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '32px',
-            alignItems: 'center',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: 'var(--space-8)',
+            alignItems: 'start'
           }}>
             <StepCard
               number="1"
@@ -219,23 +214,17 @@ export default function HomePage() {
               description="Renseignez votre budget, le type de véhicule souhaité, le kilométrage maximal, l'année minimum et d'autres filtres précis."
             />
 
-            <ArrowSeparator />
-
             <StepCard
               number="2"
               title="Notre IA recherche pour vous"
               description="En quelques secondes, nous parcourons des milliers d'annonces sur plusieurs plateformes et ne gardons que celles qui correspondent."
             />
 
-            <ArrowSeparator />
-
             <StepCard
               number="3"
               title="Consultez et comparez"
               description="Visualisez tous les résultats au même endroit, ajoutez vos favoris, et demandez l'aide d'un expert si besoin."
             />
-
-            <ArrowSeparator />
 
             <StepCard
               number="4"
@@ -248,19 +237,34 @@ export default function HomePage() {
 
       {/* Stats Section */}
       <section style={{
-        padding: '64px 20px',
-        background: 'linear-gradient(135deg, #1F2937 0%, #111827 100%)',
-        color: 'white',
+        padding: 'var(--space-16) var(--space-6)',
+        background: 'var(--gray-900)',
+        color: 'var(--white)',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
+        {/* Subtle gloss */}
         <div style={{
-          maxWidth: '1200px',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '200px',
+          background: 'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%)',
+          pointerEvents: 'none'
+        }} />
+
+        <div style={{
+          maxWidth: 'var(--container-2xl)',
           margin: '0 auto',
+          position: 'relative',
+          zIndex: 1
         }}>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '40px',
-            textAlign: 'center',
+            gap: 'var(--space-10)',
+            textAlign: 'center'
           }}>
             <StatCard number="500K+" label="Annonces analysées" />
             <StatCard number="3" label="Plateformes connectées" />
@@ -272,59 +276,48 @@ export default function HomePage() {
 
       {/* CTA Section */}
       <section style={{
-        padding: '80px 20px',
-        background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
-        textAlign: 'center',
+        padding: 'var(--space-20) var(--space-6)',
+        background: 'var(--gray-50)',
+        textAlign: 'center'
       }}>
         <div style={{
           maxWidth: '700px',
-          margin: '0 auto',
+          margin: '0 auto'
         }}>
           <h2 style={{
-            fontSize: '36px',
-            fontWeight: 700,
-            margin: '0 0 16px 0',
-            color: '#222222',
+            fontSize: '40px',
+            fontWeight: 'var(--font-weight-semibold)',
+            margin: '0 0 var(--space-4) 0',
+            color: 'var(--text-primary)',
+            letterSpacing: '-0.02em'
           }}>
             Prêt à trouver votre prochaine voiture ?
           </h2>
           <p style={{
             fontSize: '18px',
-            color: '#6B7280',
-            margin: '0 0 40px 0',
+            color: 'var(--text-secondary)',
+            margin: '0 0 var(--space-10) 0',
             lineHeight: 1.6,
+            fontWeight: 'var(--font-weight-medium)'
           }}>
             Rejoignez des milliers d'utilisateurs qui ont simplifié leur recherche
             de véhicule grâce à notre plateforme.
           </p>
           <div style={{
             display: 'flex',
-            gap: '16px',
+            gap: 'var(--space-4)',
             justifyContent: 'center',
-            flexWrap: 'wrap',
+            flexWrap: 'wrap'
           }}>
             <Link
               to="/search"
+              className="btn btn-primary"
               style={{
-                padding: '16px 32px',
-                background: '#DC2626',
-                color: 'white',
-                textDecoration: 'none',
-                borderRadius: '12px',
-                fontSize: '18px',
-                fontWeight: 600,
-                transition: 'all 0.2s',
-                boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)',
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = '#B91C1C'
-                e.target.style.transform = 'translateY(-2px)'
-                e.target.style.boxShadow = '0 8px 24px rgba(220, 38, 38, 0.4)'
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = '#DC2626'
-                e.target.style.transform = 'translateY(0)'
-                e.target.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.3)'
+                padding: 'var(--space-4) var(--space-8)',
+                fontSize: '16px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                fontWeight: 'var(--font-weight-semibold)'
               }}
             >
               Lancer une recherche
@@ -332,24 +325,13 @@ export default function HomePage() {
             {!isAuthenticated && (
               <Link
                 to="/register"
+                className="btn btn-secondary"
                 style={{
-                  padding: '16px 32px',
-                  background: 'white',
-                  color: '#DC2626',
-                  textDecoration: 'none',
-                  borderRadius: '12px',
-                  fontSize: '18px',
-                  fontWeight: 600,
-                  border: '2px solid #DC2626',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.background = '#DC2626'
-                  e.target.style.color = 'white'
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = 'white'
-                  e.target.style.color = '#DC2626'
+                  padding: 'var(--space-4) var(--space-8)',
+                  fontSize: '16px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontWeight: 'var(--font-weight-semibold)'
                 }}
               >
                 Créer un compte
@@ -362,65 +344,85 @@ export default function HomePage() {
   )
 }
 
-function ServiceCard({ icon, title, description, link, linkText }) {
+function ServiceCard({ title, description, link, linkText }) {
   return (
     <div
       style={{
-        background: 'white',
-        borderRadius: '16px',
-        padding: '32px',
-        boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
-        transition: 'all 0.3s',
+        background: 'var(--white)',
+        border: '1px solid var(--border-light)',
+        padding: 'var(--space-8)',
+        boxShadow: 'var(--shadow-gloss-sm)',
+        transition: 'all var(--transition-base)',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
+        position: 'relative',
+        overflow: 'hidden'
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-8px)'
-        e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.15)'
+        e.currentTarget.style.transform = 'translateY(-4px)'
+        e.currentTarget.style.boxShadow = 'var(--shadow-gloss-lg)'
+        e.currentTarget.style.borderColor = 'var(--border-medium)'
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)'
-        e.currentTarget.style.boxShadow = '0 4px 24px rgba(0, 0, 0, 0.08)'
+        e.currentTarget.style.boxShadow = 'var(--shadow-gloss-sm)'
+        e.currentTarget.style.borderColor = 'var(--border-light)'
       }}
     >
+      {/* Top gloss bar */}
       <div style={{
-        fontSize: '48px',
-        marginBottom: '16px',
-      }}>
-        {icon}
-      </div>
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '2px',
+        background: 'var(--red-accent)',
+        opacity: 0
+      }} />
+
       <h3 style={{
-        fontSize: '22px',
-        fontWeight: 600,
-        margin: '0 0 12px 0',
-        color: '#222222',
+        fontSize: '20px',
+        fontWeight: 'var(--font-weight-semibold)',
+        margin: '0 0 var(--space-3) 0',
+        color: 'var(--text-primary)',
+        letterSpacing: '-0.01em'
       }}>
         {title}
       </h3>
       <p style={{
         fontSize: '15px',
-        color: '#6B7280',
+        color: 'var(--text-secondary)',
         lineHeight: 1.6,
-        margin: '0 0 20px 0',
+        margin: '0 0 var(--space-5) 0',
         flex: 1,
+        fontWeight: 'var(--font-weight-regular)'
       }}>
         {description}
       </p>
       <Link
         to={link}
         style={{
-          color: '#DC2626',
+          color: 'var(--red-accent)',
           textDecoration: 'none',
-          fontWeight: 600,
-          fontSize: '15px',
+          fontWeight: 'var(--font-weight-semibold)',
+          fontSize: '14px',
           display: 'inline-flex',
           alignItems: 'center',
+          gap: 'var(--space-2)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+          transition: 'all var(--transition-fast)'
         }}
-        onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-        onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+        onMouseEnter={(e) => {
+          e.target.style.gap = 'var(--space-3)'
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.gap = 'var(--space-2)'
+        }}
       >
         {linkText}
+        <span style={{ fontSize: '12px' }}>→</span>
       </Link>
     </div>
   )
@@ -430,52 +432,50 @@ function StepCard({ number, title, description }) {
   return (
     <div style={{ textAlign: 'center' }}>
       <div style={{
-        width: '72px',
-        height: '72px',
-        borderRadius: '50%',
-        background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
+        width: '80px',
+        height: '80px',
+        background: 'var(--gray-900)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        margin: '0 auto 20px auto',
-        fontSize: '32px',
-        fontWeight: 700,
-        color: 'white',
-        boxShadow: '0 4px 16px rgba(220, 38, 38, 0.3)',
+        margin: '0 auto var(--space-5) auto',
+        fontSize: '36px',
+        fontWeight: 'var(--font-weight-bold)',
+        color: 'var(--white)',
+        boxShadow: 'var(--shadow-gloss-md)',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
-        {number}
+        {/* Gloss effect */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '40px',
+          background: 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%)',
+          pointerEvents: 'none'
+        }} />
+        <span style={{ position: 'relative', zIndex: 1 }}>{number}</span>
       </div>
       <h3 style={{
-        fontSize: '20px',
-        fontWeight: 600,
-        margin: '0 0 12px 0',
-        color: '#222222',
+        fontSize: '18px',
+        fontWeight: 'var(--font-weight-semibold)',
+        margin: '0 0 var(--space-3) 0',
+        color: 'var(--text-primary)',
+        letterSpacing: '-0.01em'
       }}>
         {title}
       </h3>
       <p style={{
         fontSize: '14px',
-        color: '#6B7280',
+        color: 'var(--text-secondary)',
         lineHeight: 1.6,
         margin: 0,
+        fontWeight: 'var(--font-weight-regular)'
       }}>
         {description}
       </p>
-    </div>
-  )
-}
-
-function ArrowSeparator() {
-  return (
-    <div style={{
-      textAlign: 'center',
-      fontSize: '32px',
-      color: '#DC2626',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
-      →
     </div>
   )
 }
@@ -484,19 +484,21 @@ function StatCard({ number, label }) {
   return (
     <div>
       <div style={{
-        fontSize: '48px',
-        fontWeight: 700,
-        marginBottom: '8px',
-        background: 'linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
+        fontSize: '56px',
+        fontWeight: 'var(--font-weight-bold)',
+        marginBottom: 'var(--space-2)',
+        color: 'var(--white)',
+        letterSpacing: '-0.02em'
       }}>
         {number}
       </div>
       <div style={{
         fontSize: '16px',
-        opacity: 0.9,
+        opacity: 0.8,
+        textTransform: 'uppercase',
+        letterSpacing: '0.05em',
+        fontWeight: 'var(--font-weight-medium)',
+        color: 'var(--white)'
       }}>
         {label}
       </div>

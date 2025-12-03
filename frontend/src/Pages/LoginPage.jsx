@@ -36,101 +36,110 @@ export default function LoginPage() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
-      padding: '20px',
+      background: 'var(--gray-50)',
+      padding: 'var(--space-6)'
     }}>
       <div style={{
-        background: 'white',
-        borderRadius: '16px',
-        boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
-        padding: '40px',
+        background: 'var(--white)',
+        border: '1px solid var(--border-light)',
+        boxShadow: 'var(--shadow-gloss-lg)',
+        padding: 'var(--space-10)',
         maxWidth: '420px',
         width: '100%',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
-        {/* Logo/Title */}
+        {/* Top gloss overlay */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '120px',
+          background: 'var(--gloss-overlay)',
+          pointerEvents: 'none'
+        }} />
+
+        {/* Header */}
         <div style={{
           textAlign: 'center',
-          marginBottom: '32px',
+          marginBottom: 'var(--space-8)',
+          position: 'relative',
+          zIndex: 1
         }}>
-          <div style={{
-            fontSize: '48px',
-            marginBottom: '16px',
-          }}>🚗</div>
           <h2 style={{
-            fontSize: '28px',
-            fontWeight: 700,
-            color: '#222222',
-            margin: '0 0 8px 0',
-          }}>Bon retour !</h2>
+            fontSize: '32px',
+            fontWeight: 'var(--font-weight-bold)',
+            color: 'var(--text-primary)',
+            margin: '0 0 var(--space-2) 0',
+            letterSpacing: '-0.02em'
+          }}>
+            Bon retour
+          </h2>
           <p style={{
-            fontSize: '14px',
-            color: '#6B7280',
+            fontSize: '15px',
+            color: 'var(--text-secondary)',
             margin: 0,
-          }}>Connectez-vous à votre compte</p>
+            fontWeight: 'var(--font-weight-medium)'
+          }}>
+            Connectez-vous à votre compte
+          </p>
         </div>
 
         {error && (
           <div style={{
-            background: '#FEE2E2',
-            border: '1px solid #EF4444',
-            borderRadius: '8px',
-            padding: '12px 16px',
-            marginBottom: '24px',
-            color: '#DC2626',
+            background: 'var(--red-accent-light)',
+            border: '1px solid var(--red-accent)',
+            padding: 'var(--space-3) var(--space-4)',
+            marginBottom: 'var(--space-6)',
+            color: 'var(--red-accent)',
             fontSize: '14px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
+            fontWeight: 'var(--font-weight-medium)'
           }}>
-            <span>⚠️</span>
-            <span>{error}</span>
+            {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '20px' }}>
+        <form onSubmit={handleSubmit} style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ marginBottom: 'var(--space-5)' }}>
             <label style={{
               display: 'block',
               fontSize: '14px',
-              fontWeight: 600,
-              color: '#374151',
-              marginBottom: '8px',
-            }}>Email</label>
+              fontWeight: 'var(--font-weight-semibold)',
+              color: 'var(--text-primary)',
+              marginBottom: 'var(--space-2)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              Email
+            </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="votre@email.com"
+              className="form-input"
               style={{
                 width: '100%',
-                padding: '12px 16px',
-                fontSize: '15px',
-                border: '2px solid #E5E7EB',
-                borderRadius: '8px',
-                outline: 'none',
-                transition: 'all 0.2s',
-                fontFamily: 'inherit',
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#DC2626'
-                e.target.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)'
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#E5E7EB'
-                e.target.style.boxShadow = 'none'
+                padding: 'var(--space-3) var(--space-4)',
+                fontSize: '15px'
               }}
             />
           </div>
 
-          <div style={{ marginBottom: '24px' }}>
+          <div style={{ marginBottom: 'var(--space-6)' }}>
             <label style={{
               display: 'block',
               fontSize: '14px',
-              fontWeight: 600,
-              color: '#374151',
-              marginBottom: '8px',
-            }}>Mot de passe</label>
+              fontWeight: 'var(--font-weight-semibold)',
+              color: 'var(--text-primary)',
+              marginBottom: 'var(--space-2)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              Mot de passe
+            </label>
             <input
               type="password"
               value={password}
@@ -138,23 +147,11 @@ export default function LoginPage() {
               required
               minLength={8}
               placeholder="••••••••"
+              className="form-input"
               style={{
                 width: '100%',
-                padding: '12px 16px',
-                fontSize: '15px',
-                border: '2px solid #E5E7EB',
-                borderRadius: '8px',
-                outline: 'none',
-                transition: 'all 0.2s',
-                fontFamily: 'inherit',
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#DC2626'
-                e.target.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)'
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#E5E7EB'
-                e.target.style.boxShadow = 'none'
+                padding: 'var(--space-3) var(--space-4)',
+                fontSize: '15px'
               }}
             />
           </div>
@@ -162,54 +159,40 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
+            className="btn btn-primary"
             style={{
               width: '100%',
-              padding: '14px 24px',
-              background: loading ? '#9CA3AF' : '#DC2626',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: 600,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'all 0.2s',
-              fontFamily: 'inherit',
-            }}
-            onMouseEnter={(e) => {
-              if (!loading) {
-                e.target.style.background = '#B91C1C'
-                e.target.style.transform = 'translateY(-1px)'
-                e.target.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.3)'
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!loading) {
-                e.target.style.background = '#DC2626'
-                e.target.style.transform = 'translateY(0)'
-                e.target.style.boxShadow = 'none'
-              }
+              padding: 'var(--space-4) var(--space-6)',
+              fontSize: '15px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              fontWeight: 'var(--font-weight-semibold)'
             }}
           >
-            {loading ? '⏳ Connexion...' : '🔐 Se connecter'}
+            {loading ? 'Connexion...' : 'Se connecter'}
           </button>
         </form>
 
         <div style={{
           textAlign: 'center',
-          marginTop: '24px',
+          marginTop: 'var(--space-6)',
           fontSize: '14px',
-          color: '#6B7280',
+          color: 'var(--text-secondary)',
+          fontWeight: 'var(--font-weight-medium)',
+          position: 'relative',
+          zIndex: 1
         }}>
           Pas encore de compte ?{' '}
           <Link
             to="/register"
             style={{
-              color: '#DC2626',
+              color: 'var(--red-accent)',
               textDecoration: 'none',
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-semibold)',
+              transition: 'opacity var(--transition-fast)'
             }}
-            onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-            onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+            onMouseEnter={(e) => e.target.style.opacity = '0.8'}
+            onMouseLeave={(e) => e.target.style.opacity = '1'}
           >
             S'inscrire
           </Link>
