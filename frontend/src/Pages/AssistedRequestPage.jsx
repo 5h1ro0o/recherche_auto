@@ -322,7 +322,7 @@ export default function AssistedRequestPage() {
                 {/* Demandes en cours */}
                 {(() => {
                   const enCours = myRequests.filter(r => r.status === 'EN_ATTENTE' || r.status === 'EN_COURS')
-                  return enCours.length > 0 && (
+                  return (
                     <div style={{ marginBottom: 'var(--space-8)' }}>
                       <h2 style={{
                         fontSize: '24px',
@@ -333,8 +333,15 @@ export default function AssistedRequestPage() {
                       }}>
                         Demandes en cours ({enCours.length})
                       </h2>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-                        {enCours.map(request => {
+                      {enCours.length === 0 ? (
+                        <div className="card">
+                          <div className="empty-state">
+                            <p style={{ color: 'var(--text-secondary)' }}>Aucune demande en cours</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                          {enCours.map(request => {
                 const badge = getStatusBadge(request.status)
 
                 return (
@@ -475,8 +482,9 @@ export default function AssistedRequestPage() {
                     </div>
                   </div>
                 )
-                        })}
-                      </div>
+                          })}
+                        </div>
+                      )}
                     </div>
                   )
                 })()}
@@ -484,7 +492,7 @@ export default function AssistedRequestPage() {
                 {/* Demandes terminées */}
                 {(() => {
                   const terminees = myRequests.filter(r => r.status === 'TERMINEE' || r.status === 'ANNULEE')
-                  return terminees.length > 0 && (
+                  return (
                     <div>
                       <h2 style={{
                         fontSize: '24px',
@@ -495,8 +503,15 @@ export default function AssistedRequestPage() {
                       }}>
                         Demandes terminées ({terminees.length})
                       </h2>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-                        {terminees.map(request => {
+                      {terminees.length === 0 ? (
+                        <div className="card">
+                          <div className="empty-state">
+                            <p style={{ color: 'var(--text-secondary)' }}>Aucune demande terminée</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                          {terminees.map(request => {
                           const badge = getStatusBadge(request.status)
 
                           return (
@@ -637,8 +652,9 @@ export default function AssistedRequestPage() {
                               </div>
                             </div>
                           )
-                        })}
-                      </div>
+                          })}
+                        </div>
+                      )}
                     </div>
                   )
                 })()}
