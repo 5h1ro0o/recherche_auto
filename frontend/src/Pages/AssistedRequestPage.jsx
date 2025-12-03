@@ -64,12 +64,12 @@ export default function AssistedRequestPage() {
 
   function getStatusBadge(status) {
     const badges = {
-      'EN_ATTENTE': { text: 'En attente', style: 'status-pending' },
-      'EN_COURS': { text: 'En cours', style: 'status-active' },
-      'TERMINEE': { text: 'Terminée', style: 'status-completed' },
-      'ANNULEE': { text: 'Annulée', style: 'status-cancelled' }
+      'PENDING': { text: 'En attente', style: 'status-pending' },
+      'IN_PROGRESS': { text: 'En cours', style: 'status-active' },
+      'COMPLETED': { text: 'Terminée', style: 'status-completed' },
+      'CANCELLED': { text: 'Annulée', style: 'status-cancelled' }
     }
-    return badges[status] || badges['EN_ATTENTE']
+    return badges[status] || badges['PENDING']
   }
 
   function formatDate(dateString) {
@@ -321,7 +321,7 @@ export default function AssistedRequestPage() {
               <>
                 {/* Demandes en cours */}
                 {(() => {
-                  const enCours = myRequests.filter(r => r.status === 'EN_ATTENTE' || r.status === 'EN_COURS')
+                  const enCours = myRequests.filter(r => r.status === 'PENDING' || r.status === 'IN_PROGRESS')
                   return (
                     <div style={{ marginBottom: 'var(--space-8)' }}>
                       <h2 style={{
@@ -491,7 +491,7 @@ export default function AssistedRequestPage() {
 
                 {/* Demandes terminées */}
                 {(() => {
-                  const terminees = myRequests.filter(r => r.status === 'TERMINEE' || r.status === 'ANNULEE')
+                  const terminees = myRequests.filter(r => r.status === 'COMPLETED' || r.status === 'CANCELLED')
                   return (
                     <div>
                       <h2 style={{
