@@ -8,6 +8,7 @@ import useSWR from 'swr'
 export default function AssistedRequestPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const [activeTab, setActiveTab] = useState('nouvelle') // 'nouvelle' | 'historique'
   const [formData, setFormData] = useState({
     description: '',
     budget_max: '',
@@ -122,15 +123,64 @@ export default function AssistedRequestPage() {
         </div>
       </div>
 
+      {/* Tabs Navigation */}
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))',
-        gap: 'var(--space-8)',
+        maxWidth: 'var(--container-2xl)',
+        margin: '0 auto var(--space-8) auto',
+        display: 'flex',
+        gap: 'var(--space-2)',
+        borderBottom: '2px solid var(--border-light)'
+      }}>
+        <button
+          onClick={() => setActiveTab('nouvelle')}
+          style={{
+            padding: 'var(--space-4) var(--space-6)',
+            background: activeTab === 'nouvelle' ? 'var(--white)' : 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'nouvelle' ? '2px solid var(--red-accent)' : '2px solid transparent',
+            marginBottom: '-2px',
+            fontSize: '15px',
+            fontWeight: activeTab === 'nouvelle' ? 'var(--font-weight-semibold)' : 'var(--font-weight-medium)',
+            color: activeTab === 'nouvelle' ? 'var(--text-primary)' : 'var(--text-secondary)',
+            cursor: 'pointer',
+            transition: 'all var(--transition-base)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            boxShadow: activeTab === 'nouvelle' ? 'var(--shadow-gloss-sm)' : 'none'
+          }}
+        >
+          Nouvelle Demande
+        </button>
+        <button
+          onClick={() => setActiveTab('historique')}
+          style={{
+            padding: 'var(--space-4) var(--space-6)',
+            background: activeTab === 'historique' ? 'var(--white)' : 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'historique' ? '2px solid var(--red-accent)' : '2px solid transparent',
+            marginBottom: '-2px',
+            fontSize: '15px',
+            fontWeight: activeTab === 'historique' ? 'var(--font-weight-semibold)' : 'var(--font-weight-medium)',
+            color: activeTab === 'historique' ? 'var(--text-primary)' : 'var(--text-secondary)',
+            cursor: 'pointer',
+            transition: 'all var(--transition-base)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            boxShadow: activeTab === 'historique' ? 'var(--shadow-gloss-sm)' : 'none'
+          }}
+        >
+          Mes Demandes
+        </button>
+      </div>
+
+      {/* Tab Content */}
+      <div style={{
         maxWidth: 'var(--container-2xl)',
         margin: '0 auto'
       }}>
-        {/* Formulaire de demande */}
-        <div className="card" style={{ height: 'fit-content' }}>
+        {/* TAB 1: Nouvelle Demande */}
+        {activeTab === 'nouvelle' && (
+          <div className="card" style={{ maxWidth: '800px', margin: '0 auto' }}>
           <div className="card-header">
             <h2 className="card-title">Nouvelle Demande</h2>
           </div>
@@ -250,26 +300,41 @@ export default function AssistedRequestPage() {
               {loading ? 'Envoi en cours...' : 'Envoyer la demande'}
             </button>
           </form>
-        </div>
-
-        {/* Historique des demandes */}
-        <div className="card">
-          <div className="card-header">
-            <h2 className="card-title">Historique des Demandes</h2>
           </div>
+        )}
 
-          {!myRequests ? (
-            <div className="loading-spinner">
-              <div className="spinner"></div>
-            </div>
-          ) : myRequests.length === 0 ? (
-            <div className="empty-state">
-              <h3>Aucune demande</h3>
-              <p>Créez votre première demande pour bénéficier de l'expertise de nos conseillers.</p>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-              {myRequests.map(request => {
+        {/* TAB 2: Historique des demandes */}
+        {activeTab === 'historique' && (
+          <div>
+            {!myRequests ? (
+              <div className="loading-spinner">
+                <div className="spinner"></div>
+              </div>
+            ) : myRequests.length === 0 ? (
+              <div className="card">
+                <div className="empty-state">
+                  <h3>Aucune demande</h3>
+                  <p>Créez votre première demande pour bénéficier de l'expertise de nos conseillers.</p>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Demandes en cours */}
+                {(() => {
+                  const enCours = myRequests.filter(r => r.status === 'EN_ATTENTE' || r.status === 'EN_COURS')
+                  return enCours.length > 0 && (
+                    <div style={{ marginBottom: 'var(--space-8)' }}>
+                      <h2 style={{
+                        fontSize: '24px',
+                        fontWeight: 'var(--font-weight-semibold)',
+                        color: 'var(--text-primary)',
+                        marginBottom: 'var(--space-5)',
+                        letterSpacing: '-0.02em'
+                      }}>
+                        Demandes en cours ({enCours.length})
+                      </h2>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                        {enCours.map(request => {
                 const badge = getStatusBadge(request.status)
 
                 return (
@@ -410,10 +475,177 @@ export default function AssistedRequestPage() {
                     </div>
                   </div>
                 )
-              })}
-            </div>
-          )}
-        </div>
+                        })}
+                      </div>
+                    </div>
+                  )
+                })()}
+
+                {/* Demandes terminées */}
+                {(() => {
+                  const terminees = myRequests.filter(r => r.status === 'TERMINEE' || r.status === 'ANNULEE')
+                  return terminees.length > 0 && (
+                    <div>
+                      <h2 style={{
+                        fontSize: '24px',
+                        fontWeight: 'var(--font-weight-semibold)',
+                        color: 'var(--text-primary)',
+                        marginBottom: 'var(--space-5)',
+                        letterSpacing: '-0.02em'
+                      }}>
+                        Demandes terminées ({terminees.length})
+                      </h2>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                        {terminees.map(request => {
+                          const badge = getStatusBadge(request.status)
+
+                          return (
+                            <div
+                              key={request.id}
+                              style={{
+                                padding: 'var(--space-5)',
+                                background: 'var(--gray-50)',
+                                border: '1px solid var(--border-light)',
+                                transition: 'all var(--transition-base)',
+                                cursor: 'pointer',
+                                position: 'relative',
+                                overflow: 'hidden'
+                              }}
+                              onClick={() => navigate(`/assisted/${request.id}`)}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.borderColor = 'var(--border-medium)'
+                                e.currentTarget.style.transform = 'translateY(-2px)'
+                                e.currentTarget.style.boxShadow = 'var(--shadow-md)'
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.borderColor = 'var(--border-light)'
+                                e.currentTarget.style.transform = 'translateY(0)'
+                                e.currentTarget.style.boxShadow = 'none'
+                              }}
+                            >
+                              {/* Header */}
+                              <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: 'var(--space-3)'
+                              }}>
+                                <span style={{
+                                  padding: 'var(--space-1) var(--space-3)',
+                                  background: badge.style === 'status-pending' ? 'var(--gray-200)' :
+                                             badge.style === 'status-active' ? '#FFF7ED' :
+                                             badge.style === 'status-completed' ? 'rgba(5, 150, 105, 0.08)' :
+                                             'var(--red-accent-light)',
+                                  color: badge.style === 'status-pending' ? 'var(--text-secondary)' :
+                                         badge.style === 'status-active' ? '#D97706' :
+                                         badge.style === 'status-completed' ? '#059669' :
+                                         'var(--red-accent)',
+                                  fontSize: '12px',
+                                  fontWeight: 'var(--font-weight-semibold)',
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.05em'
+                                }}>
+                                  {badge.text}
+                                </span>
+
+                                <span style={{
+                                  fontSize: '13px',
+                                  color: 'var(--text-muted)',
+                                  fontWeight: 'var(--font-weight-medium)'
+                                }}>
+                                  {formatDate(request.created_at)}
+                                </span>
+                              </div>
+
+                              {/* Description */}
+                              <p style={{
+                                fontSize: '15px',
+                                lineHeight: '1.6',
+                                color: 'var(--text-secondary)',
+                                marginBottom: 'var(--space-4)',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical'
+                              }}>
+                                {request.description}
+                              </p>
+
+                              {/* Informations */}
+                              <div style={{
+                                display: 'flex',
+                                gap: 'var(--space-6)',
+                                flexWrap: 'wrap',
+                                marginBottom: 'var(--space-4)',
+                                paddingTop: 'var(--space-3)',
+                                borderTop: '1px solid var(--border-light)'
+                              }}>
+                                {request.budget_max && (
+                                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                    <span style={{
+                                      fontWeight: 'var(--font-weight-medium)',
+                                      color: 'var(--text-primary)',
+                                      marginRight: 'var(--space-2)'
+                                    }}>
+                                      Budget
+                                    </span>
+                                    {request.budget_max.toLocaleString('fr-FR')} €
+                                  </div>
+                                )}
+
+                                {request.max_mileage && (
+                                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                    <span style={{
+                                      fontWeight: 'var(--font-weight-medium)',
+                                      color: 'var(--text-primary)',
+                                      marginRight: 'var(--space-2)'
+                                    }}>
+                                      Kilométrage
+                                    </span>
+                                    {request.max_mileage.toLocaleString('fr-FR')} km
+                                  </div>
+                                )}
+
+                                {request.preferred_fuel_type && (
+                                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                    <span style={{
+                                      fontWeight: 'var(--font-weight-medium)',
+                                      color: 'var(--text-primary)',
+                                      marginRight: 'var(--space-2)'
+                                    }}>
+                                      Carburant
+                                    </span>
+                                    {request.preferred_fuel_type.charAt(0).toUpperCase() + request.preferred_fuel_type.slice(1)}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* CTA */}
+                              <div style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 'var(--space-2)',
+                                color: 'var(--red-accent)',
+                                fontSize: '14px',
+                                fontWeight: 'var(--font-weight-medium)',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.05em'
+                              }}>
+                                Voir les détails
+                                <span style={{ fontSize: '12px' }}>→</span>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })()}
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
