@@ -264,7 +264,6 @@ export default function AssistedRequestPage() {
             </div>
           ) : myRequests.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-state-icon">📋</div>
               <h3>Aucune demande</h3>
               <p>Créez votre première demande pour bénéficier de l'expertise de nos conseillers.</p>
             </div>
