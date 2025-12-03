@@ -265,6 +265,9 @@ def generate_engines(db, count=50):
     """Génère un pool diversifié de moteurs"""
     engines = []
 
+    # Récupérer moteurs existants pour éviter doublons
+    existing_engines_codes = {e.code for e in db.query(Engine).all()}
+
     for i, template in enumerate(ENGINE_TEMPLATES * 3):  # Répéter pour avoir plus de variantes
         if len(engines) >= count:
             break
@@ -276,6 +279,10 @@ def generate_engines(db, count=50):
 
         name = template["name"].format(power=power)
         code = f"ENG{str(i).zfill(4)}"
+
+        # Skip si le code existe déjà
+        if code in existing_engines_codes:
+            continue
 
         engine_data = {
             "id": str(uuid.uuid4()),
@@ -310,16 +317,25 @@ def generate_engines(db, count=50):
         engine = Engine(**engine_data)
         db.add(engine)
         engines.append(engine)
+        existing_engines_codes.add(code)
 
     db.commit()
     return engines
 
 
 def generate_transmissions(db):
-    """Génère toutes les transmissions"""
+    """Génère toutes les transmissions (skip si déjà existante)"""
     transmissions = []
 
+    # Récupérer toutes les transmissions existantes pour éviter les requêtes multiples
+    existing_trans = {t.name: t for t in db.query(Transmission).all()}
+
     for trans_data in TRANSMISSIONS_DATA:
+        # Vérifier si la transmission existe déjà
+        if trans_data["name"] in existing_trans:
+            transmissions.append(existing_trans[trans_data["name"]])
+            continue
+
         trans = Transmission(
             id=str(uuid.uuid4()),
             name=trans_data["name"],
@@ -342,10 +358,18 @@ def generate_transmissions(db):
 
 
 def generate_brands(db):
-    """Génère toutes les marques"""
+    """Génère toutes les marques (skip si déjà existante)"""
     brands = {}
 
     for brand_data in ALL_BRANDS_DATA:
+        # Vérifier si la marque existe déjà
+        existing_brand = db.query(CarBrand).filter(CarBrand.name == brand_data["name"]).first()
+
+        if existing_brand:
+            print(f"  ⚠️  {brand_data['name']} existe déjà, réutilisation")
+            brands[brand_data["name"]] = existing_brand
+            continue
+
         brand = CarBrand(
             id=str(uuid.uuid4()),
             name=brand_data["name"],
@@ -602,17 +626,29 @@ def populate_massive():
         # 1. MOTEURS
         print("\n⚙️  Génération de 50+ moteurs variés...")
         engines = generate_engines(db, count=60)
-        print(f"✅ {len(engines)} moteurs ajoutés")
+        print(f"✅ {len(engines)} moteurs générés")
+
+        # Si aucun moteur n'a été ajouté (tous existaient déjà), récupérer de la DB
+        if not engines:
+            print("   ℹ️  Récupération des moteurs existants de la base...")
+            engines = db.query(Engine).all()
+            print(f"   ✓ {len(engines)} moteurs récupérés")
 
         # 2. TRANSMISSIONS
         print("\n🔧 Génération des transmissions...")
         transmissions = generate_transmissions(db)
-        print(f"✅ {len(transmissions)} transmissions ajoutées")
+        print(f"✅ {len(transmissions)} transmissions générées")
+
+        # Si aucune transmission n'a été ajoutée, récupérer de la DB
+        if not transmissions:
+            print("   ℹ️  Récupération des transmissions existantes de la base...")
+            transmissions = db.query(Transmission).all()
+            print(f"   ✓ {len(transmissions)} transmissions récupérées")
 
         # 3. MARQUES
         print(f"\n📦 Génération de {len(ALL_BRANDS_DATA)} marques...")
         brands = generate_brands(db)
-        print(f"✅ {len(brands)} marques ajoutées")
+        print(f"✅ {len(brands)} marques dans le système")
 
         # 4. MODÈLES (10-15 par marque)
         print(f"\n🚗 Génération des modèles (10-15 par marque)...")
