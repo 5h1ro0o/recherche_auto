@@ -13,15 +13,9 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div style={{
-        minHeight: '80vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
-          <p style={{ color: '#6B7280' }}>Chargement...</p>
+      <div className="app-main">
+        <div className="loading-spinner">
+          <div className="spinner"></div>
         </div>
       </div>
     )
@@ -29,10 +23,10 @@ export default function ProfilePage() {
 
   const getRoleInfo = () => {
     const roles = {
-      PRO: { icon: '🏢', label: 'Professionnel', color: '#DC2626' },
-      PARTICULAR: { icon: '👤', label: 'Particulier', color: '#10B981' },
-      EXPERT: { icon: '⭐', label: 'Expert', color: '#F59E0B' },
-      ADMIN: { icon: '🔧', label: 'Administrateur', color: '#EF4444' },
+      PRO: { label: 'Professionnel', color: 'var(--red-accent)' },
+      PARTICULAR: { label: 'Particulier', color: 'var(--gray-700)' },
+      EXPERT: { label: 'Expert', color: 'var(--gray-900)' },
+      ADMIN: { label: 'Administrateur', color: 'var(--red-accent)' },
     }
     return roles[user.role] || roles.PARTICULAR
   }
@@ -40,112 +34,121 @@ export default function ProfilePage() {
   const roleInfo = getRoleInfo()
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
-      padding: '32px 20px',
-    }}>
+    <div className="app-main">
       <div style={{
-        maxWidth: '900px',
-        margin: '0 auto',
+        maxWidth: 'var(--container-xl)',
+        margin: '0 auto'
       }}>
         {/* Header Section */}
         <div style={{
-          background: 'white',
-          borderRadius: '16px',
-          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
-          padding: '32px',
-          marginBottom: '24px',
+          background: 'var(--white)',
+          border: '1px solid var(--border-light)',
+          boxShadow: 'var(--shadow-gloss-md)',
+          padding: 'var(--space-8)',
+          marginBottom: 'var(--space-6)',
           display: 'flex',
           alignItems: 'center',
-          gap: '24px',
+          gap: 'var(--space-6)',
           flexWrap: 'wrap',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
+          {/* Gloss overlay */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '100px',
+            background: 'var(--gloss-overlay)',
+            pointerEvents: 'none'
+          }} />
+
           {/* Avatar */}
           <div style={{
             width: '100px',
             height: '100px',
-            borderRadius: '50%',
-            background: `linear-gradient(135deg, ${roleInfo.color} 0%, ${roleInfo.color}dd 100%)`,
+            background: roleInfo.color,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '48px',
-            fontWeight: 700,
-            color: 'white',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+            fontWeight: 'var(--font-weight-bold)',
+            color: 'var(--white)',
+            boxShadow: 'var(--shadow-gloss-md)',
+            position: 'relative',
+            zIndex: 1
           }}>
             {user.full_name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || '?'}
           </div>
 
           {/* User Info */}
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: 1, position: 'relative', zIndex: 1 }}>
             <h1 style={{
               fontSize: '32px',
-              fontWeight: 700,
-              color: '#222222',
-              margin: '0 0 8px 0',
+              fontWeight: 'var(--font-weight-bold)',
+              color: 'var(--text-primary)',
+              margin: '0 0 var(--space-2) 0',
+              letterSpacing: '-0.02em'
             }}>
               {user.full_name || 'Utilisateur'}
             </h1>
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
-              marginBottom: '12px',
-              flexWrap: 'wrap',
+              gap: 'var(--space-3)',
+              marginBottom: 'var(--space-3)',
+              flexWrap: 'wrap'
             }}>
               <span style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
                 background: roleInfo.color,
-                color: 'white',
-                padding: '6px 14px',
-                borderRadius: '20px',
-                fontSize: '14px',
-                fontWeight: 600,
+                color: 'var(--white)',
+                padding: 'var(--space-1) var(--space-3)',
+                fontSize: '12px',
+                fontWeight: 'var(--font-weight-semibold)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em'
               }}>
-                <span>{roleInfo.icon}</span>
-                <span>{roleInfo.label}</span>
+                {roleInfo.label}
               </span>
 
               {user.is_verified ? (
                 <span style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  background: '#10B981',
-                  color: 'white',
-                  padding: '6px 14px',
-                  borderRadius: '20px',
-                  fontSize: '14px',
-                  fontWeight: 600,
+                  background: 'rgba(5, 150, 105, 0.1)',
+                  color: '#059669',
+                  padding: 'var(--space-1) var(--space-3)',
+                  fontSize: '12px',
+                  fontWeight: 'var(--font-weight-semibold)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em'
                 }}>
-                  <span>✅</span>
-                  <span>Vérifié</span>
+                  Vérifié
                 </span>
               ) : (
                 <span style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  background: '#F59E0B',
-                  color: 'white',
-                  padding: '6px 14px',
-                  borderRadius: '20px',
-                  fontSize: '14px',
-                  fontWeight: 600,
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  color: '#D97706',
+                  padding: 'var(--space-1) var(--space-3)',
+                  fontSize: '12px',
+                  fontWeight: 'var(--font-weight-semibold)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em'
                 }}>
-                  <span>⏳</span>
-                  <span>En attente</span>
+                  En attente
                 </span>
               )}
             </div>
             <p style={{
               fontSize: '14px',
-              color: '#6B7280',
+              color: 'var(--text-secondary)',
               margin: 0,
+              fontWeight: 'var(--font-weight-medium)'
             }}>
               Membre depuis le {new Date(user.created_at).toLocaleDateString('fr-FR', {
                 day: 'numeric',
@@ -159,185 +162,104 @@ export default function ProfilePage() {
         {/* Information Cards */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '20px',
-          marginBottom: '24px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: 'var(--space-5)',
+          marginBottom: 'var(--space-6)'
         }}>
           {/* Contact Info Card */}
-          <div style={{
-            background: 'white',
-            borderRadius: '16px',
-            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
-            padding: '24px',
-          }}>
-            <h3 style={{
-              fontSize: '18px',
-              fontWeight: 600,
-              color: '#222222',
-              margin: '0 0 20px 0',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
-              <span>📧</span>
-              <span>Informations de contact</span>
-            </h3>
-
-            <InfoField label="Email" value={user.email} icon="✉️" />
-            <InfoField label="Téléphone" value={user.phone || 'Non renseigné'} icon="📱" />
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title">Informations de contact</h3>
+            </div>
+            <div className="card-body">
+              <InfoField label="Email" value={user.email} />
+              <InfoField label="Téléphone" value={user.phone || 'Non renseigné'} />
+            </div>
           </div>
 
           {/* Account Info Card */}
-          <div style={{
-            background: 'white',
-            borderRadius: '16px',
-            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
-            padding: '24px',
-          }}>
-            <h3 style={{
-              fontSize: '18px',
-              fontWeight: 600,
-              color: '#222222',
-              margin: '0 0 20px 0',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
-              <span>🔐</span>
-              <span>Sécurité</span>
-            </h3>
-
-            <InfoField
-              label="ID Utilisateur"
-              value={user.id.substring(0, 8) + '...'}
-              icon="🆔"
-            />
-            <InfoField
-              label="Compte créé"
-              value={new Date(user.created_at).toLocaleDateString('fr-FR')}
-              icon="📅"
-            />
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title">Sécurité</h3>
+            </div>
+            <div className="card-body">
+              <InfoField
+                label="ID Utilisateur"
+                value={user.id.substring(0, 8) + '...'}
+              />
+              <InfoField
+                label="Compte créé"
+                value={new Date(user.created_at).toLocaleDateString('fr-FR')}
+              />
+            </div>
           </div>
         </div>
 
         {/* Actions Card */}
-        <div style={{
-          background: 'white',
-          borderRadius: '16px',
-          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
-          padding: '24px',
-        }}>
-          <h3 style={{
-            fontSize: '18px',
-            fontWeight: 600,
-            color: '#222222',
-            margin: '0 0 20px 0',
-          }}>
-            Actions du compte
-          </h3>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '12px',
-          }}>
-            <button
-              onClick={() => navigate('/messages')}
-              style={{
-                padding: '14px 20px',
-                background: '#DC2626',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = '#B91C1C'
-                e.target.style.transform = 'translateY(-1px)'
-                e.target.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.3)'
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = '#DC2626'
-                e.target.style.transform = 'translateY(0)'
-                e.target.style.boxShadow = 'none'
-              }}
-            >
-              <span>💬</span>
-              <span>Mes messages</span>
-            </button>
-
-            {user.role !== 'EXPERT' && (
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">Actions du compte</h3>
+          </div>
+          <div className="card-body">
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: 'var(--space-3)'
+            }}>
               <button
-                onClick={() => navigate('/favorites')}
+                onClick={() => navigate('/messages')}
+                className="btn btn-primary"
                 style={{
-                  padding: '14px 20px',
-                  background: '#10B981',
-                  color: 'white',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontSize: '14px'
+                }}
+              >
+                Mes messages
+              </button>
+
+              {user.role !== 'EXPERT' && (
+                <button
+                  onClick={() => navigate('/favorites')}
+                  className="btn btn-secondary"
+                  style={{
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    fontSize: '14px'
+                  }}
+                >
+                  Mes favoris
+                </button>
+              )}
+
+              <button
+                onClick={handleLogout}
+                style={{
+                  padding: 'var(--space-3) var(--space-4)',
+                  background: 'var(--red-accent)',
+                  color: 'var(--white)',
                   border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '15px',
-                  fontWeight: 600,
+                  fontSize: '14px',
+                  fontWeight: 'var(--font-weight-semibold)',
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
+                  transition: 'all var(--transition-base)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.background = '#059669'
-                  e.target.style.transform = 'translateY(-1px)'
-                  e.target.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)'
+                  e.target.style.transform = 'translateY(-2px)'
+                  e.target.style.boxShadow = 'var(--shadow-md)'
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.background = '#10B981'
                   e.target.style.transform = 'translateY(0)'
                   e.target.style.boxShadow = 'none'
                 }}
               >
-                <span>❤️</span>
-                <span>Mes favoris</span>
+                Déconnexion
               </button>
-            )}
-
-            <button
-              onClick={handleLogout}
-              style={{
-                padding: '14px 20px',
-                background: '#EF4444',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = '#DC2626'
-                e.target.style.transform = 'translateY(-1px)'
-                e.target.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)'
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = '#EF4444'
-                e.target.style.transform = 'translateY(0)'
-                e.target.style.boxShadow = 'none'
-              }}
-            >
-              <span>🚪</span>
-              <span>Déconnexion</span>
-            </button>
+            </div>
           </div>
         </div>
       </div>
@@ -345,32 +267,29 @@ export default function ProfilePage() {
   )
 }
 
-function InfoField({ label, value, icon }) {
+function InfoField({ label, value }) {
   return (
     <div style={{
-      marginBottom: '16px',
-      paddingBottom: '16px',
-      borderBottom: '1px solid #E5E7EB',
+      marginBottom: 'var(--space-4)',
+      paddingBottom: 'var(--space-4)',
+      borderBottom: '1px solid var(--border-light)'
     }}>
       <div style={{
         fontSize: '12px',
-        fontWeight: 600,
-        color: '#6B7280',
-        marginBottom: '6px',
+        fontWeight: 'var(--font-weight-semibold)',
+        color: 'var(--text-secondary)',
+        marginBottom: 'var(--space-2)',
         textTransform: 'uppercase',
-        letterSpacing: '0.5px',
+        letterSpacing: '0.05em'
       }}>
         {label}
       </div>
       <div style={{
         fontSize: '15px',
-        color: '#222222',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
+        color: 'var(--text-primary)',
+        fontWeight: 'var(--font-weight-medium)'
       }}>
-        <span>{icon}</span>
-        <span>{value}</span>
+        {value}
       </div>
     </div>
   )
