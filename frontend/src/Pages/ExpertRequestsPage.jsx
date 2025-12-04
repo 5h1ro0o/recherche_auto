@@ -40,21 +40,20 @@ const ExpertRequestsPage = () => {
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      PENDING: { label: 'En attente', color: '#666666' },
-      IN_PROGRESS: { label: 'En cours', color: '#DC2626' },
-      COMPLETED: { label: 'Terminée', color: '#222222' },
-      CANCELLED: { label: 'Annulée', color: '#999999' },
+      PENDING: { label: 'En attente', color: 'var(--gray-700)' },
+      IN_PROGRESS: { label: 'En cours', color: '#D97706' },
+      COMPLETED: { label: 'Terminée', color: '#059669' },
+      CANCELLED: { label: 'Annulée', color: 'var(--red-accent)' },
     };
-    const { label, color } = statusMap[status] || { label: status, color: '#666666' };
+    const { label, color } = statusMap[status] || { label: status, color: 'var(--gray-700)' };
     return (
       <span style={{
         background: color,
-        color: 'white',
-        padding: '4px 10px',
-        borderRadius: '4px',
+        color: 'var(--white)',
+        padding: 'var(--space-1) var(--space-3)',
         fontSize: '11px',
-        fontWeight: 600,
-        letterSpacing: '0.5px',
+        fontWeight: 'var(--font-weight-semibold)',
+        letterSpacing: '0.05em',
         textTransform: 'uppercase'
       }}>
         {label}
@@ -73,92 +72,113 @@ const ExpertRequestsPage = () => {
   };
 
   return (
-    <div style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
-      {/* Header */}
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{
-          fontSize: '32px',
-          fontWeight: 700,
-          color: '#222222',
-          margin: '0 0 8px 0',
+    <div className="app-main">
+      <div style={{ maxWidth: 'var(--container-2xl)', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{
+          background: 'var(--white)',
+          padding: 'var(--space-8)',
+          marginBottom: 'var(--space-8)',
+          border: '1px solid var(--border-light)',
+          boxShadow: 'var(--shadow-gloss-md)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          Demandes de recherche personnalisée
-        </h1>
-        <p style={{
-          fontSize: '16px',
-          color: '#666666',
-          margin: 0,
-        }}>
-          Gérez les demandes des clients et proposez-leur des véhicules
-        </p>
-      </div>
+          {/* Gloss overlay */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '100px',
+            background: 'var(--gloss-overlay)',
+            pointerEvents: 'none'
+          }} />
 
-      {/* Filtres */}
-      <div style={{
-        display: 'flex',
-        gap: '8px',
-        marginBottom: '24px',
-        flexWrap: 'wrap'
-      }}>
-        <FilterButton
-          label="En attente"
-          active={filter === 'PENDING'}
-          onClick={() => setFilter('PENDING')}
-        />
-        <FilterButton
-          label="En cours"
-          active={filter === 'IN_PROGRESS'}
-          onClick={() => setFilter('IN_PROGRESS')}
-        />
-        <FilterButton
-          label="Terminées"
-          active={filter === 'COMPLETED'}
-          onClick={() => setFilter('COMPLETED')}
-        />
-        <FilterButton
-          label="Toutes"
-          active={filter === ''}
-          onClick={() => setFilter('')}
-        />
-      </div>
+          <h1 style={{
+            fontSize: '32px',
+            fontWeight: 'var(--font-weight-bold)',
+            color: 'var(--text-primary)',
+            margin: '0 0 var(--space-2) 0',
+            letterSpacing: '-0.02em',
+            position: 'relative',
+            zIndex: 1
+          }}>
+            Demandes de recherche personnalisée
+          </h1>
+          <p style={{
+            fontSize: '16px',
+            color: 'var(--text-secondary)',
+            margin: 0,
+            fontWeight: 'var(--font-weight-medium)',
+            position: 'relative',
+            zIndex: 1
+          }}>
+            Gérez les demandes des clients et proposez-leur des véhicules
+          </p>
+        </div>
 
-      {/* Liste des demandes */}
-      {loading ? (
+        {/* Filtres */}
         <div style={{
-          textAlign: 'center',
-          padding: '60px 20px',
+          display: 'flex',
+          gap: 'var(--space-2)',
+          marginBottom: 'var(--space-6)',
+          flexWrap: 'wrap'
         }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
-          <p style={{ color: '#666666' }}>Chargement des demandes...</p>
+          <FilterButton
+            label="En attente"
+            active={filter === 'PENDING'}
+            onClick={() => setFilter('PENDING')}
+          />
+          <FilterButton
+            label="En cours"
+            active={filter === 'IN_PROGRESS'}
+            onClick={() => setFilter('IN_PROGRESS')}
+          />
+          <FilterButton
+            label="Terminées"
+            active={filter === 'COMPLETED'}
+            onClick={() => setFilter('COMPLETED')}
+          />
+          <FilterButton
+            label="Toutes"
+            active={filter === ''}
+            onClick={() => setFilter('')}
+          />
         </div>
-      ) : requests.length === 0 ? (
-        <div style={{
-          textAlign: 'center',
-          padding: '60px 20px',
-          background: '#FAFAFA',
-          borderRadius: '12px',
-          border: '1px solid #EEEEEE'
-        }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>📭</div>
-          <p style={{ color: '#666666', fontSize: '16px' }}>Aucune demande trouvée</p>
-        </div>
-      ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-          gap: '20px',
-        }}>
-          {requests.map((request) => (
-            <RequestCard
-              key={request.id}
-              request={request}
-              onViewDetails={() => navigate(`/expert/requests/${request.id}`)}
-              getStatusBadge={getStatusBadge}
-              formatDate={formatDate}
-            />
-          ))}
-        </div>
-      )}
+
+        {/* Liste des demandes */}
+        {loading ? (
+          <div className="loading-spinner">
+            <div className="spinner"></div>
+            <p style={{ marginTop: 'var(--space-4)', color: 'var(--text-secondary)' }}>
+              Chargement des demandes...
+            </p>
+          </div>
+        ) : requests.length === 0 ? (
+          <div className="card">
+            <div className="empty-state">
+              <p>Aucune demande trouvée</p>
+            </div>
+          </div>
+        ) : (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+            gap: 'var(--space-5)',
+          }}>
+            {requests.map((request) => (
+              <RequestCard
+                key={request.id}
+                request={request}
+                onViewDetails={() => navigate(`/expert/requests/${request.id}`)}
+                getStatusBadge={getStatusBadge}
+                formatDate={formatDate}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -168,26 +188,27 @@ function FilterButton({ label, active, onClick }) {
     <button
       onClick={onClick}
       style={{
-        padding: '12px 20px',
-        background: active ? '#DC2626' : 'white',
-        color: active ? 'white' : '#222222',
-        border: active ? 'none' : '1px solid #EEEEEE',
-        borderRadius: '8px',
+        padding: 'var(--space-3) var(--space-5)',
+        background: active ? 'var(--red-accent)' : 'var(--white)',
+        color: active ? 'var(--white)' : 'var(--text-primary)',
+        border: active ? 'none' : '1px solid var(--border-light)',
         fontSize: '14px',
-        fontWeight: 600,
+        fontWeight: 'var(--font-weight-semibold)',
         cursor: 'pointer',
-        transition: 'all 0.2s',
+        transition: 'all var(--transition-base)',
+        textTransform: 'uppercase',
+        letterSpacing: '0.05em'
       }}
       onMouseEnter={(e) => {
         if (!active) {
-          e.currentTarget.style.borderColor = '#222222';
-          e.currentTarget.style.background = '#FAFAFA';
+          e.currentTarget.style.borderColor = 'var(--border-medium)';
+          e.currentTarget.style.background = 'var(--gray-50)';
         }
       }}
       onMouseLeave={(e) => {
         if (!active) {
-          e.currentTarget.style.borderColor = '#EEEEEE';
-          e.currentTarget.style.background = 'white';
+          e.currentTarget.style.borderColor = 'var(--border-light)';
+          e.currentTarget.style.background = 'var(--white)';
         }
       }}
     >
@@ -201,19 +222,22 @@ function RequestCard({ request, onViewDetails, getStatusBadge, formatDate }) {
     <div
       onClick={onViewDetails}
       style={{
-        background: 'white',
-        borderRadius: '12px',
-        boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-        border: '1px solid #EEEEEE',
-        padding: '24px',
+        background: 'var(--white)',
+        boxShadow: 'var(--shadow-gloss-sm)',
+        border: '1px solid var(--border-light)',
+        padding: 'var(--space-6)',
         cursor: 'pointer',
-        transition: 'all 0.2s',
+        transition: 'all var(--transition-base)',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-gloss-lg)';
+        e.currentTarget.style.transform = 'translateY(-2px)';
+        e.currentTarget.style.borderColor = 'var(--border-medium)';
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-gloss-sm)';
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.borderColor = 'var(--border-light)';
       }}
     >
       {/* Header */}
@@ -221,12 +245,13 @@ function RequestCard({ request, onViewDetails, getStatusBadge, formatDate }) {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: '16px',
+        marginBottom: 'var(--space-4)',
       }}>
         {getStatusBadge(request.status)}
         <span style={{
           fontSize: '12px',
-          color: '#999999',
+          color: 'var(--text-muted)',
+          fontWeight: 'var(--font-weight-medium)'
         }}>
           {formatDate(request.created_at)}
         </span>
@@ -235,9 +260,10 @@ function RequestCard({ request, onViewDetails, getStatusBadge, formatDate }) {
       {/* Title */}
       <h3 style={{
         fontSize: '18px',
-        fontWeight: 600,
-        color: '#222222',
-        margin: '0 0 12px 0',
+        fontWeight: 'var(--font-weight-semibold)',
+        color: 'var(--text-primary)',
+        margin: '0 0 var(--space-3) 0',
+        letterSpacing: '-0.01em'
       }}>
         Demande de recherche
       </h3>
@@ -245,14 +271,15 @@ function RequestCard({ request, onViewDetails, getStatusBadge, formatDate }) {
       {/* Description */}
       <p style={{
         fontSize: '14px',
-        color: '#666666',
+        color: 'var(--text-secondary)',
         lineHeight: 1.6,
-        marginBottom: '16px',
+        marginBottom: 'var(--space-4)',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         display: '-webkit-box',
         WebkitLineClamp: 3,
         WebkitBoxOrient: 'vertical',
+        fontWeight: 'var(--font-weight-regular)'
       }}>
         {request.description}
       </p>
@@ -261,28 +288,29 @@ function RequestCard({ request, onViewDetails, getStatusBadge, formatDate }) {
       <div style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '8px',
-        marginBottom: '16px',
+        gap: 'var(--space-2)',
+        marginBottom: 'var(--space-4)',
         fontSize: '13px',
+        fontWeight: 'var(--font-weight-medium)'
       }}>
         {request.budget_max && (
-          <div style={{ color: '#666666' }}>
-            <span style={{ fontWeight: 600, color: '#222222' }}>Budget max:</span> {request.budget_max.toLocaleString()} €
+          <div style={{ color: 'var(--text-secondary)' }}>
+            <span style={{ fontWeight: 'var(--font-weight-semibold)', color: 'var(--text-primary)' }}>Budget max:</span> {request.budget_max.toLocaleString()} €
           </div>
         )}
         {request.preferred_fuel_type && (
-          <div style={{ color: '#666666' }}>
-            <span style={{ fontWeight: 600, color: '#222222' }}>Carburant:</span> {request.preferred_fuel_type}
+          <div style={{ color: 'var(--text-secondary)' }}>
+            <span style={{ fontWeight: 'var(--font-weight-semibold)', color: 'var(--text-primary)' }}>Carburant:</span> {request.preferred_fuel_type}
           </div>
         )}
         {request.max_mileage && (
-          <div style={{ color: '#666666' }}>
-            <span style={{ fontWeight: 600, color: '#222222' }}>Kilométrage max:</span> {request.max_mileage.toLocaleString()} km
+          <div style={{ color: 'var(--text-secondary)' }}>
+            <span style={{ fontWeight: 'var(--font-weight-semibold)', color: 'var(--text-primary)' }}>Kilométrage max:</span> {request.max_mileage.toLocaleString()} km
           </div>
         )}
         {request.min_year && (
-          <div style={{ color: '#666666' }}>
-            <span style={{ fontWeight: 600, color: '#222222' }}>Année min:</span> {request.min_year}
+          <div style={{ color: 'var(--text-secondary)' }}>
+            <span style={{ fontWeight: 'var(--font-weight-semibold)', color: 'var(--text-primary)' }}>Année min:</span> {request.min_year}
           </div>
         )}
       </div>
@@ -293,20 +321,14 @@ function RequestCard({ request, onViewDetails, getStatusBadge, formatDate }) {
           e.stopPropagation();
           onViewDetails();
         }}
+        className="btn btn-primary"
         style={{
           width: '100%',
-          padding: '12px',
-          background: '#DC2626',
-          color: 'white',
-          border: 'none',
-          borderRadius: '8px',
+          padding: 'var(--space-3)',
           fontSize: '14px',
-          fontWeight: 600,
-          cursor: 'pointer',
-          transition: 'background 0.2s',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em'
         }}
-        onMouseEnter={(e) => e.currentTarget.style.background = '#B91C1C'}
-        onMouseLeave={(e) => e.currentTarget.style.background = '#DC2626'}
       >
         {request.status === 'PENDING' ? 'Accepter la demande' : 'Voir les détails'}
       </button>
