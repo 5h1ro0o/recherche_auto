@@ -8,27 +8,27 @@ export default function FavoritesPage() {
 
   if (error) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
-        padding: '80px 20px',
-      }}>
+      <div className="app-main">
         <div style={{
-          maxWidth: '600px',
+          maxWidth: 'var(--container-md)',
           margin: '0 auto',
-          textAlign: 'center',
-          background: 'white',
-          borderRadius: '16px',
-          padding: '40px',
-          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
+          textAlign: 'center'
         }}>
-          <div style={{ fontSize: '64px', marginBottom: '20px' }}>⚠️</div>
-          <h3 style={{ fontSize: '24px', color: '#222222', marginBottom: '12px' }}>
-            Erreur de chargement
-          </h3>
-          <p style={{ color: '#6B7280' }}>
-            Impossible de charger vos favoris. Veuillez réessayer plus tard.
-          </p>
+          <div className="card">
+            <div className="card-body">
+              <h3 style={{
+                fontSize: '24px',
+                color: 'var(--text-primary)',
+                marginBottom: 'var(--space-3)',
+                fontWeight: 'var(--font-weight-semibold)'
+              }}>
+                Erreur de chargement
+              </h3>
+              <p style={{ color: 'var(--text-secondary)' }}>
+                Impossible de charger vos favoris. Veuillez réessayer plus tard.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -36,18 +36,12 @@ export default function FavoritesPage() {
 
   if (!vehicles) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
-        padding: '80px 20px',
-      }}>
-        <div style={{
-          maxWidth: '600px',
-          margin: '0 auto',
-          textAlign: 'center',
-        }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔄</div>
-          <p style={{ color: '#6B7280', fontSize: '18px' }}>Chargement de vos favoris...</p>
+      <div className="app-main">
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+          <p style={{ marginTop: 'var(--space-4)', color: 'var(--text-secondary)' }}>
+            Chargement de vos favoris...
+          </p>
         </div>
       </div>
     )
@@ -55,63 +49,46 @@ export default function FavoritesPage() {
 
   if (vehicles.length === 0) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
-        padding: '80px 20px',
-      }}>
+      <div className="app-main">
         <div style={{
-          maxWidth: '600px',
+          maxWidth: 'var(--container-md)',
           margin: '0 auto',
-          textAlign: 'center',
-          background: 'white',
-          borderRadius: '16px',
-          padding: '60px 40px',
-          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
+          textAlign: 'center'
         }}>
-          <div style={{ fontSize: '80px', marginBottom: '24px' }}>❤️</div>
-          <h2 style={{
-            fontSize: '32px',
-            fontWeight: 700,
-            color: '#222222',
-            margin: '0 0 16px 0',
-          }}>
-            Mes Favoris
-          </h2>
-          <p style={{
-            fontSize: '18px',
-            color: '#6B7280',
-            margin: '0 0 32px 0',
-          }}>
-            Vous n'avez pas encore de favoris
-          </p>
-          <Link
-            to="/search"
-            style={{
-              display: 'inline-block',
-              padding: '14px 32px',
-              background: '#DC2626',
-              color: 'white',
-              textDecoration: 'none',
-              borderRadius: '12px',
-              fontSize: '16px',
-              fontWeight: 600,
-              transition: 'all 0.2s',
-              boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)',
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = '#B91C1C'
-              e.target.style.transform = 'translateY(-2px)'
-              e.target.style.boxShadow = '0 8px 24px rgba(220, 38, 38, 0.4)'
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = '#DC2626'
-              e.target.style.transform = 'translateY(0)'
-              e.target.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.3)'
-            }}
-          >
-            🔍 Rechercher des véhicules
-          </Link>
+          <div className="card">
+            <div className="card-body" style={{ padding: 'var(--space-16) var(--space-10)' }}>
+              <h2 style={{
+                fontSize: '32px',
+                fontWeight: 'var(--font-weight-bold)',
+                color: 'var(--text-primary)',
+                margin: '0 0 var(--space-4) 0',
+                letterSpacing: '-0.02em'
+              }}>
+                Mes Favoris
+              </h2>
+              <p style={{
+                fontSize: '18px',
+                color: 'var(--text-secondary)',
+                margin: '0 0 var(--space-8) 0',
+                fontWeight: 'var(--font-weight-medium)'
+              }}>
+                Vous n'avez pas encore de favoris
+              </p>
+              <Link
+                to="/search"
+                className="btn btn-primary"
+                style={{
+                  display: 'inline-block',
+                  padding: 'var(--space-4) var(--space-8)',
+                  fontSize: '16px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em'
+                }}
+              >
+                Rechercher des véhicules
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -120,43 +97,63 @@ export default function FavoritesPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
-      paddingBottom: '60px',
+      background: 'var(--gray-50)',
+      paddingBottom: 'var(--space-16)'
     }}>
       {/* Header Section */}
       <div style={{
-        background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
-        color: 'white',
-        padding: '60px 20px',
+        background: 'var(--white)',
+        color: 'var(--text-primary)',
+        padding: 'var(--space-16) var(--space-6)',
         textAlign: 'center',
-        marginBottom: '40px',
+        marginBottom: 'var(--space-10)',
+        borderBottom: '1px solid var(--border-light)',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
+        {/* Gloss overlay */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '200px',
+          background: 'var(--gloss-overlay)',
+          pointerEvents: 'none'
+        }} />
+
         <h1 style={{
-          fontSize: '42px',
-          fontWeight: 700,
-          margin: '0 0 16px 0',
-          lineHeight: 1.2,
+          fontSize: '48px',
+          fontWeight: 'var(--font-weight-bold)',
+          margin: '0 0 var(--space-4) 0',
+          lineHeight: 1.1,
+          letterSpacing: '-0.02em',
+          position: 'relative',
+          zIndex: 1
         }}>
-          ❤️ Mes Favoris
+          Mes Favoris
         </h1>
         <p style={{
           fontSize: '18px',
           margin: 0,
-          opacity: 0.95,
+          color: 'var(--text-secondary)',
+          fontWeight: 'var(--font-weight-medium)',
+          position: 'relative',
+          zIndex: 1
         }}>
           {vehicles.length} véhicule{vehicles.length > 1 ? 's' : ''} sauvegardé{vehicles.length > 1 ? 's' : ''}
         </p>
       </div>
 
       <div style={{
-        maxWidth: '1200px',
+        maxWidth: 'var(--container-2xl)',
         margin: '0 auto',
-        padding: '0 20px',
+        padding: '0 var(--space-5)'
       }}>
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: '24px',
+          gap: 'var(--space-6)'
         }}>
           {vehicles.map((v) => (
             <Link
@@ -165,22 +162,23 @@ export default function FavoritesPage() {
               state={{ vehicle: v }}
               style={{
                 display: 'block',
-                background: 'white',
-                borderRadius: '12px',
-                padding: '20px',
+                background: 'var(--white)',
+                padding: 'var(--space-5)',
                 textDecoration: 'none',
                 color: 'inherit',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-                border: '1px solid #EEEEEE',
-                transition: 'all 0.2s',
+                boxShadow: 'var(--shadow-gloss-sm)',
+                border: '1px solid var(--border-light)',
+                transition: 'all var(--transition-base)'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-4px)'
-                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.12)'
+                e.currentTarget.style.boxShadow = 'var(--shadow-gloss-lg)'
+                e.currentTarget.style.borderColor = 'var(--border-medium)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)'
+                e.currentTarget.style.boxShadow = 'var(--shadow-gloss-sm)'
+                e.currentTarget.style.borderColor = 'var(--border-light)'
               }}
             >
               {/* Image */}
@@ -188,9 +186,9 @@ export default function FavoritesPage() {
                 <div style={{
                   width: '100%',
                   height: '180px',
-                  borderRadius: '8px',
                   overflow: 'hidden',
-                  marginBottom: '16px',
+                  marginBottom: 'var(--space-4)',
+                  background: 'var(--gray-100)'
                 }}>
                   <img
                     src={v.images[0]}
@@ -198,7 +196,7 @@ export default function FavoritesPage() {
                     style={{
                       width: '100%',
                       height: '100%',
-                      objectFit: 'cover',
+                      objectFit: 'cover'
                     }}
                     onError={(e) => {
                       e.target.src = 'https://via.placeholder.com/400x300?text=No+Image'
@@ -209,25 +207,29 @@ export default function FavoritesPage() {
                 <div style={{
                   width: '100%',
                   height: '180px',
-                  borderRadius: '8px',
-                  background: '#F9FAFB',
+                  background: 'var(--gray-100)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  marginBottom: '16px',
-                  fontSize: '64px',
+                  marginBottom: 'var(--space-4)',
+                  fontSize: '14px',
+                  color: 'var(--text-muted)',
+                  fontWeight: 'var(--font-weight-medium)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em'
                 }}>
-                  🚗
+                  Pas d'image
                 </div>
               )}
 
               {/* Title */}
               <h3 style={{
-                margin: '0 0 12px 0',
+                margin: '0 0 var(--space-3) 0',
                 fontSize: '18px',
-                fontWeight: 600,
-                color: '#222222',
+                fontWeight: 'var(--font-weight-semibold)',
+                color: 'var(--text-primary)',
                 lineHeight: 1.3,
+                letterSpacing: '-0.01em'
               }}>
                 {v.title || `${v.make} ${v.model}`}
               </h3>
@@ -236,9 +238,10 @@ export default function FavoritesPage() {
               {v.price && (
                 <div style={{
                   fontSize: '24px',
-                  fontWeight: 700,
-                  color: '#DC2626',
-                  marginBottom: '12px',
+                  fontWeight: 'var(--font-weight-bold)',
+                  color: 'var(--red-accent)',
+                  marginBottom: 'var(--space-3)',
+                  letterSpacing: '-0.01em'
                 }}>
                   {typeof v.price === 'number'
                     ? v.price.toLocaleString('fr-FR')
@@ -251,30 +254,30 @@ export default function FavoritesPage() {
               <div style={{
                 display: 'flex',
                 flexWrap: 'wrap',
-                gap: '12px',
-                fontSize: '14px',
-                color: '#6B7280',
+                gap: 'var(--space-3)',
+                fontSize: '13px',
+                color: 'var(--text-secondary)',
+                fontWeight: 'var(--font-weight-medium)'
               }}>
                 {v.year && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span>📅</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1)' }}>
+                    <span style={{ fontWeight: 'var(--font-weight-semibold)' }}>Année:</span>
                     <span>{v.year}</span>
                   </div>
                 )}
                 {v.mileage && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span>🛣️</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1)' }}>
+                    <span style={{ fontWeight: 'var(--font-weight-semibold)' }}>KM:</span>
                     <span>
                       {typeof v.mileage === 'number'
                         ? v.mileage.toLocaleString('fr-FR')
-                        : v.mileage}{' '}
-                      km
+                        : v.mileage}
                     </span>
                   </div>
                 )}
                 {v.fuel_type && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span>⛽</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1)' }}>
+                    <span style={{ fontWeight: 'var(--font-weight-semibold)' }}>Carburant:</span>
                     <span>{v.fuel_type}</span>
                   </div>
                 )}
@@ -283,16 +286,17 @@ export default function FavoritesPage() {
               {/* Location */}
               {v.location_city && (
                 <div style={{
-                  marginTop: '12px',
-                  paddingTop: '12px',
-                  borderTop: '1px solid #E5E7EB',
-                  fontSize: '14px',
-                  color: '#6B7280',
+                  marginTop: 'var(--space-3)',
+                  paddingTop: 'var(--space-3)',
+                  borderTop: '1px solid var(--border-light)',
+                  fontSize: '13px',
+                  color: 'var(--text-secondary)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  gap: 'var(--space-2)',
+                  fontWeight: 'var(--font-weight-medium)'
                 }}>
-                  <span>📍</span>
+                  <span style={{ fontWeight: 'var(--font-weight-semibold)' }}>Localisation:</span>
                   <span>{v.location_city}</span>
                 </div>
               )}
