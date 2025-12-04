@@ -38,31 +38,51 @@ export default function SearchPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
-      paddingBottom: '60px',
+      background: 'var(--gray-50)',
+      paddingBottom: 'var(--space-16)'
     }}>
       {/* Header Section */}
       <div style={{
-        background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
-        color: 'white',
-        padding: '60px 20px',
+        background: 'var(--white)',
+        color: 'var(--text-primary)',
+        padding: 'var(--space-16) var(--space-6)',
         textAlign: 'center',
-        marginBottom: '40px',
+        marginBottom: 'var(--space-10)',
+        borderBottom: '1px solid var(--border-light)',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
+        {/* Gloss overlay */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '200px',
+          background: 'var(--gloss-overlay)',
+          pointerEvents: 'none'
+        }} />
+
         <h1 style={{
-          fontSize: '42px',
-          fontWeight: 700,
-          margin: '0 0 16px 0',
-          lineHeight: 1.2,
+          fontSize: '48px',
+          fontWeight: 'var(--font-weight-bold)',
+          margin: '0 0 var(--space-4) 0',
+          lineHeight: 1.1,
+          letterSpacing: '-0.02em',
+          position: 'relative',
+          zIndex: 1
         }}>
           Recherche de véhicules
         </h1>
         <p style={{
           fontSize: '18px',
           margin: 0,
-          opacity: 0.95,
+          color: 'var(--text-secondary)',
+          fontWeight: 'var(--font-weight-medium)',
+          position: 'relative',
+          zIndex: 1
         }}>
-          🎯 Utilisez la barre de recherche ou le chatbot pour trouver votre véhicule
+          Utilisez la barre de recherche ou le chatbot pour trouver votre véhicule
         </p>
       </div>
 
@@ -71,28 +91,30 @@ export default function SearchPage() {
       {/* Affichage des filtres détectés */}
       {Object.keys(filters).length > 0 && (
         <div style={{
-          maxWidth: '800px',
-          margin: '0 auto 32px auto',
-          padding: '0 20px',
+          maxWidth: 'var(--container-lg)',
+          margin: '0 auto var(--space-8) auto',
+          padding: '0 var(--space-5)'
         }}>
           <div style={{
-            background: 'white',
-            borderRadius: '12px',
-            padding: '20px',
-            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
+            background: 'var(--white)',
+            border: '1px solid var(--border-light)',
+            padding: 'var(--space-5)',
+            boxShadow: 'var(--shadow-gloss-sm)'
           }}>
             <h4 style={{
-              fontSize: '16px',
-              fontWeight: 600,
-              color: '#222222',
-              margin: '0 0 16px 0',
+              fontSize: '14px',
+              fontWeight: 'var(--font-weight-semibold)',
+              color: 'var(--text-primary)',
+              margin: '0 0 var(--space-4) 0',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
             }}>
-              🔍 Filtres actifs
+              Filtres actifs
             </h4>
             <div style={{
               display: 'flex',
               flexWrap: 'wrap',
-              gap: '8px',
+              gap: 'var(--space-2)'
             }}>
               {Object.entries(filters).map(([key, value]) => (
                 <span
@@ -100,13 +122,12 @@ export default function SearchPage() {
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '6px',
-                    background: '#FEE2E2',
-                    color: '#DC2626',
-                    padding: '6px 14px',
-                    borderRadius: '20px',
-                    fontSize: '14px',
-                    fontWeight: 500,
+                    gap: 'var(--space-2)',
+                    background: 'var(--red-accent-light)',
+                    color: 'var(--red-accent)',
+                    padding: 'var(--space-1) var(--space-3)',
+                    fontSize: '13px',
+                    fontWeight: 'var(--font-weight-medium)'
                   }}
                 >
                   <strong>{key}:</strong> {value}
@@ -118,9 +139,9 @@ export default function SearchPage() {
       )}
 
       <div style={{
-        maxWidth: '1000px',
+        maxWidth: 'var(--container-xl)',
         margin: '0 auto',
-        padding: '0 20px',
+        padding: '0 var(--space-5)'
       }}>
         <Results
           loading={isLoading}
