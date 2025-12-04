@@ -41,7 +41,7 @@ export default function AssistedRequestDetailPage() {
     try {
       await updateProposalStatus(proposalId, 'LIKED', null)
       await loadData()
-      alert('✅ Véhicule marqué comme coup de cœur !')
+      alert(' Véhicule marqué comme coup de cœur !')
     } catch (error) {
       console.error('Error marking favorite:', error)
       alert('❌ Erreur lors de la mise en favori : ' + (error.response?.data?.detail || error.message))
@@ -58,7 +58,7 @@ export default function AssistedRequestDetailPage() {
       setShowRejectModal(null)
       setRejectReason('')
       await loadData()
-      alert('✅ Véhicule refusé avec succès')
+      alert(' Véhicule refusé avec succès')
     } catch (error) {
       console.error('Error rejecting proposal:', error)
       alert('❌ Erreur lors du refus : ' + (error.response?.data?.detail || error.message))
@@ -67,46 +67,44 @@ export default function AssistedRequestDetailPage() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      'EN_ATTENTE': { text: '⏳ En attente', color: '#ffc107' },
-      'EN_COURS': { text: '🔄 En cours', color: '#17a2b8' },
-      'TERMINEE': { text: '✅ Terminée', color: '#28a745' },
+      'EN_ATTENTE': { text: ' En attente', color: '#ffc107' },
+      'EN_COURS': { text: ' En cours', color: '#17a2b8' },
+      'TERMINEE': { text: ' Terminée', color: '#28a745' },
       'ANNULEE': { text: '❌ Annulée', color: '#dc3545' }
     }
     const badge = badges[status] || badges['EN_ATTENTE']
     return <span style={{
       background: badge.color,
-      color: 'white',
+      color: 'var(--white)',
       padding: '4px 12px',
-      borderRadius: '16px',
-      fontSize: '13px',
+            fontSize: '13px',
       fontWeight: 600
     }}>{badge.text}</span>
   }
 
   const getProposalStatusBadge = (status) => {
     const badges = {
-      'PENDING': { text: '⏱️ En attente', color: '#6c757d' },
-      'LIKED': { text: '❤️ Coup de cœur', color: '#e91e63' },
+      'PENDING': { text: ' En attente', color: '#6c757d' },
+      'LIKED': { text: ' Coup de cœur', color: '#e91e63' },
       'SUPER_LIKED': { text: '💖 Coup de foudre', color: '#e91e63' },
       'REJECTED': { text: '❌ Refusé', color: '#dc3545' }
     }
     const badge = badges[status] || badges['PENDING']
     return <span style={{
       background: badge.color,
-      color: 'white',
+      color: 'var(--white)',
       padding: '4px 10px',
-      borderRadius: '12px',
-      fontSize: '12px',
+            fontSize: 'var(--space-3)',
       fontWeight: 600
     }}>{badge.text}</span>
   }
 
   if (loading) {
-    return <div style={{padding: '40px', textAlign: 'center'}}>Chargement...</div>
+    return <div style={{padding: 'var(--space-10)', textAlign: 'center'}}>Chargement...</div>
   }
 
   if (!request) {
-    return <div style={{padding: '40px', textAlign: 'center'}}>Demande non trouvée</div>
+    return <div style={{padding: 'var(--space-10)', textAlign: 'center'}}>Demande non trouvée</div>
   }
 
   const favorites = proposals.filter(p => p.status === 'LIKED' || p.status === 'SUPER_LIKED')
@@ -114,7 +112,7 @@ export default function AssistedRequestDetailPage() {
   const pending = proposals.filter(p => p.status === 'PENDING')
 
   return (
-    <div style={{maxWidth: '1200px', margin: '0 auto', padding: '20px'}}>
+    <div style={{maxWidth: '1200px', margin: '0 auto', padding: 'var(--space-5)'}}>
       {/* Header */}
       <div style={{marginBottom: '30px'}}>
         <button
@@ -123,23 +121,21 @@ export default function AssistedRequestDetailPage() {
             background: 'none',
             border: '1px solid #ddd',
             padding: '8px 16px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            marginBottom: '16px'
+                        cursor: 'pointer',
+            marginBottom: 'var(--space-4)'
           }}
         >
           ← Retour à mes demandes
         </button>
         
         <div style={{
-          background: 'white',
-          padding: '24px',
-          borderRadius: '16px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+          background: 'var(--white)',
+          padding: 'var(--space-6)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
         }}>
-          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px'}}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-4)'}}>
             <div>
-              <h1 style={{margin: '0 0 12px 0', fontSize: '24px'}}>
+              <h1 style={{margin: '0 0 12px 0', fontSize: 'var(--space-6)'}}>
                 Ma demande assistée
               </h1>
               <p style={{color: '#6a737d', margin: 0, fontSize: '14px'}}>
@@ -151,22 +147,21 @@ export default function AssistedRequestDetailPage() {
 
           <div style={{
             background: '#f8f9fa',
-            padding: '16px',
-            borderRadius: '12px',
-            marginBottom: '16px'
+            padding: 'var(--space-4)',
+                        marginBottom: 'var(--space-4)'
           }}>
-            <strong style={{display: 'block', marginBottom: '8px'}}>Description :</strong>
+            <strong style={{display: 'block', marginBottom: 'var(--space-2)'}}>Description :</strong>
             <p style={{margin: 0, lineHeight: 1.6}}>{request.description}</p>
           </div>
 
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '12px'
+            gap: 'var(--space-3)'
           }}>
             {request.budget_max && (
               <div>
-                <div style={{fontSize: '12px', color: '#6a737d', marginBottom: '4px'}}>Budget max</div>
+                <div style={{fontSize: 'var(--space-3)', color: '#6a737d', marginBottom: 'var(--space-1)'}}>Budget max</div>
                 <div style={{fontSize: '18px', fontWeight: 600, color: '#28a745'}}>
                   {request.budget_max.toLocaleString()} €
                 </div>
@@ -174,16 +169,16 @@ export default function AssistedRequestDetailPage() {
             )}
             {request.preferred_fuel_type && (
               <div>
-                <div style={{fontSize: '12px', color: '#6a737d', marginBottom: '4px'}}>Carburant</div>
-                <div style={{fontSize: '16px', fontWeight: 500}}>
+                <div style={{fontSize: 'var(--space-3)', color: '#6a737d', marginBottom: 'var(--space-1)'}}>Carburant</div>
+                <div style={{fontSize: 'var(--space-4)', fontWeight: 500}}>
                   {request.preferred_fuel_type}
                 </div>
               </div>
             )}
             {request.max_mileage && (
               <div>
-                <div style={{fontSize: '12px', color: '#6a737d', marginBottom: '4px'}}>Kilométrage max</div>
-                <div style={{fontSize: '16px', fontWeight: 500}}>
+                <div style={{fontSize: 'var(--space-3)', color: '#6a737d', marginBottom: 'var(--space-1)'}}>Kilométrage max</div>
+                <div style={{fontSize: 'var(--space-4)', fontWeight: 500}}>
                   {request.max_mileage.toLocaleString()} km
                 </div>
               </div>
@@ -192,30 +187,29 @@ export default function AssistedRequestDetailPage() {
 
           {request.expert && (
             <div style={{
-              marginTop: '16px',
-              padding: '12px',
+              marginTop: 'var(--space-4)',
+              padding: 'var(--space-3)',
               background: '#e7f3ff',
-              borderRadius: '8px',
-              display: 'flex',
+                            display: 'flex',
               alignItems: 'center',
-              gap: '12px'
+              gap: 'var(--space-3)'
             }}>
               <div style={{
-                width: '40px',
-                height: '40px',
+                width: 'var(--space-10)',
+                height: 'var(--space-10)',
                 borderRadius: '50%',
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'white',
+                color: 'var(--white)',
                 fontSize: '18px',
                 fontWeight: 600
               }}>
                 {request.expert.full_name[0]}
               </div>
               <div>
-                <div style={{fontWeight: 600}}>⭐ Expert assigné</div>
+                <div style={{fontWeight: 600}}> Expert assigné</div>
                 <div style={{fontSize: '13px', color: '#6a737d'}}>
                   {request.expert.full_name}
                 </div>
@@ -229,7 +223,7 @@ export default function AssistedRequestDetailPage() {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '16px',
+        gap: 'var(--space-4)',
         marginBottom: '30px'
       }}>
         <StatCard 
@@ -239,13 +233,13 @@ export default function AssistedRequestDetailPage() {
           color="#667eea"
         />
         <StatCard 
-          icon="❤️" 
+          icon="" 
           label="Coups de cœur" 
           value={favorites.length}
           color="#e91e63"
         />
         <StatCard 
-          icon="⏱️" 
+          icon="" 
           label="En attente" 
           value={pending.length}
           color="#ffc107"
@@ -291,29 +285,28 @@ export default function AssistedRequestDetailPage() {
 function StatCard({ icon, label, value, color }) {
   return (
     <div style={{
-      background: 'white',
-      padding: '20px',
-      borderRadius: '12px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+      background: 'var(--white)',
+      padding: 'var(--space-5)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
       display: 'flex',
       alignItems: 'center',
-      gap: '16px'
+      gap: 'var(--space-4)'
     }}>
       <div style={{
-        fontSize: '40px',
+        fontSize: 'var(--space-10)',
         lineHeight: 1
       }}>{icon}</div>
       <div>
         <div style={{
-          fontSize: '12px',
+          fontSize: 'var(--space-3)',
           color: '#6a737d',
-          marginBottom: '4px',
+          marginBottom: 'var(--space-1)',
           textTransform: 'uppercase',
           fontWeight: 600,
           letterSpacing: '0.5px'
         }}>{label}</div>
         <div style={{
-          fontSize: '28px',
+          fontSize: 'var(--space-7)',
           fontWeight: 700,
           color: color
         }}>{value}</div>
@@ -340,12 +333,11 @@ function TabSection({ proposals, pending, favorites, rejected, onFavorite, onRej
       {/* Tabs */}
       <div style={{
         display: 'flex',
-        gap: '8px',
-        marginBottom: '20px',
-        background: 'white',
-        padding: '8px',
-        borderRadius: '12px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+        gap: 'var(--space-2)',
+        marginBottom: 'var(--space-5)',
+        background: 'var(--white)',
+        padding: 'var(--space-2)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
       }}>
         <TabButton 
           active={activeTab === 'all'} 
@@ -355,12 +347,12 @@ function TabSection({ proposals, pending, favorites, rejected, onFavorite, onRej
         <TabButton 
           active={activeTab === 'pending'} 
           onClick={() => setActiveTab('pending')}
-          label={`⏱️ En attente (${pending.length})`}
+          label={` En attente (${pending.length})`}
         />
         <TabButton 
           active={activeTab === 'favorites'} 
           onClick={() => setActiveTab('favorites')}
-          label={`❤️ Coups de cœur (${favorites.length})`}
+          label={` Coups de cœur (${favorites.length})`}
         />
         <TabButton 
           active={activeTab === 'rejected'} 
@@ -373,7 +365,7 @@ function TabSection({ proposals, pending, favorites, rejected, onFavorite, onRej
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-        gap: '20px'
+        gap: 'var(--space-5)'
       }}>
         {getFilteredProposals().length === 0 ? (
           <div style={{
@@ -382,7 +374,7 @@ function TabSection({ proposals, pending, favorites, rejected, onFavorite, onRej
             padding: '60px 20px',
             color: '#6a737d'
           }}>
-            <div style={{fontSize: '48px', marginBottom: '16px'}}>📭</div>
+            <div style={{fontSize: 'var(--space-12)', marginBottom: 'var(--space-4)'}}></div>
             <p>Aucune proposition dans cette catégorie</p>
           </div>
         ) : (
@@ -411,10 +403,9 @@ function TabButton({ active, onClick, label }) {
         background: active 
           ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
           : 'transparent',
-        color: active ? 'white' : '#6a737d',
+        color: active ? 'var(--white)' : '#6a737d',
         border: 'none',
-        borderRadius: '8px',
-        fontSize: '14px',
+                fontSize: '14px',
         fontWeight: active ? 600 : 500,
         cursor: 'pointer',
         transition: 'all 0.2s',
@@ -438,18 +429,17 @@ function ProposalCard({ proposal, onFavorite, onReject, onViewVehicle }) {
   
   const getStatusBadge = (status) => {
     const badges = {
-      'PENDING': { text: '⏱️ En attente', color: '#6c757d' },
-      'FAVORITE': { text: '❤️ Coup de cœur', color: '#e91e63' },
+      'PENDING': { text: ' En attente', color: '#6c757d' },
+      'FAVORITE': { text: ' Coup de cœur', color: '#e91e63' },
       'REJECTED': { text: '❌ Refusé', color: '#dc3545' }
     }
     const badge = badges[status] || badges['PENDING']
     return (
       <span style={{
         background: badge.color,
-        color: 'white',
+        color: 'var(--white)',
         padding: '4px 10px',
-        borderRadius: '12px',
-        fontSize: '11px',
+                fontSize: '11px',
         fontWeight: 600
       }}>
         {badge.text}
@@ -459,9 +449,8 @@ function ProposalCard({ proposal, onFavorite, onReject, onViewVehicle }) {
 
   return (
     <div style={{
-      background: 'white',
-      borderRadius: '16px',
-      padding: '20px',
+      background: 'var(--white)',
+            padding: 'var(--space-5)',
       boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
       border: status === 'FAVORITE' ? '2px solid #e91e63' : '2px solid transparent',
       transition: 'all 0.3s'
@@ -471,10 +460,10 @@ function ProposalCard({ proposal, onFavorite, onReject, onViewVehicle }) {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: '16px'
+        marginBottom: 'var(--space-4)'
       }}>
         {getStatusBadge(status)}
-        <span style={{fontSize: '12px', color: '#6a737d'}}>
+        <span style={{fontSize: 'var(--space-3)', color: '#6a737d'}}>
           {new Date(created_at).toLocaleDateString('fr-FR')}
         </span>
       </div>
@@ -482,13 +471,12 @@ function ProposalCard({ proposal, onFavorite, onReject, onViewVehicle }) {
       {/* Vehicle Info */}
       <div style={{
         background: '#f8f9fa',
-        padding: '16px',
-        borderRadius: '12px',
-        marginBottom: '12px'
+        padding: 'var(--space-4)',
+                marginBottom: 'var(--space-3)'
       }}>
         <h3 style={{
           margin: '0 0 12px 0',
-          fontSize: '16px',
+          fontSize: 'var(--space-4)',
           fontWeight: 600
         }}>
           {vehicle.title}
@@ -496,14 +484,14 @@ function ProposalCard({ proposal, onFavorite, onReject, onViewVehicle }) {
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '8px',
+          gap: 'var(--space-2)',
           fontSize: '13px',
           color: '#6a737d'
         }}>
-          <div>💰 {vehicle.price.toLocaleString()} €</div>
-          <div>📅 {vehicle.year}</div>
-          <div>🛣️ {vehicle.mileage.toLocaleString()} km</div>
-          <div>⛽ {vehicle.fuel_type}</div>
+          <div> {vehicle.price.toLocaleString()} €</div>
+          <div> {vehicle.year}</div>
+          <div> {vehicle.mileage.toLocaleString()} km</div>
+          <div> {vehicle.fuel_type}</div>
         </div>
       </div>
 
@@ -511,42 +499,40 @@ function ProposalCard({ proposal, onFavorite, onReject, onViewVehicle }) {
       {message && (
         <div style={{
           background: '#e7f3ff',
-          padding: '12px',
-          borderRadius: '8px',
-          marginBottom: '16px',
+          padding: 'var(--space-3)',
+                    marginBottom: 'var(--space-4)',
           fontSize: '13px',
           lineHeight: 1.5,
           color: '#24292e'
         }}>
-          <strong style={{display: 'block', marginBottom: '4px', color: '#667eea'}}>
-            💬 Message de l'expert :
+          <strong style={{display: 'block', marginBottom: 'var(--space-1)', color: '#667eea'}}>
+             Message de l'expert :
           </strong>
           {message}
         </div>
       )}
 
       {/* Actions */}
-      <div style={{display: 'flex', gap: '8px'}}>
+      <div style={{display: 'flex', gap: 'var(--space-2)'}}>
         <button
           onClick={() => onViewVehicle(proposal.vehicle_id)}
           style={{
             flex: 1,
             padding: '10px',
-            background: 'white',
+            background: 'var(--white)',
             border: '2px solid #667eea',
             color: '#667eea',
-            borderRadius: '8px',
-            fontSize: '13px',
+                        fontSize: '13px',
             fontWeight: 600,
             cursor: 'pointer',
             transition: 'all 0.2s'
           }}
           onMouseEnter={(e) => {
             e.target.style.background = '#667eea'
-            e.target.style.color = 'white'
+            e.target.style.color = 'var(--white)'
           }}
           onMouseLeave={(e) => {
-            e.target.style.background = 'white'
+            e.target.style.background = 'var(--white)'
             e.target.style.color = '#667eea'
           }}
         >
@@ -561,9 +547,8 @@ function ProposalCard({ proposal, onFavorite, onReject, onViewVehicle }) {
                 padding: '10px 16px',
                 background: '#e91e63',
                 border: 'none',
-                color: 'white',
-                borderRadius: '8px',
-                fontSize: '18px',
+                color: 'var(--white)',
+                                fontSize: '18px',
                 cursor: 'pointer',
                 transition: 'all 0.2s'
               }}
@@ -574,7 +559,7 @@ function ProposalCard({ proposal, onFavorite, onReject, onViewVehicle }) {
                 e.target.style.transform = 'scale(1)'
               }}
             >
-              ❤️
+              
             </button>
             <button
               onClick={onReject}
@@ -582,9 +567,8 @@ function ProposalCard({ proposal, onFavorite, onReject, onViewVehicle }) {
                 padding: '10px 16px',
                 background: '#dc3545',
                 border: 'none',
-                color: 'white',
-                borderRadius: '8px',
-                fontSize: '18px',
+                color: 'var(--white)',
+                                fontSize: '18px',
                 cursor: 'pointer',
                 transition: 'all 0.2s'
               }}
@@ -628,40 +612,39 @@ function RejectModal({ onClose, onConfirm, reason, onReasonChange }) {
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 1000,
-        padding: '20px'
+        padding: 'var(--space-5)'
       }}
       onClick={onClose}
     >
       <div 
         style={{
-          background: 'white',
-          borderRadius: '16px',
-          padding: '28px',
+          background: 'var(--white)',
+                    padding: 'var(--space-7)',
           maxWidth: '500px',
           width: '100%',
           boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 style={{margin: '0 0 20px 0', fontSize: '20px'}}>
+        <h2 style={{margin: '0 0 20px 0', fontSize: 'var(--space-5)'}}>
           ❌ Refuser cette proposition
         </h2>
         
-        <p style={{color: '#6a737d', fontSize: '14px', marginBottom: '16px'}}>
+        <p style={{color: '#6a737d', fontSize: '14px', marginBottom: 'var(--space-4)'}}>
           Indiquez pourquoi ce véhicule ne vous convient pas. Cela aidera l'expert à mieux comprendre vos besoins.
         </p>
 
         {/* Predefined reasons */}
-        <div style={{marginBottom: '16px'}}>
+        <div style={{marginBottom: 'var(--space-4)'}}>
           <div style={{
             fontSize: '13px',
             fontWeight: 600,
-            marginBottom: '8px',
+            marginBottom: 'var(--space-2)',
             color: '#24292e'
           }}>
             Raisons courantes :
           </div>
-          <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+          <div style={{display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)'}}>
             {predefinedReasons.map(r => (
               <button
                 key={r}
@@ -669,10 +652,9 @@ function RejectModal({ onClose, onConfirm, reason, onReasonChange }) {
                 style={{
                   padding: '8px 14px',
                   background: reason === r ? '#667eea' : '#f0f0f0',
-                  color: reason === r ? 'white' : '#24292e',
+                  color: reason === r ? 'var(--white)' : '#24292e',
                   border: 'none',
-                  borderRadius: '20px',
-                  fontSize: '12px',
+                                    fontSize: 'var(--space-3)',
                   cursor: 'pointer',
                   transition: 'all 0.2s'
                 }}
@@ -690,28 +672,26 @@ function RejectModal({ onClose, onConfirm, reason, onReasonChange }) {
           placeholder="Ou écrivez votre propre raison..."
           style={{
             width: '100%',
-            padding: '12px',
+            padding: 'var(--space-3)',
             border: '2px solid #e1e4e8',
-            borderRadius: '8px',
-            fontSize: '14px',
+                        fontSize: '14px',
             fontFamily: 'inherit',
-            minHeight: '80px',
+            minHeight: 'var(--space-20)',
             resize: 'vertical',
-            marginBottom: '20px'
+            marginBottom: 'var(--space-5)'
           }}
         />
 
         {/* Actions */}
-        <div style={{display: 'flex', gap: '12px'}}>
+        <div style={{display: 'flex', gap: 'var(--space-3)'}}>
           <button
             onClick={onClose}
             style={{
               flex: 1,
-              padding: '12px',
-              background: 'white',
+              padding: 'var(--space-3)',
+              background: 'var(--white)',
               border: '2px solid #e1e4e8',
-              borderRadius: '8px',
-              fontSize: '14px',
+                            fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.2s'
@@ -724,12 +704,11 @@ function RejectModal({ onClose, onConfirm, reason, onReasonChange }) {
             disabled={!reason.trim()}
             style={{
               flex: 1,
-              padding: '12px',
+              padding: 'var(--space-3)',
               background: reason.trim() ? '#dc3545' : '#ccc',
               border: 'none',
-              color: 'white',
-              borderRadius: '8px',
-              fontSize: '14px',
+              color: 'var(--white)',
+                            fontSize: '14px',
               fontWeight: 600,
               cursor: reason.trim() ? 'pointer' : 'not-allowed',
               transition: 'all 0.2s'

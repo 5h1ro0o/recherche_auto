@@ -12,7 +12,7 @@ export default function EncyclopediaPage() {
       {
         id: 1,
         name: 'Renault',
-        logo: '🚗',
+        logo: '',
         description: 'Constructeur automobile français fondé en 1899, spécialisé dans les véhicules compacts et électriques.',
         popularModels: ['Clio', 'Megane', 'Captur', 'Zoe'],
         reputation: 'Fiabilité moyenne, bon rapport qualité-prix'
@@ -36,7 +36,7 @@ export default function EncyclopediaPage() {
       {
         id: 4,
         name: 'Volkswagen',
-        logo: '⚙️',
+        logo: '',
         description: 'Constructeur allemand leader mondial, synonyme de qualité et fiabilité.',
         popularModels: ['Golf', 'Polo', 'Tiguan', 'ID.3'],
         reputation: 'Excellente fiabilité, finitions premium'
@@ -44,7 +44,7 @@ export default function EncyclopediaPage() {
       {
         id: 5,
         name: 'BMW',
-        logo: '🔵',
+        logo: '',
         description: 'Marque allemande de prestige, spécialiste des berlines sportives.',
         popularModels: ['Série 1', 'Série 3', 'X1', 'X3'],
         reputation: 'Performances élevées, plaisir de conduite'
@@ -52,7 +52,7 @@ export default function EncyclopediaPage() {
       {
         id: 6,
         name: 'Mercedes-Benz',
-        logo: '⭐',
+        logo: '',
         description: 'Constructeur allemand premium, référence en matière de luxe et technologie.',
         popularModels: ['Classe A', 'Classe C', 'GLA', 'GLC'],
         reputation: 'Luxe, confort et technologies de pointe'
@@ -78,7 +78,7 @@ export default function EncyclopediaPage() {
       {
         id: 1,
         name: 'Essence',
-        icon: '⛽',
+        icon: '',
         pros: ['Prix d\'achat inférieur', 'Entretien moins coûteux', 'Meilleur pour petits trajets'],
         cons: ['Consommation élevée sur autoroute', 'Émissions CO2 importantes', 'Prix du carburant élevé'],
         idealFor: 'Conducteurs urbains avec petits trajets quotidiens'
@@ -120,13 +120,13 @@ export default function EncyclopediaPage() {
       {
         id: 1,
         title: 'Définir son budget',
-        icon: '💰',
+        icon: '',
         content: 'Incluez le prix d\'achat, l\'assurance, l\'entretien et le carburant. Règle générale : le coût mensuel total ne devrait pas dépasser 20% de vos revenus.'
       },
       {
         id: 2,
         title: 'Analyser ses besoins',
-        icon: '📊',
+        icon: '',
         content: 'Kilométrage annuel, type de trajets (ville/autoroute), nombre de places nécessaires, besoin de coffre. Ces critères détermineront le type de véhicule et de motorisation.'
       },
       {
@@ -138,19 +138,19 @@ export default function EncyclopediaPage() {
       {
         id: 4,
         title: 'Essai routier',
-        icon: '🚗',
+        icon: '',
         content: 'Testez le véhicule dans des conditions variées : ville, route, autoroute. Vérifiez bruits anormaux, tenue de route, confort, visibilité et équipements.'
       },
       {
         id: 5,
         title: 'Inspection mécanique',
-        icon: '🔧',
+        icon: '',
         content: 'Pour l\'occasion, faites inspecter le véhicule par un professionnel avant achat. Coût : 100-200€, économies potentielles : plusieurs milliers d\'euros.'
       },
       {
         id: 6,
         title: 'Négocier le prix',
-        icon: '💬',
+        icon: '',
         content: 'Comparez avec les prix du marché (Argus, annonces similaires). Les défauts identifiés sont des arguments de négociation. Négociation moyenne : 5-10% du prix affiché.'
       }
     ],
@@ -181,15 +181,15 @@ export default function EncyclopediaPage() {
     <div style={{
       minHeight: '100vh',
       background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
-      paddingBottom: '60px',
+      paddingBottom: 'var(--space-16)',
     }}>
       {/* Header Section */}
       <div style={{
         background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
-        color: 'white',
+        color: 'var(--white)',
         padding: '60px 20px',
         textAlign: 'center',
-        marginBottom: '40px',
+        marginBottom: 'var(--space-10)',
       }}>
         <h1 style={{
           fontSize: '42px',
@@ -197,7 +197,7 @@ export default function EncyclopediaPage() {
           margin: '0 0 16px 0',
           lineHeight: 1.2,
         }}>
-          📚 Encyclopédie Automobile
+           Encyclopédie Automobile
         </h1>
         <p style={{
           fontSize: '18px',
@@ -215,32 +215,31 @@ export default function EncyclopediaPage() {
       }}>
         {/* Search Bar */}
         <div style={{
-          marginBottom: '32px',
+          marginBottom: 'var(--space-8)',
         }}>
           <input
             type="text"
-            placeholder="🔍 Rechercher dans l'encyclopédie..."
+            placeholder=" Rechercher dans l'encyclopédie..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
               width: '100%',
               maxWidth: '600px',
               padding: '14px 20px',
-              fontSize: '16px',
+              fontSize: 'var(--space-4)',
               border: '2px solid #E5E7EB',
-              borderRadius: '12px',
-              outline: 'none',
+                            outline: 'none',
               transition: 'all 0.2s',
               fontFamily: 'inherit',
               display: 'block',
               margin: '0 auto',
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = '#DC2626'
+              e.target.style.borderColor = 'var(--red-accent)'
               e.target.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)'
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = '#E5E7EB'
+              e.target.style.borderColor = 'var(--border-light)'
               e.target.style.boxShadow = 'none'
             }}
           />
@@ -249,39 +248,38 @@ export default function EncyclopediaPage() {
         {/* Category Tabs */}
         <div style={{
           display: 'flex',
-          gap: '12px',
-          marginBottom: '32px',
+          gap: 'var(--space-3)',
+          marginBottom: 'var(--space-8)',
           flexWrap: 'wrap',
           justifyContent: 'center',
         }}>
           {[
             { id: 'brands', label: '🏭 Marques' },
-            { id: 'fuelTypes', label: '⛽ Types de carburant' },
+            { id: 'fuelTypes', label: ' Types de carburant' },
             { id: 'buyingGuide', label: '📖 Guide d\'achat' },
-            { id: 'glossary', label: '📝 Glossaire' },
+            { id: 'glossary', label: ' Glossaire' },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setSelectedCategory(tab.id)}
               style={{
                 padding: '12px 24px',
-                background: selectedCategory === tab.id ? '#DC2626' : 'white',
-                color: selectedCategory === tab.id ? 'white' : '#222222',
+                background: selectedCategory === tab.id ? 'var(--red-accent)' : 'var(--white)',
+                color: selectedCategory === tab.id ? 'var(--white)' : 'var(--text-primary)',
                 border: selectedCategory === tab.id ? 'none' : '2px solid #E5E7EB',
-                borderRadius: '12px',
-                fontSize: '15px',
+                                fontSize: '15px',
                 fontWeight: 600,
                 cursor: 'pointer',
                 transition: 'all 0.2s',
               }}
               onMouseEnter={(e) => {
                 if (selectedCategory !== tab.id) {
-                  e.target.style.borderColor = '#DC2626'
+                  e.target.style.borderColor = 'var(--red-accent)'
                 }
               }}
               onMouseLeave={(e) => {
                 if (selectedCategory !== tab.id) {
-                  e.target.style.borderColor = '#E5E7EB'
+                  e.target.style.borderColor = 'var(--border-light)'
                 }
               }}
             >
@@ -297,15 +295,14 @@ export default function EncyclopediaPage() {
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-              gap: '24px',
+              gap: 'var(--space-6)',
             }}>
               {filteredData().map(brand => (
                 <div
                   key={brand.id}
                   style={{
-                    background: 'white',
-                    borderRadius: '12px',
-                    padding: '24px',
+                    background: 'var(--white)',
+                                        padding: 'var(--space-6)',
                     boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
                     border: '1px solid #EEEEEE',
                     transition: 'all 0.2s',
@@ -322,15 +319,15 @@ export default function EncyclopediaPage() {
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px',
-                    marginBottom: '16px',
+                    gap: 'var(--space-3)',
+                    marginBottom: 'var(--space-4)',
                   }}>
-                    <span style={{ fontSize: '32px' }}>{brand.logo}</span>
+                    <span style={{ fontSize: 'var(--space-8)' }}>{brand.logo}</span>
                     <h3 style={{
                       margin: 0,
                       fontSize: '22px',
                       fontWeight: 700,
-                      color: '#222222',
+                      color: 'var(--text-primary)',
                     }}>
                       {brand.name}
                     </h3>
@@ -339,33 +336,32 @@ export default function EncyclopediaPage() {
                     fontSize: '14px',
                     lineHeight: 1.6,
                     color: '#6B7280',
-                    marginBottom: '16px',
+                    marginBottom: 'var(--space-4)',
                   }}>
                     {brand.description}
                   </p>
-                  <div style={{ marginBottom: '16px' }}>
+                  <div style={{ marginBottom: 'var(--space-4)' }}>
                     <strong style={{
                       fontSize: '13px',
-                      color: '#222222',
+                      color: 'var(--text-primary)',
                       display: 'block',
-                      marginBottom: '8px',
+                      marginBottom: 'var(--space-2)',
                     }}>
                       Modèles populaires :
                     </strong>
                     <div style={{
                       display: 'flex',
                       flexWrap: 'wrap',
-                      gap: '8px',
+                      gap: 'var(--space-2)',
                     }}>
                       {brand.popularModels.map((model, idx) => (
                         <span
                           key={idx}
                           style={{
                             background: '#FEE2E2',
-                            color: '#DC2626',
+                            color: 'var(--red-accent)',
                             padding: '4px 12px',
-                            borderRadius: '12px',
-                            fontSize: '13px',
+                                                        fontSize: '13px',
                             fontWeight: 500,
                           }}
                         >
@@ -375,13 +371,12 @@ export default function EncyclopediaPage() {
                     </div>
                   </div>
                   <div style={{
-                    padding: '12px',
-                    background: '#F9FAFB',
-                    borderRadius: '8px',
-                    fontSize: '13px',
+                    padding: 'var(--space-3)',
+                    background: 'var(--gray-50)',
+                                        fontSize: '13px',
                     color: '#6B7280',
                   }}>
-                    <strong style={{ color: '#222222' }}>Réputation :</strong> {brand.reputation}
+                    <strong style={{ color: 'var(--text-primary)' }}>Réputation :</strong> {brand.reputation}
                   </div>
                 </div>
               ))}
@@ -393,15 +388,14 @@ export default function EncyclopediaPage() {
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-              gap: '24px',
+              gap: 'var(--space-6)',
             }}>
               {filteredData().map(fuel => (
                 <div
                   key={fuel.id}
                   style={{
-                    background: 'white',
-                    borderRadius: '12px',
-                    padding: '24px',
+                    background: 'var(--white)',
+                                        padding: 'var(--space-6)',
                     boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
                     border: '1px solid #EEEEEE',
                     transition: 'all 0.2s',
@@ -418,31 +412,31 @@ export default function EncyclopediaPage() {
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px',
-                    marginBottom: '20px',
+                    gap: 'var(--space-3)',
+                    marginBottom: 'var(--space-5)',
                   }}>
-                    <span style={{ fontSize: '32px' }}>{fuel.icon}</span>
+                    <span style={{ fontSize: 'var(--space-8)' }}>{fuel.icon}</span>
                     <h3 style={{
                       margin: 0,
                       fontSize: '22px',
                       fontWeight: 700,
-                      color: '#222222',
+                      color: 'var(--text-primary)',
                     }}>
                       {fuel.name}
                     </h3>
                   </div>
-                  <div style={{ marginBottom: '16px' }}>
+                  <div style={{ marginBottom: 'var(--space-4)' }}>
                     <h4 style={{
                       margin: '0 0 12px 0',
                       fontSize: '15px',
                       fontWeight: 600,
                       color: '#10B981',
                     }}>
-                      ✅ Avantages
+                       Avantages
                     </h4>
                     <ul style={{
                       margin: 0,
-                      paddingLeft: '20px',
+                      paddingLeft: 'var(--space-5)',
                       fontSize: '14px',
                       color: '#6B7280',
                       lineHeight: 1.8,
@@ -452,18 +446,18 @@ export default function EncyclopediaPage() {
                       ))}
                     </ul>
                   </div>
-                  <div style={{ marginBottom: '16px' }}>
+                  <div style={{ marginBottom: 'var(--space-4)' }}>
                     <h4 style={{
                       margin: '0 0 12px 0',
                       fontSize: '15px',
                       fontWeight: 600,
-                      color: '#EF4444',
+                      color: 'var(--red-accent)',
                     }}>
                       ❌ Inconvénients
                     </h4>
                     <ul style={{
                       margin: 0,
-                      paddingLeft: '20px',
+                      paddingLeft: 'var(--space-5)',
                       fontSize: '14px',
                       color: '#6B7280',
                       lineHeight: 1.8,
@@ -474,11 +468,10 @@ export default function EncyclopediaPage() {
                     </ul>
                   </div>
                   <div style={{
-                    padding: '12px',
+                    padding: 'var(--space-3)',
                     background: '#FEE2E2',
-                    borderRadius: '8px',
-                    fontSize: '13px',
-                    color: '#DC2626',
+                                        fontSize: '13px',
+                    color: 'var(--red-accent)',
                     borderLeft: '4px solid #DC2626',
                   }}>
                     <strong>Idéal pour :</strong> {fuel.idealFor}
@@ -498,19 +491,18 @@ export default function EncyclopediaPage() {
                 <div
                   key={step.id}
                   style={{
-                    background: 'white',
-                    borderRadius: '12px',
-                    padding: '24px',
-                    marginBottom: '16px',
+                    background: 'var(--white)',
+                                        padding: 'var(--space-6)',
+                    marginBottom: 'var(--space-4)',
                     boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
                     border: '1px solid #EEEEEE',
                     display: 'flex',
-                    gap: '20px',
+                    gap: 'var(--space-5)',
                     alignItems: 'flex-start',
                   }}
                 >
                   <div style={{
-                    fontSize: '40px',
+                    fontSize: 'var(--space-10)',
                     flexShrink: 0,
                   }}>
                     {step.icon}
@@ -518,9 +510,9 @@ export default function EncyclopediaPage() {
                   <div style={{ flex: 1 }}>
                     <h3 style={{
                       margin: '0 0 12px 0',
-                      fontSize: '20px',
+                      fontSize: 'var(--space-5)',
                       fontWeight: 700,
-                      color: '#222222',
+                      color: 'var(--text-primary)',
                     }}>
                       {step.id}. {step.title}
                     </h3>
@@ -537,21 +529,20 @@ export default function EncyclopediaPage() {
               ))}
               <div style={{
                 background: 'linear-gradient(135deg, #DC2626 0%, #DC2626 100%)',
-                borderRadius: '16px',
-                padding: '40px',
+                                padding: 'var(--space-10)',
                 textAlign: 'center',
-                color: 'white',
-                marginTop: '32px',
+                color: 'var(--white)',
+                marginTop: 'var(--space-8)',
               }}>
                 <h3 style={{
-                  fontSize: '28px',
+                  fontSize: 'var(--space-7)',
                   fontWeight: 700,
                   margin: '0 0 12px 0',
                 }}>
                   Prêt à chercher votre véhicule ?
                 </h3>
                 <p style={{
-                  fontSize: '16px',
+                  fontSize: 'var(--space-4)',
                   margin: '0 0 24px 0',
                   opacity: 0.95,
                 }}>
@@ -562,11 +553,10 @@ export default function EncyclopediaPage() {
                   style={{
                     display: 'inline-block',
                     padding: '14px 32px',
-                    background: 'white',
-                    color: '#DC2626',
+                    background: 'var(--white)',
+                    color: 'var(--red-accent)',
                     textDecoration: 'none',
-                    borderRadius: '12px',
-                    fontSize: '16px',
+                                        fontSize: 'var(--space-4)',
                     fontWeight: 600,
                     transition: 'all 0.2s',
                   }}
@@ -579,7 +569,7 @@ export default function EncyclopediaPage() {
                     e.target.style.boxShadow = 'none'
                   }}
                 >
-                  🔍 Lancer une recherche
+                   Lancer une recherche
                 </Link>
               </div>
             </div>
@@ -595,26 +585,25 @@ export default function EncyclopediaPage() {
                 <div
                   key={idx}
                   style={{
-                    background: 'white',
-                    borderRadius: '12px',
-                    padding: '20px 24px',
-                    marginBottom: '12px',
+                    background: 'var(--white)',
+                                        padding: '20px 24px',
+                    marginBottom: 'var(--space-3)',
                     boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
                     border: '1px solid #EEEEEE',
                     transition: 'all 0.2s',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = '#DC2626'
+                    e.currentTarget.style.borderColor = 'var(--red-accent)'
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = '#EEEEEE'
+                    e.currentTarget.style.borderColor = 'var(--border-light)'
                   }}
                 >
                   <dt style={{
                     fontSize: '17px',
                     fontWeight: 700,
-                    color: '#DC2626',
-                    marginBottom: '8px',
+                    color: 'var(--red-accent)',
+                    marginBottom: 'var(--space-2)',
                   }}>
                     {item.term}
                   </dt>

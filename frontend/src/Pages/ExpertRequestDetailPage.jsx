@@ -30,7 +30,7 @@ export default function ExpertRequestDetailPage() {
   )
 
   if (!request) {
-    return <div style={{ padding: '40px', textAlign: 'center' }}>Chargement...</div>
+    return <div style={{ padding: 'var(--space-10)', textAlign: 'center' }}>Chargement...</div>
   }
 
   async function handleSearchVehicles() {
@@ -52,7 +52,7 @@ export default function ExpertRequestDetailPage() {
       mutateProposals()
       setShowProposeModal(false)
       setShowSearchModal(false)
-      alert('✅ Véhicule proposé avec succès !')
+      alert(' Véhicule proposé avec succès !')
     } catch (error) {
       console.error('Erreur:', error)
       alert('❌ Erreur lors de la proposition')
@@ -65,7 +65,7 @@ export default function ExpertRequestDetailPage() {
     try {
       await completeRequest(requestId)
       mutateRequest()
-      alert('✅ Demande terminée')
+      alert(' Demande terminée')
       navigate('/expert')
     } catch (error) {
       console.error('Erreur:', error)
@@ -81,30 +81,29 @@ export default function ExpertRequestDetailPage() {
   }
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '20px' }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'var(--space-5)' }}>
       {/* Header */}
       <div style={{ marginBottom: '30px' }}>
         <button
           onClick={() => navigate('/expert')}
           style={{
-            background: 'white',
+            background: 'var(--white)',
             border: '1px solid #EEEEEE',
             padding: '8px 16px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            marginBottom: '16px',
-            color: '#222222',
+                        cursor: 'pointer',
+            marginBottom: 'var(--space-4)',
+            color: 'var(--text-primary)',
             fontSize: '14px',
             fontWeight: 500,
             transition: 'all 0.2s'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#222222';
-            e.currentTarget.style.background = '#FAFAFA';
+            e.currentTarget.style.borderColor = 'var(--text-primary)';
+            e.currentTarget.style.background = 'var(--gray-50)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = '#EEEEEE';
-            e.currentTarget.style.background = 'white';
+            e.currentTarget.style.borderColor = 'var(--border-light)';
+            e.currentTarget.style.background = 'var(--white)';
           }}
         >
           ← Retour au dashboard
@@ -117,19 +116,19 @@ export default function ExpertRequestDetailPage() {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '16px',
+        gap: 'var(--space-4)',
         marginBottom: '30px'
       }}>
-        <StatCard icon="📋" label="Propositions" value={stats.proposed} color="#222222" />
-        <StatCard icon="❤️" label="Coup de cœur" value={stats.favorites} color="#DC2626" />
-        <StatCard icon="⏱️" label="En attente" value={stats.pending} color="#666666" />
-        <StatCard icon="❌" label="Refusés" value={stats.rejected} color="#999999" />
+        <StatCard icon="📋" label="Propositions" value={stats.proposed} color="var(--text-primary)" />
+        <StatCard icon="" label="Coup de cœur" value={stats.favorites} color="var(--red-accent)" />
+        <StatCard icon="" label="En attente" value={stats.pending} color="var(--text-secondary)" />
+        <StatCard icon="❌" label="Refusés" value={stats.rejected} color="var(--text-muted)" />
       </div>
 
       {/* Actions principales */}
       <div style={{
         display: 'flex',
-        gap: '12px',
+        gap: 'var(--space-3)',
         marginBottom: '30px',
         flexWrap: 'wrap'
       }}>
@@ -139,17 +138,16 @@ export default function ExpertRequestDetailPage() {
             flex: '1',
             minWidth: '200px',
             padding: '14px 24px',
-            background: '#DC2626',
-            color: 'white',
+            background: 'var(--red-accent)',
+            color: 'var(--white)',
             border: 'none',
-            borderRadius: '8px',
-            fontSize: '15px',
+                        fontSize: '15px',
             fontWeight: 600,
             cursor: 'pointer',
             transition: 'background 0.2s'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.background = '#B91C1C'}
-          onMouseLeave={(e) => e.currentTarget.style.background = '#DC2626'}
+          onMouseEnter={(e) => e.currentTarget.style.background = 'var(--red-accent)'}
+          onMouseLeave={(e) => e.currentTarget.style.background = 'var(--red-accent)'}
         >
           Rechercher des véhicules
         </button>
@@ -159,11 +157,10 @@ export default function ExpertRequestDetailPage() {
           disabled={request.status === 'TERMINEE'}
           style={{
             padding: '14px 24px',
-            background: request.status === 'TERMINEE' ? '#CCCCCC' : '#222222',
-            color: 'white',
+            background: request.status === 'TERMINEE' ? '#CCCCCC' : 'var(--text-primary)',
+            color: 'var(--white)',
             border: 'none',
-            borderRadius: '8px',
-            fontSize: '15px',
+                        fontSize: '15px',
             fontWeight: 600,
             cursor: request.status === 'TERMINEE' ? 'not-allowed' : 'pointer',
             transition: 'background 0.2s'
@@ -175,7 +172,7 @@ export default function ExpertRequestDetailPage() {
           }}
           onMouseLeave={(e) => {
             if (request.status !== 'TERMINEE') {
-              e.currentTarget.style.background = '#222222';
+              e.currentTarget.style.background = 'var(--text-primary)';
             }
           }}
         >
@@ -185,7 +182,7 @@ export default function ExpertRequestDetailPage() {
 
       {/* Propositions existantes */}
       <div>
-        <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '20px' }}>
+        <h2 style={{ fontSize: 'var(--space-5)', fontWeight: 600, marginBottom: 'var(--space-5)' }}>
           Véhicules proposés ({proposals?.length || 0})
         </h2>
 
@@ -193,11 +190,10 @@ export default function ExpertRequestDetailPage() {
           <div style={{
             textAlign: 'center',
             padding: '60px 20px',
-            background: 'white',
-            borderRadius: '12px',
-            color: '#6a737d'
+            background: 'var(--white)',
+                        color: '#6a737d'
           }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🚗</div>
+            <div style={{ fontSize: 'var(--space-12)', marginBottom: 'var(--space-4)' }}></div>
             <p>Aucun véhicule proposé pour le moment</p>
             <p>Utilisez le bouton "Rechercher" ci-dessus</p>
           </div>
@@ -205,7 +201,7 @@ export default function ExpertRequestDetailPage() {
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-            gap: '20px'
+            gap: 'var(--space-5)'
           }}>
             {proposals.map(proposal => (
               <ProposalCard
@@ -224,19 +220,18 @@ export default function ExpertRequestDetailPage() {
 function RequestCard({ request }) {
   const getStatusBadge = (status) => {
     const badges = {
-      'PENDING': { text: 'En attente', color: '#666666' },
-      'IN_PROGRESS': { text: 'En cours', color: '#DC2626' },
-      'COMPLETED': { text: 'Terminée', color: '#222222' },
-      'CANCELLED': { text: 'Annulée', color: '#999999' }
+      'PENDING': { text: 'En attente', color: 'var(--text-secondary)' },
+      'IN_PROGRESS': { text: 'En cours', color: 'var(--red-accent)' },
+      'COMPLETED': { text: 'Terminée', color: 'var(--text-primary)' },
+      'CANCELLED': { text: 'Annulée', color: 'var(--text-muted)' }
     }
     const badge = badges[status] || badges['IN_PROGRESS']
     return (
       <span style={{
         background: badge.color,
-        color: 'white',
+        color: 'var(--white)',
         padding: '4px 10px',
-        borderRadius: '4px',
-        fontSize: '11px',
+                fontSize: '11px',
         fontWeight: 600,
         letterSpacing: '0.5px',
         textTransform: 'uppercase'
@@ -248,20 +243,19 @@ function RequestCard({ request }) {
 
   return (
     <div style={{
-      background: 'white',
-      padding: '24px',
-      borderRadius: '12px',
-      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      background: 'var(--white)',
+      padding: 'var(--space-6)',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
       border: '1px solid #EEEEEE'
     }}>
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: '20px'
+        marginBottom: 'var(--space-5)'
       }}>
         <div>
-          <h1 style={{ margin: '0 0 8px 0', fontSize: '24px', fontWeight: 700 }}>
+          <h1 style={{ margin: '0 0 8px 0', fontSize: 'var(--space-6)', fontWeight: 700 }}>
             Demande de {request.client?.full_name || request.client?.email}
           </h1>
           <p style={{ color: '#6a737d', margin: 0, fontSize: '14px' }}>
@@ -273,12 +267,11 @@ function RequestCard({ request }) {
 
       <div style={{
         background: '#f8f9fa',
-        padding: '16px',
-        borderRadius: '12px',
-        marginBottom: '20px'
+        padding: 'var(--space-4)',
+                marginBottom: 'var(--space-5)'
       }}>
-        <strong style={{ display: 'block', marginBottom: '8px', color: '#24292e' }}>
-          📝 Description :
+        <strong style={{ display: 'block', marginBottom: 'var(--space-2)', color: '#24292e' }}>
+           Description :
         </strong>
         <p style={{ margin: 0, lineHeight: 1.6, color: '#586069' }}>
           {request.description}
@@ -288,13 +281,13 @@ function RequestCard({ request }) {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '16px'
+        gap: 'var(--space-4)'
       }}>
         {request.budget_max && (
           <CriteriaItem
             label="Budget max"
             value={`${request.budget_max.toLocaleString()} €`}
-            icon="💰"
+            icon=""
             color="#28a745"
           />
         )}
@@ -302,28 +295,28 @@ function RequestCard({ request }) {
           <CriteriaItem
             label="Carburant"
             value={request.preferred_fuel_type}
-            icon="⛽"
+            icon=""
           />
         )}
         {request.preferred_transmission && (
           <CriteriaItem
             label="Transmission"
             value={request.preferred_transmission}
-            icon="⚙️"
+            icon=""
           />
         )}
         {request.max_mileage && (
           <CriteriaItem
             label="Km max"
             value={`${request.max_mileage.toLocaleString()} km`}
-            icon="🛣️"
+            icon=""
           />
         )}
         {request.min_year && (
           <CriteriaItem
             label="Année min"
             value={request.min_year}
-            icon="📅"
+            icon=""
           />
         )}
       </div>
@@ -334,7 +327,7 @@ function RequestCard({ request }) {
 function CriteriaItem({ label, value, icon, color = '#24292e' }) {
   return (
     <div>
-      <div style={{ fontSize: '12px', color: '#6a737d', marginBottom: '4px' }}>
+      <div style={{ fontSize: 'var(--space-3)', color: '#6a737d', marginBottom: 'var(--space-1)' }}>
         {icon} {label}
       </div>
       <div style={{ fontSize: '18px', fontWeight: 600, color }}>
@@ -347,28 +340,27 @@ function CriteriaItem({ label, value, icon, color = '#24292e' }) {
 function StatCard({ icon, label, value, color }) {
   return (
     <div style={{
-      background: 'white',
-      padding: '20px',
-      borderRadius: '12px',
-      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      background: 'var(--white)',
+      padding: 'var(--space-5)',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
       border: '1px solid #EEEEEE',
       display: 'flex',
       alignItems: 'center',
-      gap: '16px'
+      gap: 'var(--space-4)'
     }}>
-      <div style={{ fontSize: '32px', lineHeight: 1 }}>{icon}</div>
+      <div style={{ fontSize: 'var(--space-8)', lineHeight: 1 }}>{icon}</div>
       <div>
         <div style={{
-          fontSize: '12px',
-          color: '#666666',
-          marginBottom: '4px',
+          fontSize: 'var(--space-3)',
+          color: 'var(--text-secondary)',
+          marginBottom: 'var(--space-1)',
           textTransform: 'uppercase',
           fontWeight: 600,
           letterSpacing: '0.5px'
         }}>
           {label}
         </div>
-        <div style={{ fontSize: '24px', fontWeight: 700, color }}>{value}</div>
+        <div style={{ fontSize: 'var(--space-6)', fontWeight: 700, color }}>{value}</div>
       </div>
     </div>
   )
@@ -377,19 +369,18 @@ function StatCard({ icon, label, value, color }) {
 function ProposalCard({ proposal, onViewVehicle }) {
   const getStatusBadge = (status) => {
     const badges = {
-      'PENDING': { text: 'En attente', color: '#666666' },
-      'LIKED': { text: 'Aimé', color: '#222222' },
-      'SUPER_LIKED': { text: 'Coup de cœur', color: '#DC2626' },
-      'REJECTED': { text: 'Refusé', color: '#999999' }
+      'PENDING': { text: 'En attente', color: 'var(--text-secondary)' },
+      'LIKED': { text: 'Aimé', color: 'var(--text-primary)' },
+      'SUPER_LIKED': { text: 'Coup de cœur', color: 'var(--red-accent)' },
+      'REJECTED': { text: 'Refusé', color: 'var(--text-muted)' }
     }
     const badge = badges[status] || badges['PENDING']
     return (
       <span style={{
         background: badge.color,
-        color: 'white',
+        color: 'var(--white)',
         padding: '4px 10px',
-        borderRadius: '4px',
-        fontSize: '11px',
+                fontSize: '11px',
         fontWeight: 600,
         letterSpacing: '0.5px',
         textTransform: 'uppercase'
@@ -401,9 +392,8 @@ function ProposalCard({ proposal, onViewVehicle }) {
 
   return (
     <div style={{
-      background: 'white',
-      borderRadius: '12px',
-      padding: '20px',
+      background: 'var(--white)',
+            padding: 'var(--space-5)',
       boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
       border: proposal.status === 'SUPER_LIKED' ? '2px solid #DC2626' : '1px solid #EEEEEE'
     }}>
@@ -411,21 +401,20 @@ function ProposalCard({ proposal, onViewVehicle }) {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '12px'
+        marginBottom: 'var(--space-3)'
       }}>
         {getStatusBadge(proposal.status)}
-        <span style={{ fontSize: '12px', color: '#6a737d' }}>
+        <span style={{ fontSize: 'var(--space-3)', color: '#6a737d' }}>
           {new Date(proposal.created_at).toLocaleDateString('fr-FR')}
         </span>
       </div>
 
       <div style={{
         background: '#f8f9fa',
-        padding: '12px',
-        borderRadius: '8px',
-        marginBottom: '12px'
+        padding: 'var(--space-3)',
+                marginBottom: 'var(--space-3)'
       }}>
-        <div style={{ fontWeight: 600, marginBottom: '8px', fontSize: '15px' }}>
+        <div style={{ fontWeight: 600, marginBottom: 'var(--space-2)', fontSize: '15px' }}>
           {proposal.vehicle?.title || 'Véhicule'}
         </div>
         <div style={{
@@ -435,44 +424,42 @@ function ProposalCard({ proposal, onViewVehicle }) {
           fontSize: '13px',
           color: '#6a737d'
         }}>
-          <div>💰 {proposal.vehicle?.price?.toLocaleString()} €</div>
-          <div>📅 {proposal.vehicle?.year}</div>
-          <div>🛣️ {proposal.vehicle?.mileage?.toLocaleString()} km</div>
-          <div>⛽ {proposal.vehicle?.fuel_type}</div>
+          <div> {proposal.vehicle?.price?.toLocaleString()} €</div>
+          <div> {proposal.vehicle?.year}</div>
+          <div> {proposal.vehicle?.mileage?.toLocaleString()} km</div>
+          <div> {proposal.vehicle?.fuel_type}</div>
         </div>
       </div>
 
       {proposal.message && (
         <div style={{
-          background: '#FAFAFA',
+          background: 'var(--gray-50)',
           padding: '10px',
-          borderRadius: '8px',
-          marginBottom: '12px',
+                    marginBottom: 'var(--space-3)',
           fontSize: '13px',
           lineHeight: 1.5,
           border: '1px solid #EEEEEE'
         }}>
-          <strong style={{ display: 'block', marginBottom: '4px', color: '#222222' }}>
+          <strong style={{ display: 'block', marginBottom: 'var(--space-1)', color: 'var(--text-primary)' }}>
             Votre message :
           </strong>
-          <div style={{ color: '#666666' }}>{proposal.message}</div>
+          <div style={{ color: 'var(--text-secondary)' }}>{proposal.message}</div>
         </div>
       )}
 
       {proposal.rejection_reason && (
         <div style={{
-          background: '#FAFAFA',
+          background: 'var(--gray-50)',
           padding: '10px',
-          borderRadius: '8px',
-          marginBottom: '12px',
+                    marginBottom: 'var(--space-3)',
           fontSize: '13px',
           lineHeight: 1.5,
           border: '1px solid #DC2626'
         }}>
-          <strong style={{ display: 'block', marginBottom: '4px', color: '#DC2626' }}>
+          <strong style={{ display: 'block', marginBottom: 'var(--space-1)', color: 'var(--red-accent)' }}>
             Raison du refus :
           </strong>
-          <div style={{ color: '#666666' }}>{proposal.rejection_reason}</div>
+          <div style={{ color: 'var(--text-secondary)' }}>{proposal.rejection_reason}</div>
         </div>
       )}
 
@@ -481,22 +468,21 @@ function ProposalCard({ proposal, onViewVehicle }) {
         style={{
           width: '100%',
           padding: '10px',
-          background: 'white',
+          background: 'var(--white)',
           border: '1px solid #EEEEEE',
-          color: '#222222',
-          borderRadius: '8px',
-          fontSize: '13px',
+          color: 'var(--text-primary)',
+                    fontSize: '13px',
           fontWeight: 600,
           cursor: 'pointer',
           transition: 'all 0.2s'
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = '#222222';
-          e.currentTarget.style.background = '#FAFAFA';
+          e.currentTarget.style.borderColor = 'var(--text-primary)';
+          e.currentTarget.style.background = 'var(--gray-50)';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = '#EEEEEE';
-          e.currentTarget.style.background = 'white';
+          e.currentTarget.style.borderColor = 'var(--border-light)';
+          e.currentTarget.style.background = 'var(--white)';
         }}
       >
         Voir le véhicule

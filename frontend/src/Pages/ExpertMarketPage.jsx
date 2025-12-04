@@ -59,7 +59,7 @@ export default function ExpertMarketPage() {
     try {
       await acceptRequest(requestId);
       mutate();
-      alert('✅ Demande acceptée avec succès !');
+      alert(' Demande acceptée avec succès !');
       navigate(`/expert/requests/${requestId}`);
     } catch (error) {
       console.error('Erreur:', error);
@@ -73,11 +73,11 @@ export default function ExpertMarketPage() {
   };
 
   return (
-    <div style={{ padding: '32px' }}>
+    <div style={{ padding: 'var(--space-8)' }}>
       {/* Header */}
-      <div style={{ marginBottom: '32px' }}>
+      <div style={{ marginBottom: 'var(--space-8)' }}>
         <h1 style={{
-          fontSize: '32px',
+          fontSize: 'var(--space-8)',
           fontWeight: 700,
           color: '#24292e',
           margin: '0 0 8px 0',
@@ -85,7 +85,7 @@ export default function ExpertMarketPage() {
           🏪 Marché des demandes
         </h1>
         <p style={{
-          fontSize: '16px',
+          fontSize: 'var(--space-4)',
           color: '#6a737d',
           margin: 0,
         }}>
@@ -95,26 +95,24 @@ export default function ExpertMarketPage() {
 
       {/* Filters */}
       <div style={{
-        background: 'white',
-        padding: '20px',
-        borderRadius: '16px',
-        marginBottom: '24px',
+        background: 'var(--white)',
+        padding: 'var(--space-5)',
+                marginBottom: 'var(--space-6)',
         boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
         display: 'flex',
-        gap: '12px',
+        gap: 'var(--space-3)',
         flexWrap: 'wrap',
       }}>
         <input
           type="text"
-          placeholder="🔍 Rechercher dans les descriptions..."
+          placeholder=" Rechercher dans les descriptions..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
             flex: '1 1 300px',
             padding: '12px 16px',
             border: '2px solid #e1e4e8',
-            borderRadius: '10px',
-            fontSize: '14px',
+                        fontSize: '14px',
           }}
         />
 
@@ -124,12 +122,11 @@ export default function ExpertMarketPage() {
           style={{
             padding: '12px 16px',
             border: '2px solid #e1e4e8',
-            borderRadius: '10px',
-            fontSize: '14px',
+                        fontSize: '14px',
             cursor: 'pointer',
           }}
         >
-          <option value="">💰 Tous les budgets</option>
+          <option value=""> Tous les budgets</option>
           <option value="10000">≤ 10 000 €</option>
           <option value="15000">≤ 15 000 €</option>
           <option value="20000">≤ 20 000 €</option>
@@ -143,12 +140,11 @@ export default function ExpertMarketPage() {
           style={{
             padding: '12px 16px',
             border: '2px solid #e1e4e8',
-            borderRadius: '10px',
-            fontSize: '14px',
+                        fontSize: '14px',
             cursor: 'pointer',
           }}
         >
-          <option value="recent">📅 Plus récentes</option>
+          <option value="recent"> Plus récentes</option>
           <option value="urgent">🚨 Plus urgentes (48h)</option>
           <option value="budget">💵 Budget décroissant</option>
         </select>
@@ -164,14 +160,13 @@ export default function ExpertMarketPage() {
               padding: '12px 16px',
               background: '#f6f8fa',
               border: '2px solid #e1e4e8',
-              borderRadius: '10px',
-              fontSize: '14px',
+                            fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',
               color: '#586069',
             }}
           >
-            🔄 Réinitialiser
+             Réinitialiser
           </button>
         )}
       </div>
@@ -181,23 +176,23 @@ export default function ExpertMarketPage() {
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '16px',
-          marginBottom: '24px',
+          gap: 'var(--space-4)',
+          marginBottom: 'var(--space-6)',
         }}>
           <StatCard
             icon="📋"
             label="Demandes disponibles"
             value={filteredAndSortedRequests.length}
-            color="#222222"
+            color="var(--text-primary)"
           />
           <StatCard
             icon="🚨"
             label="Demandes urgentes"
             value={filteredAndSortedRequests.filter(r => isUrgent(r.created_at)).length}
-            color="#DC2626"
+            color="var(--red-accent)"
           />
           <StatCard
-            icon="💰"
+            icon=""
             label="Budget moyen"
             value={
               filteredAndSortedRequests.length > 0
@@ -207,7 +202,7 @@ export default function ExpertMarketPage() {
                   ).toLocaleString() + ' €'
                 : 'N/A'
             }
-            color="#666666"
+            color="var(--text-secondary)"
           />
         </div>
       )}
@@ -217,20 +212,18 @@ export default function ExpertMarketPage() {
         <div style={{
           textAlign: 'center',
           padding: '60px 20px',
-          background: 'white',
-          borderRadius: '16px',
-        }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
+          background: 'var(--white)',
+                  }}>
+          <div style={{ fontSize: 'var(--space-12)', marginBottom: 'var(--space-4)' }}></div>
           <p style={{ color: '#6a737d' }}>Chargement des demandes...</p>
         </div>
       ) : filteredAndSortedRequests.length === 0 ? (
         <div style={{
           textAlign: 'center',
           padding: '60px 20px',
-          background: 'white',
-          borderRadius: '16px',
-        }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>📭</div>
+          background: 'var(--white)',
+                  }}>
+          <div style={{ fontSize: 'var(--space-12)', marginBottom: 'var(--space-4)' }}></div>
           <h3 style={{ margin: '0 0 8px 0' }}>Aucune demande disponible</h3>
           <p style={{ color: '#6a737d', margin: 0 }}>
             {searchTerm || budgetFilter
@@ -242,7 +235,7 @@ export default function ExpertMarketPage() {
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))',
-          gap: '20px',
+          gap: 'var(--space-5)',
         }}>
           {filteredAndSortedRequests.map((request) => (
             <RequestCard
@@ -261,23 +254,22 @@ export default function ExpertMarketPage() {
 function StatCard({ icon, label, value, color }) {
   return (
     <div style={{
-      background: 'white',
-      padding: '20px',
-      borderRadius: '12px',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+      background: 'var(--white)',
+      padding: 'var(--space-5)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
       display: 'flex',
       alignItems: 'center',
-      gap: '16px',
+      gap: 'var(--space-4)',
     }}>
       <div style={{
-        fontSize: '32px',
+        fontSize: 'var(--space-8)',
         lineHeight: 1,
       }}>{icon}</div>
       <div>
         <div style={{
-          fontSize: '12px',
+          fontSize: 'var(--space-3)',
           color: '#6a737d',
-          marginBottom: '4px',
+          marginBottom: 'var(--space-1)',
           textTransform: 'uppercase',
           fontWeight: 600,
           letterSpacing: '0.5px',
@@ -285,7 +277,7 @@ function StatCard({ icon, label, value, color }) {
           {label}
         </div>
         <div style={{
-          fontSize: '24px',
+          fontSize: 'var(--space-6)',
           fontWeight: 700,
           color: color,
         }}>{value}</div>
@@ -299,9 +291,8 @@ function RequestCard({ request, onAccept, isUrgent }) {
 
   return (
     <div style={{
-      background: 'white',
-      borderRadius: '12px',
-      padding: '24px',
+      background: 'var(--white)',
+            padding: 'var(--space-6)',
       boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
       border: isUrgent ? '2px solid #DC2626' : '1px solid #EEEEEE',
       transition: 'all 0.2s',
@@ -318,23 +309,23 @@ function RequestCard({ request, onAccept, isUrgent }) {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: '16px',
+        marginBottom: 'var(--space-4)',
       }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
+          gap: 'var(--space-2)',
         }}>
           <div style={{
             width: '36px',
             height: '36px',
             borderRadius: '50%',
-            background: '#DC2626',
+            background: 'var(--red-accent)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'white',
-            fontSize: '16px',
+            color: 'var(--white)',
+            fontSize: 'var(--space-4)',
             fontWeight: 600,
           }}>
             {request.client?.full_name?.[0] || request.client?.email?.[0] || '?'}
@@ -343,7 +334,7 @@ function RequestCard({ request, onAccept, isUrgent }) {
             <div style={{ fontSize: '14px', fontWeight: 600, color: '#24292e' }}>
               {request.client?.full_name || request.client?.email}
             </div>
-            <div style={{ fontSize: '12px', color: '#6a737d' }}>
+            <div style={{ fontSize: 'var(--space-3)', color: '#6a737d' }}>
               Il y a {age}h
             </div>
           </div>
@@ -351,11 +342,10 @@ function RequestCard({ request, onAccept, isUrgent }) {
 
         {isUrgent && (
           <span style={{
-            background: '#DC2626',
-            color: 'white',
+            background: 'var(--red-accent)',
+            color: 'var(--white)',
             padding: '4px 8px',
-            borderRadius: '4px',
-            fontSize: '11px',
+                        fontSize: '11px',
             fontWeight: 600,
             letterSpacing: '0.5px',
             textTransform: 'uppercase',
@@ -368,9 +358,8 @@ function RequestCard({ request, onAccept, isUrgent }) {
       {/* Description */}
       <div style={{
         background: '#f6f8fa',
-        padding: '12px',
-        borderRadius: '8px',
-        marginBottom: '16px',
+        padding: 'var(--space-3)',
+                marginBottom: 'var(--space-4)',
       }}>
         <p style={{
           margin: 0,
@@ -386,23 +375,23 @@ function RequestCard({ request, onAccept, isUrgent }) {
       <div style={{
         display: 'flex',
         flexWrap: 'wrap',
-        gap: '8px',
-        marginBottom: '16px',
+        gap: 'var(--space-2)',
+        marginBottom: 'var(--space-4)',
       }}>
         {request.budget_max && (
-          <Tag icon="💰" label={`${request.budget_max.toLocaleString()} €`} />
+          <Tag icon="" label={`${request.budget_max.toLocaleString()} €`} />
         )}
         {request.preferred_fuel_type && (
-          <Tag icon="⛽" label={request.preferred_fuel_type} />
+          <Tag icon="" label={request.preferred_fuel_type} />
         )}
         {request.preferred_transmission && (
-          <Tag icon="⚙️" label={request.preferred_transmission} />
+          <Tag icon="" label={request.preferred_transmission} />
         )}
         {request.max_mileage && (
-          <Tag icon="🛣️" label={`${request.max_mileage.toLocaleString()} km`} />
+          <Tag icon="" label={`${request.max_mileage.toLocaleString()} km`} />
         )}
         {request.min_year && (
-          <Tag icon="📅" label={`${request.min_year}`} />
+          <Tag icon="" label={`${request.min_year}`} />
         )}
       </div>
 
@@ -412,20 +401,19 @@ function RequestCard({ request, onAccept, isUrgent }) {
         style={{
           width: '100%',
           padding: '14px',
-          background: '#DC2626',
-          color: 'white',
+          background: 'var(--red-accent)',
+          color: 'var(--white)',
           border: 'none',
-          borderRadius: '8px',
-          fontSize: '15px',
+                    fontSize: '15px',
           fontWeight: 600,
           cursor: 'pointer',
           transition: 'background 0.2s',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = '#B91C1C';
+          e.currentTarget.style.background = 'var(--red-accent)';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.background = '#DC2626';
+          e.currentTarget.style.background = 'var(--red-accent)';
         }}
       >
         Accepter cette demande
@@ -439,12 +427,11 @@ function Tag({ icon, label }) {
     <span style={{
       display: 'inline-flex',
       alignItems: 'center',
-      gap: '4px',
-      background: 'white',
+      gap: 'var(--space-1)',
+      background: 'var(--white)',
       border: '1px solid #e1e4e8',
       padding: '4px 10px',
-      borderRadius: '12px',
-      fontSize: '13px',
+            fontSize: '13px',
       fontWeight: 500,
       color: '#24292e',
     }}>

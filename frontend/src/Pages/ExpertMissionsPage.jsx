@@ -22,7 +22,7 @@ export default function ExpertMissionsPage() {
     try {
       await completeRequest(requestId);
       mutate();
-      alert('✅ Mission terminée !');
+      alert(' Mission terminée !');
     } catch (error) {
       console.error('Erreur:', error);
       alert('❌ Erreur lors de la finalisation');
@@ -32,11 +32,11 @@ export default function ExpertMissionsPage() {
   const totalMissions = (missions?.length || 0) + (completed?.length || 0);
 
   return (
-    <div style={{ padding: '32px' }}>
+    <div style={{ padding: 'var(--space-8)' }}>
       {/* Header */}
-      <div style={{ marginBottom: '32px' }}>
+      <div style={{ marginBottom: 'var(--space-8)' }}>
         <h1 style={{
-          fontSize: '32px',
+          fontSize: 'var(--space-8)',
           fontWeight: 700,
           color: '#24292e',
           margin: '0 0 8px 0',
@@ -44,7 +44,7 @@ export default function ExpertMissionsPage() {
           📋 Mes missions
         </h1>
         <p style={{
-          fontSize: '16px',
+          fontSize: 'var(--space-4)',
           color: '#6a737d',
           margin: 0,
         }}>
@@ -56,87 +56,84 @@ export default function ExpertMissionsPage() {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-        gap: '16px',
-        marginBottom: '32px',
+        gap: 'var(--space-4)',
+        marginBottom: 'var(--space-8)',
       }}>
         <StatCard
-          icon="🔄"
+          icon=""
           label="En cours"
           value={missions?.length || 0}
-          color="#DC2626"
+          color="var(--red-accent)"
         />
         <StatCard
-          icon="✅"
+          icon=""
           label="Terminées"
           value={completed?.length || 0}
-          color="#222222"
+          color="var(--text-primary)"
         />
         <StatCard
-          icon="📊"
+          icon=""
           label="Total"
           value={totalMissions}
-          color="#666666"
+          color="var(--text-secondary)"
         />
         <StatCard
-          icon="📈"
+          icon=""
           label="Taux de complétion"
           value={
             totalMissions > 0
               ? `${Math.round(((completed?.length || 0) / totalMissions) * 100)}%`
               : '0%'
           }
-          color="#222222"
+          color="var(--text-primary)"
         />
       </div>
 
       {/* Active Missions */}
-      <div style={{ marginBottom: '40px' }}>
+      <div style={{ marginBottom: 'var(--space-10)' }}>
         <h2 style={{
-          fontSize: '20px',
+          fontSize: 'var(--space-5)',
           fontWeight: 600,
           color: '#24292e',
-          marginBottom: '16px',
+          marginBottom: 'var(--space-4)',
         }}>
-          🔄 Missions en cours ({missions?.length || 0})
+           Missions en cours ({missions?.length || 0})
         </h2>
 
         {!missions ? (
           <div style={{
             textAlign: 'center',
             padding: '40px 20px',
-            background: 'white',
-            borderRadius: '12px',
-          }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
+            background: 'var(--white)',
+                      }}>
+            <div style={{ fontSize: 'var(--space-12)', marginBottom: 'var(--space-4)' }}></div>
             <p style={{ color: '#6a737d' }}>Chargement...</p>
           </div>
         ) : missions.length === 0 ? (
           <div style={{
             textAlign: 'center',
             padding: '60px 20px',
-            background: 'white',
-            borderRadius: '12px',
-          }}>
-            <div style={{ fontSize: '64px', marginBottom: '16px' }}>🎉</div>
+            background: 'var(--white)',
+                      }}>
+            <div style={{ fontSize: 'var(--space-16)', marginBottom: 'var(--space-4)' }}></div>
             <h3 style={{ margin: '0 0 8px 0' }}>Aucune mission en cours</h3>
-            <p style={{ color: '#6a737d', marginBottom: '20px' }}>
+            <p style={{ color: '#6a737d', marginBottom: 'var(--space-5)' }}>
               Acceptez des demandes depuis le marché pour commencer !
             </p>
             <button
               onClick={() => navigate('/expert/market')}
               style={{
                 padding: '12px 24px',
-                background: '#DC2626',
-                color: 'white',
+                background: 'var(--red-accent)',
+                color: 'var(--white)',
                 border: 'none',
-                borderRadius: '8px',
-                fontSize: '15px',
+                                fontSize: '15px',
                 fontWeight: 600,
                 cursor: 'pointer',
                 transition: 'background 0.2s',
               }}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#B91C1C'}
-              onMouseLeave={(e) => e.currentTarget.style.background = '#DC2626'}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'var(--red-accent)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'var(--red-accent)'}
             >
               Voir le marché
             </button>
@@ -145,7 +142,7 @@ export default function ExpertMissionsPage() {
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))',
-            gap: '20px',
+            gap: 'var(--space-5)',
           }}>
             {missions.map((mission) => (
               <MissionCard
@@ -164,18 +161,18 @@ export default function ExpertMissionsPage() {
       {completed && completed.length > 0 && (
         <div>
           <h2 style={{
-            fontSize: '20px',
+            fontSize: 'var(--space-5)',
             fontWeight: 600,
             color: '#24292e',
-            marginBottom: '16px',
+            marginBottom: 'var(--space-4)',
           }}>
-            ✅ Missions terminées ({completed.length})
+             Missions terminées ({completed.length})
           </h2>
 
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))',
-            gap: '20px',
+            gap: 'var(--space-5)',
           }}>
             {completed.slice(0, 6).map((mission) => (
               <CompletedMissionCard
@@ -194,20 +191,19 @@ export default function ExpertMissionsPage() {
 function StatCard({ icon, label, value, color }) {
   return (
     <div style={{
-      background: 'white',
-      padding: '20px',
-      borderRadius: '12px',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+      background: 'var(--white)',
+      padding: 'var(--space-5)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
       display: 'flex',
       alignItems: 'center',
-      gap: '16px',
+      gap: 'var(--space-4)',
     }}>
-      <div style={{ fontSize: '32px', lineHeight: 1 }}>{icon}</div>
+      <div style={{ fontSize: 'var(--space-8)', lineHeight: 1 }}>{icon}</div>
       <div>
         <div style={{
-          fontSize: '12px',
+          fontSize: 'var(--space-3)',
           color: '#6a737d',
-          marginBottom: '4px',
+          marginBottom: 'var(--space-1)',
           textTransform: 'uppercase',
           fontWeight: 600,
           letterSpacing: '0.5px',
@@ -215,7 +211,7 @@ function StatCard({ icon, label, value, color }) {
           {label}
         </div>
         <div style={{
-          fontSize: '24px',
+          fontSize: 'var(--space-6)',
           fontWeight: 700,
           color: color,
         }}>{value}</div>
@@ -229,9 +225,8 @@ function MissionCard({ mission, onViewDetails, onComplete, onSearchVehicles }) {
 
   return (
     <div style={{
-      background: 'white',
-      borderRadius: '12px',
-      padding: '24px',
+      background: 'var(--white)',
+            padding: 'var(--space-6)',
       boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
       border: '1px solid #EEEEEE',
     }}>
@@ -240,14 +235,14 @@ function MissionCard({ mission, onViewDetails, onComplete, onSearchVehicles }) {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: '16px',
+        marginBottom: 'var(--space-4)',
       }}>
         <div>
           <div style={{
-            fontSize: '16px',
+            fontSize: 'var(--space-4)',
             fontWeight: 600,
             color: '#24292e',
-            marginBottom: '4px',
+            marginBottom: 'var(--space-1)',
           }}>
             {mission.client?.full_name || mission.client?.email}
           </div>
@@ -256,11 +251,10 @@ function MissionCard({ mission, onViewDetails, onComplete, onSearchVehicles }) {
           </div>
         </div>
         <span style={{
-          background: '#DC2626',
-          color: 'white',
+          background: 'var(--red-accent)',
+          color: 'var(--white)',
           padding: '4px 10px',
-          borderRadius: '4px',
-          fontSize: '11px',
+                    fontSize: '11px',
           fontWeight: 600,
           letterSpacing: '0.5px',
           textTransform: 'uppercase',
@@ -272,9 +266,8 @@ function MissionCard({ mission, onViewDetails, onComplete, onSearchVehicles }) {
       {/* Description */}
       <div style={{
         background: '#f6f8fa',
-        padding: '12px',
-        borderRadius: '8px',
-        marginBottom: '16px',
+        padding: 'var(--space-3)',
+                marginBottom: 'var(--space-4)',
       }}>
         <p style={{
           margin: 0,
@@ -294,50 +287,48 @@ function MissionCard({ mission, onViewDetails, onComplete, onSearchVehicles }) {
       {/* Actions */}
       <div style={{
         display: 'flex',
-        gap: '8px',
+        gap: 'var(--space-2)',
         flexDirection: 'column',
       }}>
         <button
           onClick={onSearchVehicles}
           style={{
             width: '100%',
-            padding: '12px',
-            background: '#DC2626',
-            color: 'white',
+            padding: 'var(--space-3)',
+            background: 'var(--red-accent)',
+            color: 'var(--white)',
             border: 'none',
-            borderRadius: '8px',
-            fontSize: '14px',
+                        fontSize: '14px',
             fontWeight: 600,
             cursor: 'pointer',
             transition: 'background 0.2s',
           }}
-          onMouseEnter={(e) => e.currentTarget.style.background = '#B91C1C'}
-          onMouseLeave={(e) => e.currentTarget.style.background = '#DC2626'}
+          onMouseEnter={(e) => e.currentTarget.style.background = 'var(--red-accent)'}
+          onMouseLeave={(e) => e.currentTarget.style.background = 'var(--red-accent)'}
         >
-          🔍 Rechercher véhicules
+           Rechercher véhicules
         </button>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
           <button
             onClick={onViewDetails}
             style={{
               flex: 1,
               padding: '10px',
-              background: 'white',
-              color: '#222222',
+              background: 'var(--white)',
+              color: 'var(--text-primary)',
               border: '1px solid #EEEEEE',
-              borderRadius: '8px',
-              fontSize: '14px',
+                            fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#222222';
-              e.currentTarget.style.background = '#FAFAFA';
+              e.currentTarget.style.borderColor = 'var(--text-primary)';
+              e.currentTarget.style.background = 'var(--gray-50)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = '#EEEEEE';
-              e.currentTarget.style.background = 'white';
+              e.currentTarget.style.borderColor = 'var(--border-light)';
+              e.currentTarget.style.background = 'var(--white)';
             }}
           >
             Détails
@@ -347,17 +338,16 @@ function MissionCard({ mission, onViewDetails, onComplete, onSearchVehicles }) {
             style={{
               flex: 1,
               padding: '10px',
-              background: '#222222',
-              color: 'white',
+              background: 'var(--text-primary)',
+              color: 'var(--white)',
               border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
+                            fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'background 0.2s',
             }}
             onMouseEnter={(e) => e.currentTarget.style.background = '#000000'}
-            onMouseLeave={(e) => e.currentTarget.style.background = '#222222'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'var(--text-primary)'}
           >
             Terminer
           </button>
@@ -376,9 +366,8 @@ function CompletedMissionCard({ mission, onViewDetails }) {
 
   return (
     <div style={{
-      background: 'white',
-      borderRadius: '16px',
-      padding: '20px',
+      background: 'var(--white)',
+            padding: 'var(--space-5)',
       boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
       opacity: 0.8,
     }}>
@@ -386,27 +375,26 @@ function CompletedMissionCard({ mission, onViewDetails }) {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: '12px',
+        marginBottom: 'var(--space-3)',
       }}>
         <div>
           <div style={{
             fontSize: '15px',
             fontWeight: 600,
             color: '#24292e',
-            marginBottom: '4px',
+            marginBottom: 'var(--space-1)',
           }}>
             {mission.client?.full_name || mission.client?.email}
           </div>
-          <div style={{ fontSize: '12px', color: '#6a737d' }}>
+          <div style={{ fontSize: 'var(--space-3)', color: '#6a737d' }}>
             Terminée le {completedDate}
           </div>
         </div>
         <span style={{
-          background: '#222222',
-          color: 'white',
+          background: 'var(--text-primary)',
+          color: 'var(--white)',
           padding: '4px 8px',
-          borderRadius: '4px',
-          fontSize: '11px',
+                    fontSize: '11px',
           fontWeight: 600,
           letterSpacing: '0.5px',
           textTransform: 'uppercase',
@@ -420,22 +408,21 @@ function CompletedMissionCard({ mission, onViewDetails }) {
         style={{
           width: '100%',
           padding: '10px',
-          background: 'white',
-          color: '#222222',
+          background: 'var(--white)',
+          color: 'var(--text-primary)',
           border: '1px solid #EEEEEE',
-          borderRadius: '8px',
-          fontSize: '13px',
+                    fontSize: '13px',
           fontWeight: 600,
           cursor: 'pointer',
           transition: 'all 0.2s',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = '#222222';
-          e.currentTarget.style.background = '#FAFAFA';
+          e.currentTarget.style.borderColor = 'var(--text-primary)';
+          e.currentTarget.style.background = 'var(--gray-50)';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = '#EEEEEE';
-          e.currentTarget.style.background = 'white';
+          e.currentTarget.style.borderColor = 'var(--border-light)';
+          e.currentTarget.style.background = 'var(--white)';
         }}
       >
         Voir les détails

@@ -17,14 +17,13 @@ export default function AdminDashboard() {
         maxWidth: '600px',
         margin: '100px auto',
         textAlign: 'center',
-        padding: '40px',
-        background: 'white',
-        borderRadius: '16px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+        padding: 'var(--space-10)',
+        background: 'var(--white)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
       }}>
-        <div style={{ fontSize: '64px', marginBottom: '20px' }}>🔒</div>
-        <h2 style={{ marginBottom: '16px' }}>Accès réservé aux administrateurs</h2>
-        <p style={{ color: '#6a737d', marginBottom: '24px' }}>
+        <div style={{ fontSize: 'var(--space-16)', marginBottom: 'var(--space-5)' }}>🔒</div>
+        <h2 style={{ marginBottom: 'var(--space-4)' }}>Accès réservé aux administrateurs</h2>
+        <p style={{ color: '#6a737d', marginBottom: 'var(--space-6)' }}>
           Cette page nécessite des privilèges administrateur
         </p>
         <button 
@@ -32,10 +31,9 @@ export default function AdminDashboard() {
           style={{
             padding: '12px 24px',
             background: '#667eea',
-            color: 'white',
+            color: 'var(--white)',
             border: 'none',
-            borderRadius: '8px',
-            fontSize: '15px',
+                        fontSize: '15px',
             fontWeight: 600,
             cursor: 'pointer'
           }}
@@ -143,31 +141,31 @@ export default function AdminDashboard() {
 
   async function clearQueue() {
     if (!confirm('Vider la queue Redis ?')) return
-    alert('🗑️ Queue vidée')
+    alert(' Queue vidée')
     loadData()
   }
 
   if (loading) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
-        <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
+      <div style={{ padding: 'var(--space-10)', textAlign: 'center' }}>
+        <div style={{ fontSize: 'var(--space-12)', marginBottom: 'var(--space-4)' }}></div>
         <p>Chargement...</p>
       </div>
     )
   }
 
   return (
-    <div style={{ maxWidth: '1600px', margin: '0 auto', padding: '20px' }}>
+    <div style={{ maxWidth: '1600px', margin: '0 auto', padding: 'var(--space-5)' }}>
       <div style={{ marginBottom: '30px' }}>
         <h1 style={{ 
-          fontSize: '32px', 
+          fontSize: 'var(--space-8)', 
           fontWeight: 700, 
-          marginBottom: '8px',
+          marginBottom: 'var(--space-2)',
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent'
         }}>
-          🔧 Dashboard Administrateur
+           Dashboard Administrateur
         </h1>
         <p style={{ color: '#6a737d', fontSize: '15px' }}>
           Monitoring des scrapers, worker et base de données
@@ -178,16 +176,15 @@ export default function AdminDashboard() {
 
       <div style={{
         display: 'flex',
-        gap: '8px',
-        marginBottom: '24px',
-        background: 'white',
-        padding: '8px',
-        borderRadius: '12px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+        gap: 'var(--space-2)',
+        marginBottom: 'var(--space-6)',
+        background: 'var(--white)',
+        padding: 'var(--space-2)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
       }}>
-        <TabButton active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} label="📊 Vue d'ensemble" />
+        <TabButton active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} label=" Vue d'ensemble" />
         <TabButton active={activeTab === 'scrapers'} onClick={() => setActiveTab('scrapers')} label="🕷️ Scrapers" />
-        <TabButton active={activeTab === 'worker'} onClick={() => setActiveTab('worker')} label="⚙️ Worker" />
+        <TabButton active={activeTab === 'worker'} onClick={() => setActiveTab('worker')} label=" Worker" />
         <TabButton active={activeTab === 'logs'} onClick={() => setActiveTab('logs')} label="📋 Logs" />
       </div>
 
@@ -206,37 +203,35 @@ function HealthAlert({ workerHealth, onRefresh }) {
   return (
     <div style={{
       background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)',
-      color: 'white',
+      color: 'var(--white)',
       padding: '16px 20px',
-      borderRadius: '12px',
-      marginBottom: '24px',
+            marginBottom: 'var(--space-6)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <span style={{ fontSize: '24px' }}>⚠️</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+        <span style={{ fontSize: 'var(--space-6)' }}></span>
         <div>
           <strong>Problèmes détectés</strong>
           <div style={{ fontSize: '13px', opacity: 0.9 }}>
             {!workerHealth.connections.redis && '❌ Redis • '}
             {!workerHealth.connections.elasticsearch && '❌ ES • '}
             {!workerHealth.connections.database && '❌ DB • '}
-            {workerHealth.queue_size > 100 && `⚠️ Queue: ${workerHealth.queue_size}`}
+            {workerHealth.queue_size > 100 && ` Queue: ${workerHealth.queue_size}`}
           </div>
         </div>
       </div>
       <button onClick={onRefresh} style={{
         background: 'rgba(255,255,255,0.2)',
         border: '1px solid rgba(255,255,255,0.3)',
-        color: 'white',
+        color: 'var(--white)',
         padding: '8px 16px',
-        borderRadius: '8px',
-        cursor: 'pointer',
+                cursor: 'pointer',
         fontSize: '13px',
         fontWeight: 600
       }}>
-        🔄 Rafraîchir
+         Rafraîchir
       </button>
     </div>
   )
@@ -247,10 +242,9 @@ function TabButton({ active, onClick, label }) {
     <button onClick={onClick} style={{
       padding: '12px 20px',
       background: active ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent',
-      color: active ? 'white' : '#6a737d',
+      color: active ? 'var(--white)' : '#6a737d',
       border: 'none',
-      borderRadius: '8px',
-      fontSize: '14px',
+            fontSize: '14px',
       fontWeight: active ? 600 : 500,
       cursor: 'pointer',
       transition: 'all 0.2s',
@@ -267,38 +261,36 @@ function OverviewTab({ stats }) {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '16px',
+        gap: 'var(--space-4)',
         marginBottom: '30px'
       }}>
-        <KPICard icon="🚗" label="Total véhicules" value={stats.total_vehicles.toLocaleString()} color="#667eea" />
-        <KPICard icon="📈" label="Nouveaux (24h)" value={stats.last_24h.new_vehicles} trend={`+${stats.last_24h.new_vehicles}`} color="#28a745" />
-        <KPICard icon="🔄" label="Mis à jour (24h)" value={stats.last_24h.updated_vehicles} color="#17a2b8" />
+        <KPICard icon="" label="Total véhicules" value={stats.total_vehicles.toLocaleString()} color="#667eea" />
+        <KPICard icon="" label="Nouveaux (24h)" value={stats.last_24h.new_vehicles} trend={`+${stats.last_24h.new_vehicles}`} color="#28a745" />
+        <KPICard icon="" label="Mis à jour (24h)" value={stats.last_24h.updated_vehicles} color="#17a2b8" />
         <KPICard icon="❌" label="Erreurs (24h)" value={stats.last_24h.errors} color={stats.last_24h.errors > 10 ? '#dc3545' : '#ffc107'} />
       </div>
 
       <div style={{
-        background: 'white',
-        padding: '24px',
-        borderRadius: '16px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-        marginBottom: '24px'
+        background: 'var(--white)',
+        padding: 'var(--space-6)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        marginBottom: 'var(--space-6)'
       }}>
-        <h3 style={{ marginBottom: '20px', fontSize: '18px', fontWeight: 600 }}>📊 Répartition par source</h3>
+        <h3 style={{ marginBottom: 'var(--space-5)', fontSize: '18px', fontWeight: 600 }}> Répartition par source</h3>
         <SourcesChart sources={stats.sources} total={stats.total_vehicles} />
       </div>
 
       <div style={{
-        background: 'white',
-        padding: '24px',
-        borderRadius: '16px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-        marginBottom: '24px'
+        background: 'var(--white)',
+        padding: 'var(--space-6)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        marginBottom: 'var(--space-6)'
       }}>
-        <h3 style={{ marginBottom: '20px', fontSize: '18px', fontWeight: 600 }}>🔍 Déduplication</h3>
+        <h3 style={{ marginBottom: 'var(--space-5)', fontSize: '18px', fontWeight: 600 }}> Déduplication</h3>
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '16px'
+          gap: 'var(--space-4)'
         }}>
           <StatItem label="Annonces traitées" value={stats.deduplication.total_processed.toLocaleString()} />
           <StatItem label="Doublons détectés" value={stats.deduplication.duplicates_found.toLocaleString()} />
@@ -307,12 +299,11 @@ function OverviewTab({ stats }) {
       </div>
 
       <div style={{
-        background: 'white',
-        padding: '24px',
-        borderRadius: '16px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+        background: 'var(--white)',
+        padding: 'var(--space-6)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
       }}>
-        <h3 style={{ marginBottom: '20px', fontSize: '18px', fontWeight: 600 }}>📈 Annonces par jour (7 derniers jours)</h3>
+        <h3 style={{ marginBottom: 'var(--space-5)', fontSize: '18px', fontWeight: 600 }}> Annonces par jour (7 derniers jours)</h3>
         <TimelineChart data={stats.by_day} />
       </div>
     </div>
@@ -321,7 +312,7 @@ function OverviewTab({ stats }) {
 
 function ScrapersTab({ stats, onTrigger, workerHealth, onClearQueue }) {
   const scrapers = [
-    { id: 'leboncoin', name: 'LeBonCoin', icon: '🔵', count: stats.sources.leboncoin, status: 'active', schedule: 'Toutes les 6h' },
+    { id: 'leboncoin', name: 'LeBonCoin', icon: '', count: stats.sources.leboncoin, status: 'active', schedule: 'Toutes les 6h' },
     { id: 'lacentrale', name: 'La Centrale', icon: '🟢', count: stats.sources.lacentrale, status: 'active', schedule: 'Toutes les 6h (offset 30min)' },
     { id: 'autoscout24', name: 'AutoScout24', icon: '🔴', count: stats.sources.autoscout24, status: 'warning', schedule: 'Toutes les 12h' }
   ]
@@ -330,36 +321,34 @@ function ScrapersTab({ stats, onTrigger, workerHealth, onClearQueue }) {
     <div>
       <div style={{
         background: workerHealth.queue_size > 50 ? 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)' : 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
-        color: 'white',
-        padding: '20px',
-        borderRadius: '12px',
-        marginBottom: '24px',
+        color: 'var(--white)',
+        padding: 'var(--space-5)',
+                marginBottom: 'var(--space-6)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between'
       }}>
         <div>
-          <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '4px' }}>Queue Redis</div>
-          <div style={{ fontSize: '32px', fontWeight: 700 }}>{workerHealth.queue_size} annonces</div>
+          <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: 'var(--space-1)' }}>Queue Redis</div>
+          <div style={{ fontSize: 'var(--space-8)', fontWeight: 700 }}>{workerHealth.queue_size} annonces</div>
         </div>
         <button onClick={onClearQueue} style={{
           background: 'rgba(255,255,255,0.2)',
           border: '1px solid rgba(255,255,255,0.3)',
-          color: 'white',
+          color: 'var(--white)',
           padding: '10px 20px',
-          borderRadius: '8px',
-          cursor: 'pointer',
+                    cursor: 'pointer',
           fontSize: '14px',
           fontWeight: 600
         }}>
-          🗑️ Vider la queue
+           Vider la queue
         </button>
       </div>
 
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-        gap: '20px'
+        gap: 'var(--space-5)'
       }}>
         {scrapers.map(scraper => (
           <ScraperCard key={scraper.id} scraper={scraper} onTrigger={() => onTrigger(scraper.id)} />
@@ -371,27 +360,26 @@ function ScrapersTab({ stats, onTrigger, workerHealth, onClearQueue }) {
 
 function ScraperCard({ scraper, onTrigger }) {
   const statusColors = {
-    active: { bg: '#d4edda', color: '#155724', text: '✅ Actif' },
-    warning: { bg: '#fff3cd', color: '#856404', text: '⚠️ Avertissement' },
+    active: { bg: '#d4edda', color: '#155724', text: ' Actif' },
+    warning: { bg: '#fff3cd', color: '#856404', text: ' Avertissement' },
     error: { bg: '#f8d7da', color: '#721c24', text: '❌ Erreur' }
   }
   const status = statusColors[scraper.status]
 
   return (
     <div style={{
-      background: 'white',
-      borderRadius: '16px',
-      padding: '24px',
+      background: 'var(--white)',
+            padding: 'var(--space-6)',
       boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
       border: '2px solid #e1e4e8'
     }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '12px',
-        marginBottom: '16px'
+        gap: 'var(--space-3)',
+        marginBottom: 'var(--space-4)'
       }}>
-        <span style={{ fontSize: '32px' }}>{scraper.icon}</span>
+        <span style={{ fontSize: 'var(--space-8)' }}>{scraper.icon}</span>
         <div style={{ flex: 1 }}>
           <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{scraper.name}</h3>
           <div style={{ fontSize: '13px', color: '#6a737d', marginTop: '2px' }}>{scraper.schedule}</div>
@@ -400,8 +388,7 @@ function ScraperCard({ scraper, onTrigger }) {
           background: status.bg,
           color: status.color,
           padding: '4px 12px',
-          borderRadius: '12px',
-          fontSize: '12px',
+                    fontSize: 'var(--space-3)',
           fontWeight: 600
         }}>
           {status.text}
@@ -410,22 +397,20 @@ function ScraperCard({ scraper, onTrigger }) {
 
       <div style={{
         background: '#f8f9fa',
-        padding: '16px',
-        borderRadius: '12px',
-        marginBottom: '16px'
+        padding: 'var(--space-4)',
+                marginBottom: 'var(--space-4)'
       }}>
-        <div style={{ fontSize: '13px', color: '#6a737d', marginBottom: '4px' }}>Annonces dans la base</div>
-        <div style={{ fontSize: '28px', fontWeight: 700, color: '#24292e' }}>{scraper.count.toLocaleString()}</div>
+        <div style={{ fontSize: '13px', color: '#6a737d', marginBottom: 'var(--space-1)' }}>Annonces dans la base</div>
+        <div style={{ fontSize: 'var(--space-7)', fontWeight: 700, color: '#24292e' }}>{scraper.count.toLocaleString()}</div>
       </div>
 
       <button onClick={onTrigger} style={{
         width: '100%',
-        padding: '12px',
+        padding: 'var(--space-3)',
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        color: 'white',
+        color: 'var(--white)',
         border: 'none',
-        borderRadius: '8px',
-        fontSize: '14px',
+                fontSize: '14px',
         fontWeight: 600,
         cursor: 'pointer'
       }}>
@@ -444,33 +429,31 @@ function WorkerTab({ workerHealth }) {
     <div>
       <div style={{
         background: workerHealth.status === 'healthy' ? 'linear-gradient(135deg, #28a745 0%, #20c997 100%)' : 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
-        color: 'white',
-        padding: '24px',
-        borderRadius: '16px',
-        marginBottom: '24px',
+        color: 'var(--white)',
+        padding: 'var(--space-6)',
+                marginBottom: 'var(--space-6)',
         display: 'flex',
         alignItems: 'center',
-        gap: '16px'
+        gap: 'var(--space-4)'
       }}>
-        <span style={{ fontSize: '48px' }}>{workerHealth.status === 'healthy' ? '✅' : '❌'}</span>
+        <span style={{ fontSize: 'var(--space-12)' }}>{workerHealth.status === 'healthy' ? '' : '❌'}</span>
         <div>
-          <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 700 }}>Worker {workerHealth.status === 'healthy' ? 'opérationnel' : 'en erreur'}</h2>
-          <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '4px' }}>Uptime: {uptime}</div>
+          <h2 style={{ margin: 0, fontSize: 'var(--space-6)', fontWeight: 700 }}>Worker {workerHealth.status === 'healthy' ? 'opérationnel' : 'en erreur'}</h2>
+          <div style={{ fontSize: '14px', opacity: 0.9, marginTop: 'var(--space-1)' }}>Uptime: {uptime}</div>
         </div>
       </div>
 
       <div style={{
-        background: 'white',
-        padding: '24px',
-        borderRadius: '16px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-        marginBottom: '24px'
+        background: 'var(--white)',
+        padding: 'var(--space-6)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        marginBottom: 'var(--space-6)'
       }}>
-        <h3 style={{ marginBottom: '20px', fontSize: '18px', fontWeight: 600 }}>🔌 État des connexions</h3>
+        <h3 style={{ marginBottom: 'var(--space-5)', fontSize: '18px', fontWeight: 600 }}>🔌 État des connexions</h3>
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '16px'
+          gap: 'var(--space-4)'
         }}>
           <ConnectionStatus name="Redis" connected={workerHealth.connections.redis} />
           <ConnectionStatus name="Elasticsearch" connected={workerHealth.connections.elasticsearch} />
@@ -479,16 +462,15 @@ function WorkerTab({ workerHealth }) {
       </div>
 
       <div style={{
-        background: 'white',
-        padding: '24px',
-        borderRadius: '16px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+        background: 'var(--white)',
+        padding: 'var(--space-6)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
       }}>
-        <h3 style={{ marginBottom: '20px', fontSize: '18px', fontWeight: 600 }}>📊 Statistiques du worker</h3>
+        <h3 style={{ marginBottom: 'var(--space-5)', fontSize: '18px', fontWeight: 600 }}> Statistiques du worker</h3>
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '16px'
+          gap: 'var(--space-4)'
         }}>
           <StatItem label="Véhicules traités" value={workerHealth.stats.total_processed.toLocaleString()} />
           <StatItem label="Doublons détectés" value={workerHealth.stats.total_duplicates.toLocaleString()} />
@@ -502,13 +484,12 @@ function WorkerTab({ workerHealth }) {
 function LogsTab({ logs }) {
   return (
     <div style={{
-      background: 'white',
-      padding: '24px',
-      borderRadius: '16px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+      background: 'var(--white)',
+      padding: 'var(--space-6)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
     }}>
-      <h3 style={{ marginBottom: '20px', fontSize: '18px', fontWeight: 600 }}>📋 Logs des scrapers</h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <h3 style={{ marginBottom: 'var(--space-5)', fontSize: '18px', fontWeight: 600 }}>📋 Logs des scrapers</h3>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
         {logs.map(log => <LogEntry key={log.id} log={log} />)}
       </div>
     </div>
@@ -517,8 +498,8 @@ function LogsTab({ logs }) {
 
 function LogEntry({ log }) {
   const statusConfig = {
-    success: { icon: '✅', color: '#28a745', bg: '#d4edda' },
-    warning: { icon: '⚠️', color: '#ffc107', bg: '#fff3cd' },
+    success: { icon: '', color: '#28a745', bg: '#d4edda' },
+    warning: { icon: '', color: '#ffc107', bg: '#fff3cd' },
     error: { icon: '❌', color: '#dc3545', bg: '#f8d7da' }
   }
   const config = statusConfig[log.status]
@@ -529,23 +510,22 @@ function LogEntry({ log }) {
     <div style={{
       display: 'flex',
       alignItems: 'center',
-      gap: '16px',
-      padding: '16px',
+      gap: 'var(--space-4)',
+      padding: 'var(--space-4)',
       background: config.bg,
-      borderRadius: '12px',
-      borderLeft: `4px solid ${config.color}`
+            borderLeft: `4px solid ${config.color}`
     }}>
-      <span style={{ fontSize: '24px' }}>{config.icon}</span>
+      <span style={{ fontSize: 'var(--space-6)' }}>{config.icon}</span>
       <div style={{ flex: 1 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-1)' }}>
           <strong>{log.source}</strong>
-          <span style={{ fontSize: '12px', color: '#6a737d', background: 'rgba(0,0,0,0.1)', padding: '2px 8px', borderRadius: '4px' }}>
+          <span style={{ fontSize: 'var(--space-3)', color: '#6a737d', background: 'rgba(0,0,0,0.1)', padding: '2px 8px',  }}>
             {log.duration}
           </span>
         </div>
         <div style={{ fontSize: '14px', color: '#586069' }}>{log.message}</div>
       </div>
-      <div style={{ fontSize: '12px', color: '#6a737d', textAlign: 'right' }}>{timeAgo}</div>
+      <div style={{ fontSize: 'var(--space-3)', color: '#6a737d', textAlign: 'right' }}>{timeAgo}</div>
     </div>
   )
 }
@@ -553,20 +533,19 @@ function LogEntry({ log }) {
 function KPICard({ icon, label, value, trend, color }) {
   return (
     <div style={{
-      background: 'white',
-      padding: '24px',
-      borderRadius: '12px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+      background: 'var(--white)',
+      padding: 'var(--space-6)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
       display: 'flex',
       alignItems: 'center',
-      gap: '16px'
+      gap: 'var(--space-4)'
     }}>
-      <div style={{ fontSize: '40px' }}>{icon}</div>
+      <div style={{ fontSize: 'var(--space-10)' }}>{icon}</div>
       <div>
-        <div style={{ fontSize: '12px', color: '#6a737d', marginBottom: '4px', textTransform: 'uppercase', fontWeight: 600 }}>{label}</div>
-        <div style={{ fontSize: '28px', fontWeight: 700, color }}>
+        <div style={{ fontSize: 'var(--space-3)', color: '#6a737d', marginBottom: 'var(--space-1)', textTransform: 'uppercase', fontWeight: 600 }}>{label}</div>
+        <div style={{ fontSize: 'var(--space-7)', fontWeight: 700, color }}>
           {value}
-          {trend && <span style={{ fontSize: '14px', color: '#28a745', marginLeft: '8px' }}>{trend}</span>}
+          {trend && <span style={{ fontSize: '14px', color: '#28a745', marginLeft: 'var(--space-2)' }}>{trend}</span>}
         </div>
       </div>
     </div>
@@ -575,7 +554,7 @@ function KPICard({ icon, label, value, trend, color }) {
 
 function SourcesChart({ sources, total }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
       {Object.entries(sources).map(([name, count]) => {
         const percentage = (count / total * 100).toFixed(1)
         return (
@@ -584,7 +563,7 @@ function SourcesChart({ sources, total }) {
               <strong>{name}</strong>
               <span style={{ color: '#6a737d' }}>{count.toLocaleString()} ({percentage}%)</span>
             </div>
-            <div style={{ height: '8px', background: '#e1e4e8', borderRadius: '4px', overflow: 'hidden' }}>
+            <div style={{ height: 'var(--space-2)', background: '#e1e4e8',  overflow: 'hidden' }}>
               <div style={{
                 height: '100%',
                 width: `${percentage}%`,
@@ -601,10 +580,10 @@ function SourcesChart({ sources, total }) {
 function TimelineChart({ data }) {
   const maxCount = Math.max(...data.map(d => d.count))
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', height: '200px' }}>
+    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 'var(--space-2)', height: '200px' }}>
       {data.map((item, idx) => (
-        <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          <div style={{ fontSize: '12px', fontWeight: 600 }}>{item.count}</div>
+        <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-2)' }}>
+          <div style={{ fontSize: 'var(--space-3)', fontWeight: 600 }}>{item.count}</div>
           <div style={{
             width: '100%',
             height: `${(item.count / maxCount) * 180}px`,
@@ -624,11 +603,10 @@ function StatItem({ label, value, highlight }) {
   return (
     <div style={{
       background: highlight ? '#fff3cd' : '#f8f9fa',
-      padding: '16px',
-      borderRadius: '12px'
-    }}>
+      padding: 'var(--space-4)',
+          }}>
       <div style={{ fontSize: '13px', color: '#6a737d', marginBottom: '6px' }}>{label}</div>
-      <div style={{ fontSize: '24px', fontWeight: 700, color: highlight ? '#856404' : '#24292e' }}>{value}</div>
+      <div style={{ fontSize: 'var(--space-6)', fontWeight: 700, color: highlight ? '#856404' : '#24292e' }}>{value}</div>
     </div>
   )
 }
@@ -636,17 +614,16 @@ function StatItem({ label, value, highlight }) {
 function ConnectionStatus({ name, connected }) {
   return (
     <div style={{
-      padding: '16px',
+      padding: 'var(--space-4)',
       background: connected ? '#d4edda' : '#f8d7da',
-      borderRadius: '12px',
-      display: 'flex',
+            display: 'flex',
       alignItems: 'center',
-      gap: '12px'
+      gap: 'var(--space-3)'
     }}>
-      <span style={{ fontSize: '24px' }}>{connected ? '✅' : '❌'}</span>
+      <span style={{ fontSize: 'var(--space-6)' }}>{connected ? '' : '❌'}</span>
       <div>
         <div style={{ fontWeight: 600, color: connected ? '#155724' : '#721c24' }}>{name}</div>
-        <div style={{ fontSize: '12px', color: connected ? '#155724' : '#721c24', opacity: 0.8 }}>
+        <div style={{ fontSize: 'var(--space-3)', color: connected ? '#155724' : '#721c24', opacity: 0.8 }}>
           {connected ? 'Connecté' : 'Déconnecté'}
         </div>
       </div>

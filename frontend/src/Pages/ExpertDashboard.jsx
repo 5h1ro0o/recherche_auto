@@ -26,24 +26,23 @@ export default function ExpertDashboard() {
         margin: '0 auto',
       }}>
         <h2 style={{
-          fontSize: '24px',
+          fontSize: 'var(--space-6)',
           fontWeight: 600,
-          color: '#222222',
-          marginBottom: '12px',
+          color: 'var(--text-primary)',
+          marginBottom: 'var(--space-3)',
         }}>Accès réservé aux experts</h2>
         <p style={{
-          color: '#666666',
-          marginBottom: '24px',
+          color: 'var(--text-secondary)',
+          marginBottom: 'var(--space-6)',
         }}>Cette page est uniquement accessible aux comptes experts.</p>
         <button
           onClick={() => navigate('/')}
           style={{
             padding: '12px 24px',
-            background: '#DC2626',
-            color: 'white',
+            background: 'var(--red-accent)',
+            color: 'var(--white)',
             border: 'none',
-            borderRadius: '8px',
-            fontSize: '15px',
+                        fontSize: '15px',
             fontWeight: 600,
             cursor: 'pointer',
           }}
@@ -69,20 +68,20 @@ export default function ExpertDashboard() {
   const inProgressRate = totalRequests > 0 ? Math.round((inProgressRequests / totalRequests) * 100) : 0;
 
   return (
-    <div style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
+    <div style={{ padding: 'var(--space-8)', maxWidth: '1400px', margin: '0 auto' }}>
       {/* Header */}
-      <div style={{ marginBottom: '32px' }}>
+      <div style={{ marginBottom: 'var(--space-8)' }}>
         <h1 style={{
-          fontSize: '32px',
+          fontSize: 'var(--space-8)',
           fontWeight: 700,
-          color: '#222222',
+          color: 'var(--text-primary)',
           margin: '0 0 8px 0',
         }}>
-          ⭐ Dashboard Expert
+           Dashboard Expert
         </h1>
         <p style={{
-          fontSize: '16px',
-          color: '#666666',
+          fontSize: 'var(--space-4)',
+          color: 'var(--text-secondary)',
           margin: 0,
         }}>
           Bienvenue {user?.full_name || user?.email} - Vue d'ensemble de votre activité
@@ -93,25 +92,25 @@ export default function ExpertDashboard() {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '16px',
-        marginBottom: '32px',
+        gap: 'var(--space-4)',
+        marginBottom: 'var(--space-8)',
       }}>
         <KPICard
           icon="📋"
           label="Total demandes"
           value={totalRequests}
-          color="#DC2626"
+          color="var(--red-accent)"
           trend="+12%"
         />
         <KPICard
-          icon="🔄"
+          icon=""
           label="En cours"
           value={inProgressRequests}
           percentage={inProgressRate}
           color="#F59E0B"
         />
         <KPICard
-          icon="✅"
+          icon=""
           label="Terminées"
           value={completedRequests}
           percentage={completionRate}
@@ -129,91 +128,88 @@ export default function ExpertDashboard() {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-        gap: '24px',
-        marginBottom: '32px',
+        gap: 'var(--space-6)',
+        marginBottom: 'var(--space-8)',
       }}>
         {/* Graphique des demandes */}
         <div style={{
-          background: 'white',
-          padding: '24px',
-          borderRadius: '12px',
-          border: '1px solid #EEEEEE',
+          background: 'var(--white)',
+          padding: 'var(--space-6)',
+                    border: '1px solid #EEEEEE',
           boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         }}>
           <h3 style={{
-            fontSize: '16px',
+            fontSize: 'var(--space-4)',
             fontWeight: 600,
-            color: '#222222',
-            marginBottom: '20px',
-          }}>📊 Répartition des demandes</h3>
+            color: 'var(--text-primary)',
+            marginBottom: 'var(--space-5)',
+          }}> Répartition des demandes</h3>
 
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--space-6)' }}>
             <PieChart
               data={[
                 { value: completedRequests, color: '#10B981', label: 'Terminées' },
                 { value: inProgressRequests, color: '#F59E0B', label: 'En cours' },
-                { value: pendingRequests, color: '#EF4444', label: 'En attente' },
+                { value: pendingRequests, color: 'var(--red-accent)', label: 'En attente' },
               ]}
               size={180}
             />
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
             <LegendItem color="#10B981" label="Terminées" value={completedRequests} total={totalRequests} />
             <LegendItem color="#F59E0B" label="En cours" value={inProgressRequests} total={totalRequests} />
-            <LegendItem color="#EF4444" label="En attente" value={pendingRequests} total={totalRequests} />
+            <LegendItem color="var(--red-accent)" label="En attente" value={pendingRequests} total={totalRequests} />
           </div>
         </div>
 
         {/* Graphique des propositions */}
         <div style={{
-          background: 'white',
-          padding: '24px',
-          borderRadius: '12px',
-          border: '1px solid #EEEEEE',
+          background: 'var(--white)',
+          padding: 'var(--space-6)',
+                    border: '1px solid #EEEEEE',
           boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         }}>
           <h3 style={{
-            fontSize: '16px',
+            fontSize: 'var(--space-4)',
             fontWeight: 600,
-            color: '#222222',
-            marginBottom: '20px',
-          }}>🚗 Statut des propositions</h3>
+            color: 'var(--text-primary)',
+            marginBottom: 'var(--space-5)',
+          }}> Statut des propositions</h3>
 
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--space-6)' }}>
             <PieChart
               data={[
                 { value: acceptedProposals, color: '#10B981', label: 'Acceptées' },
                 { value: pendingProposals, color: '#6B7280', label: 'En attente' },
-                { value: rejectedProposals, color: '#EF4444', label: 'Refusées' },
+                { value: rejectedProposals, color: 'var(--red-accent)', label: 'Refusées' },
               ]}
               size={180}
             />
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
             <LegendItem color="#10B981" label="Acceptées" value={acceptedProposals} total={totalProposals} />
             <LegendItem color="#6B7280" label="En attente" value={pendingProposals} total={totalProposals} />
-            <LegendItem color="#EF4444" label="Refusées" value={rejectedProposals} total={totalProposals} />
+            <LegendItem color="var(--red-accent)" label="Refusées" value={rejectedProposals} total={totalProposals} />
           </div>
         </div>
 
         {/* Métriques de performance */}
         <div style={{
-          background: 'white',
-          padding: '24px',
-          borderRadius: '12px',
-          border: '1px solid #EEEEEE',
+          background: 'var(--white)',
+          padding: 'var(--space-6)',
+                    border: '1px solid #EEEEEE',
           boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         }}>
           <h3 style={{
-            fontSize: '16px',
+            fontSize: 'var(--space-4)',
             fontWeight: 600,
-            color: '#222222',
-            marginBottom: '20px',
-          }}>📈 Métriques de performance</h3>
+            color: 'var(--text-primary)',
+            marginBottom: 'var(--space-5)',
+          }}> Métriques de performance</h3>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
             <ProgressBar
               label="Taux de complétion"
               percentage={completionRate}
@@ -232,16 +228,15 @@ export default function ExpertDashboard() {
           </div>
 
           <div style={{
-            marginTop: '20px',
-            padding: '12px',
-            background: '#F9FAFB',
-            borderRadius: '8px',
-            textAlign: 'center',
+            marginTop: 'var(--space-5)',
+            padding: 'var(--space-3)',
+            background: 'var(--gray-50)',
+                        textAlign: 'center',
           }}>
-            <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '4px' }}>
+            <div style={{ fontSize: 'var(--space-3)', color: '#6B7280', marginBottom: 'var(--space-1)' }}>
               Performance globale
             </div>
-            <div style={{ fontSize: '24px', fontWeight: 700, color: '#DC2626' }}>
+            <div style={{ fontSize: 'var(--space-6)', fontWeight: 700, color: 'var(--red-accent)' }}>
               {Math.round((completionRate + acceptanceRate) / 2)}%
             </div>
           </div>
@@ -252,7 +247,7 @@ export default function ExpertDashboard() {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '16px',
+        gap: 'var(--space-4)',
       }}>
         <ActionCard
           icon="🏪"
@@ -269,7 +264,7 @@ export default function ExpertDashboard() {
           onClick={() => navigate('/expert/missions')}
         />
         <ActionCard
-          icon="💬"
+          icon=""
           title="Messagerie"
           description="Communiquez avec vos clients"
           onClick={() => navigate('/messages')}
@@ -290,7 +285,7 @@ function PieChart({ data, size = 150 }) {
         width: size,
         height: size,
         borderRadius: '50%',
-        background: '#E5E7EB',
+        background: 'var(--border-light)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -347,14 +342,14 @@ function PieChart({ data, size = 150 }) {
               key={index}
               d={pathData}
               fill={segment.color}
-              stroke="white"
+              stroke="var(--white)"
               strokeWidth="2"
             />
           );
         })}
 
         {/* Center circle for donut effect */}
-        <circle cx="100" cy="100" r="45" fill="white" />
+        <circle cx="100" cy="100" r="45" fill="var(--white)" />
 
         {/* Center text */}
         <text
@@ -362,9 +357,9 @@ function PieChart({ data, size = 150 }) {
           y="95"
           textAnchor="middle"
           style={{
-            fontSize: '24px',
+            fontSize: 'var(--space-6)',
             fontWeight: 700,
-            fill: '#222222',
+            fill: 'var(--text-primary)',
           }}
         >
           {total}
@@ -374,7 +369,7 @@ function PieChart({ data, size = 150 }) {
           y="112"
           textAnchor="middle"
           style={{
-            fontSize: '12px',
+            fontSize: 'var(--space-3)',
             fill: '#6B7280',
           }}
         >
@@ -393,24 +388,22 @@ function LegendItem({ color, label, value, total }) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '8px',
-      borderRadius: '6px',
-      background: '#F9FAFB',
+      padding: 'var(--space-2)',
+            background: 'var(--gray-50)',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
         <div style={{
-          width: '12px',
-          height: '12px',
-          borderRadius: '3px',
-          background: color,
+          width: 'var(--space-3)',
+          height: 'var(--space-3)',
+                    background: color,
         }} />
         <span style={{ fontSize: '14px', color: '#374151' }}>{label}</span>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span style={{ fontSize: '14px', fontWeight: 600, color: '#222222' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+        <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
           {value}
         </span>
-        <span style={{ fontSize: '12px', color: '#6B7280' }}>
+        <span style={{ fontSize: 'var(--space-3)', color: '#6B7280' }}>
           ({percentage}%)
         </span>
       </div>
@@ -424,25 +417,23 @@ function ProgressBar({ label, percentage, color }) {
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
-        marginBottom: '8px',
+        marginBottom: 'var(--space-2)',
       }}>
         <span style={{ fontSize: '14px', color: '#374151' }}>{label}</span>
-        <span style={{ fontSize: '14px', fontWeight: 600, color: '#222222' }}>
+        <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
           {percentage}%
         </span>
       </div>
       <div style={{
-        height: '8px',
-        background: '#E5E7EB',
-        borderRadius: '4px',
-        overflow: 'hidden',
+        height: 'var(--space-2)',
+        background: 'var(--border-light)',
+                overflow: 'hidden',
       }}>
         <div style={{
           width: `${percentage}%`,
           height: '100%',
           background: color,
-          borderRadius: '4px',
-          transition: 'width 0.3s ease',
+                    transition: 'width 0.3s ease',
         }} />
       </div>
     </div>
@@ -452,10 +443,9 @@ function ProgressBar({ label, percentage, color }) {
 function KPICard({ icon, label, value, percentage, color, trend }) {
   return (
     <div style={{
-      background: 'white',
-      padding: '20px',
-      borderRadius: '12px',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+      background: 'var(--white)',
+      padding: 'var(--space-5)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
       border: '1px solid #EEEEEE',
       position: 'relative',
       overflow: 'hidden',
@@ -464,7 +454,7 @@ function KPICard({ icon, label, value, percentage, color, trend }) {
         position: 'absolute',
         top: 0,
         left: 0,
-        width: '4px',
+        width: 'var(--space-1)',
         height: '100%',
         background: color,
       }} />
@@ -472,9 +462,9 @@ function KPICard({ icon, label, value, percentage, color, trend }) {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div style={{ flex: 1 }}>
           <div style={{
-            fontSize: '12px',
+            fontSize: 'var(--space-3)',
             color: '#6B7280',
-            marginBottom: '8px',
+            marginBottom: 'var(--space-2)',
             textTransform: 'uppercase',
             fontWeight: 600,
             letterSpacing: '0.5px',
@@ -482,10 +472,10 @@ function KPICard({ icon, label, value, percentage, color, trend }) {
             {label}
           </div>
           <div style={{
-            fontSize: '28px',
+            fontSize: 'var(--space-7)',
             fontWeight: 700,
             color: color,
-            marginBottom: '4px',
+            marginBottom: 'var(--space-1)',
           }}>{value}</div>
           {percentage !== undefined && (
             <div style={{ fontSize: '13px', color: '#6B7280' }}>
@@ -497,14 +487,14 @@ function KPICard({ icon, label, value, percentage, color, trend }) {
               fontSize: '13px',
               color: '#10B981',
               fontWeight: 600,
-              marginTop: '4px',
+              marginTop: 'var(--space-1)',
             }}>
               {trend} ce mois
             </div>
           )}
         </div>
         <div style={{
-          fontSize: '32px',
+          fontSize: 'var(--space-8)',
           opacity: 0.3,
         }}>{icon}</div>
       </div>
@@ -517,10 +507,9 @@ function ActionCard({ icon, title, description, count, onClick }) {
     <div
       onClick={onClick}
       style={{
-        background: 'white',
-        padding: '24px',
-        borderRadius: '12px',
-        border: '2px solid #EEEEEE',
+        background: 'var(--white)',
+        padding: 'var(--space-6)',
+                border: '2px solid #EEEEEE',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         cursor: 'pointer',
         transition: 'all 0.2s',
@@ -528,24 +517,23 @@ function ActionCard({ icon, title, description, count, onClick }) {
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)';
-        e.currentTarget.style.borderColor = '#DC2626';
+        e.currentTarget.style.borderColor = 'var(--red-accent)';
         e.currentTarget.style.transform = 'translateY(-2px)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-        e.currentTarget.style.borderColor = '#EEEEEE';
+        e.currentTarget.style.borderColor = 'var(--border-light)';
         e.currentTarget.style.transform = 'translateY(0)';
       }}
     >
       {count !== undefined && count > 0 && (
         <div style={{
           position: 'absolute',
-          top: '16px',
-          right: '16px',
-          background: '#EF4444',
-          color: 'white',
-          borderRadius: '12px',
-          padding: '4px 10px',
+          top: 'var(--space-4)',
+          right: 'var(--space-4)',
+          background: 'var(--red-accent)',
+          color: 'var(--white)',
+                    padding: '4px 10px',
           fontSize: '13px',
           fontWeight: 600,
         }}>
@@ -554,13 +542,13 @@ function ActionCard({ icon, title, description, count, onClick }) {
       )}
 
       <div style={{
-        fontSize: '40px',
-        marginBottom: '12px',
+        fontSize: 'var(--space-10)',
+        marginBottom: 'var(--space-3)',
       }}>{icon}</div>
       <h3 style={{
         fontSize: '18px',
         fontWeight: 600,
-        color: '#222222',
+        color: 'var(--text-primary)',
         margin: '0 0 8px 0',
       }}>{title}</h3>
       <p style={{

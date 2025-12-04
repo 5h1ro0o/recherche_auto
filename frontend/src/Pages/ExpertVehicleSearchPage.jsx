@@ -100,7 +100,7 @@ export default function ExpertVehicleSearchPage() {
     setResults([]);
     setSearchStats(null);
 
-    console.log('🔍 Recherche avec filtres:', filters);
+    console.log(' Recherche avec filtres:', filters);
 
     try {
       const response = await fetch(`${API_URL}/api/search-advanced/search`, {
@@ -121,7 +121,7 @@ export default function ExpertVehicleSearchPage() {
 
       const data = await response.json();
 
-      console.log('✅ Résultats reçus:', data);
+      console.log(' Résultats reçus:', data);
 
       // Générer des IDs stables pour les véhicules qui n'en ont pas
       const vehiclesWithIds = (data.results || []).map(vehicle => ({
@@ -181,7 +181,7 @@ export default function ExpertVehicleSearchPage() {
 
       if (!response.ok) throw new Error('Erreur proposition');
 
-      alert('✅ Véhicule proposé au client avec succès !');
+      alert(' Véhicule proposé au client avec succès !');
 
       // Marquer visuellement comme proposé
       setResults(prev => prev.map(v =>
@@ -204,55 +204,54 @@ export default function ExpertVehicleSearchPage() {
         minHeight: '80vh'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
-          <p style={{ color: '#666666' }}>Chargement...</p>
+          <div style={{ fontSize: 'var(--space-12)', marginBottom: 'var(--space-4)' }}></div>
+          <p style={{ color: 'var(--text-secondary)' }}>Chargement...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ backgroundColor: '#FAFAFA', minHeight: '100vh' }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px' }}>
+    <div style={{ backgroundColor: 'var(--gray-50)', minHeight: '100vh' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'var(--space-8)' }}>
         {/* Header */}
-        <div style={{ marginBottom: '32px' }}>
+        <div style={{ marginBottom: 'var(--space-8)' }}>
           <button
             onClick={() => navigate(`/expert/requests/${requestId}`)}
             style={{
-              background: 'white',
+              background: 'var(--white)',
               border: '1px solid #EEEEEE',
               padding: '8px 16px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              marginBottom: '16px',
-              color: '#222222',
+                            cursor: 'pointer',
+              marginBottom: 'var(--space-4)',
+              color: 'var(--text-primary)',
               fontSize: '14px',
               fontWeight: 500,
               transition: 'all 0.2s'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#222222';
-              e.currentTarget.style.background = '#FAFAFA';
+              e.currentTarget.style.borderColor = 'var(--text-primary)';
+              e.currentTarget.style.background = 'var(--gray-50)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = '#EEEEEE';
-              e.currentTarget.style.background = 'white';
+              e.currentTarget.style.borderColor = 'var(--border-light)';
+              e.currentTarget.style.background = 'var(--white)';
             }}
           >
             ← Retour à la demande
           </button>
 
           <h1 style={{
-            fontSize: '32px',
+            fontSize: 'var(--space-8)',
             fontWeight: 700,
-            color: '#222222',
+            color: 'var(--text-primary)',
             margin: '0 0 8px 0'
           }}>
             Recherche de véhicules
           </h1>
           <p style={{
-            fontSize: '16px',
-            color: '#666666',
+            fontSize: 'var(--space-4)',
+            color: 'var(--text-secondary)',
             margin: 0
           }}>
             Recherchez et proposez des véhicules pour <strong>{request.client?.full_name || request.client?.email}</strong>
@@ -261,92 +260,86 @@ export default function ExpertVehicleSearchPage() {
 
         {/* Critères du client */}
         <div style={{
-          background: 'white',
-          padding: '20px',
-          borderRadius: '12px',
-          marginBottom: '24px',
+          background: 'var(--white)',
+          padding: 'var(--space-5)',
+                    marginBottom: 'var(--space-6)',
           border: '1px solid #EEEEEE',
           boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
         }}>
           <div style={{
-            fontSize: '12px',
+            fontSize: 'var(--space-3)',
             fontWeight: 600,
-            marginBottom: '12px',
-            color: '#222222',
+            marginBottom: 'var(--space-3)',
+            color: 'var(--text-primary)',
             textTransform: 'uppercase',
             letterSpacing: '0.5px'
           }}>
             Critères du client
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
             {request.budget_max && (
               <span style={{
-                background: '#FAFAFA',
+                background: 'var(--gray-50)',
                 padding: '6px 12px',
-                borderRadius: '4px',
-                fontSize: '13px',
+                                fontSize: '13px',
                 fontWeight: 500,
                 border: '1px solid #EEEEEE'
               }}>
-                💰 Budget max : {request.budget_max.toLocaleString()} €
+                 Budget max : {request.budget_max.toLocaleString()} €
               </span>
             )}
             {request.preferred_fuel_type && request.preferred_fuel_type !== 'null' && (
               <span style={{
-                background: '#FAFAFA',
+                background: 'var(--gray-50)',
                 padding: '6px 12px',
-                borderRadius: '4px',
-                fontSize: '13px',
+                                fontSize: '13px',
                 fontWeight: 500,
                 border: '1px solid #EEEEEE'
               }}>
-                ⛽ Carburant : {request.preferred_fuel_type}
+                 Carburant : {request.preferred_fuel_type}
               </span>
             )}
             {request.preferred_transmission && request.preferred_transmission !== 'null' && (
               <span style={{
-                background: '#FAFAFA',
+                background: 'var(--gray-50)',
                 padding: '6px 12px',
-                borderRadius: '4px',
-                fontSize: '13px',
+                                fontSize: '13px',
                 fontWeight: 500,
                 border: '1px solid #EEEEEE'
               }}>
-                ⚙️ Transmission : {request.preferred_transmission}
+                 Transmission : {request.preferred_transmission}
               </span>
             )}
             {request.max_mileage && (
               <span style={{
-                background: '#FAFAFA',
+                background: 'var(--gray-50)',
                 padding: '6px 12px',
-                borderRadius: '4px',
-                fontSize: '13px',
+                                fontSize: '13px',
                 fontWeight: 500,
                 border: '1px solid #EEEEEE'
               }}>
-                🛣️ Km max : {request.max_mileage.toLocaleString()} km
+                 Km max : {request.max_mileage.toLocaleString()} km
               </span>
             )}
             {request.min_year && (
               <span style={{
-                background: '#FAFAFA',
+                background: 'var(--gray-50)',
                 padding: '6px 12px',
-                borderRadius: '4px',
-                fontSize: '13px',
+                                fontSize: '13px',
                 fontWeight: 500,
                 border: '1px solid #EEEEEE'
               }}>
-                📅 Année min : {request.min_year}
+                 Année min : {request.min_year}
               </span>
             )}
           </div>
           {request.description && (
-            <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #EEEEEE' }}>
+            <div style={{ marginTop: 'var(--space-3)', paddingTop: 'var(--space-3)', borderTop: '1px solid #EEEEEE' }}>
               <div style={{
-                fontSize: '12px',
+                fontSize: 'var(--space-3)',
                 fontWeight: 600,
                 marginBottom: '6px',
-                color: '#222222',
+                color: 'var(--text-primary)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
               }}>
@@ -355,7 +348,7 @@ export default function ExpertVehicleSearchPage() {
               <p style={{
                 margin: 0,
                 fontSize: '14px',
-                color: '#666666',
+                color: 'var(--text-secondary)',
                 lineHeight: 1.6
               }}>
                 {request.description}
@@ -366,10 +359,9 @@ export default function ExpertVehicleSearchPage() {
 
         {/* Formulaire de recherche */}
         <div style={{
-          background: 'white',
-          padding: '24px',
-          borderRadius: '12px',
-          marginBottom: '24px',
+          background: 'var(--white)',
+          padding: 'var(--space-6)',
+                    marginBottom: 'var(--space-6)',
           border: '1px solid #EEEEEE',
           boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
         }}>
@@ -383,10 +375,9 @@ export default function ExpertVehicleSearchPage() {
         {/* Statistiques de recherche */}
         {searchStats && (
           <div style={{
-            background: 'white',
-            padding: '20px',
-            borderRadius: '12px',
-            marginBottom: '24px',
+            background: 'var(--white)',
+            padding: 'var(--space-5)',
+                        marginBottom: 'var(--space-6)',
             border: '1px solid #EEEEEE',
             boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
           }}>
@@ -394,41 +385,40 @@ export default function ExpertVehicleSearchPage() {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginBottom: '16px'
+              marginBottom: 'var(--space-4)'
             }}>
               <h3 style={{
                 fontSize: '18px',
                 fontWeight: 600,
-                color: '#222222',
+                color: 'var(--text-primary)',
                 margin: 0
               }}>
                 {searchStats.total} résultat{searchStats.total > 1 ? 's' : ''} trouvé{searchStats.total > 1 ? 's' : ''}
               </h3>
               <span style={{
                 fontSize: '13px',
-                color: '#666666'
+                color: 'var(--text-secondary)'
               }}>
-                ⏱️ {searchStats.duration.toFixed(2)}s
+                 {searchStats.duration.toFixed(2)}s
               </span>
             </div>
 
             <div style={{
               display: 'flex',
-              gap: '16px',
-              marginBottom: '12px'
+              gap: 'var(--space-4)',
+              marginBottom: 'var(--space-3)'
             }}>
               {Object.entries(searchStats.sources).map(([source, stats]) => (
                 <div key={source} style={{
                   flex: 1,
-                  padding: '12px',
-                  background: '#FAFAFA',
-                  borderRadius: '8px',
-                  border: '1px solid #EEEEEE'
+                  padding: 'var(--space-3)',
+                  background: 'var(--gray-50)',
+                                    border: '1px solid #EEEEEE'
                 }}>
                   <div style={{
-                    fontSize: '12px',
-                    color: '#666666',
-                    marginBottom: '4px',
+                    fontSize: 'var(--space-3)',
+                    color: 'var(--text-secondary)',
+                    marginBottom: 'var(--space-1)',
                     textTransform: 'uppercase',
                     fontWeight: 600,
                     letterSpacing: '0.5px'
@@ -436,9 +426,9 @@ export default function ExpertVehicleSearchPage() {
                     {source === 'leboncoin' ? 'LeBonCoin' : 'AutoScout24'}
                   </div>
                   <div style={{
-                    fontSize: '16px',
+                    fontSize: 'var(--space-4)',
                     fontWeight: 600,
-                    color: stats.success ? '#222222' : '#DC2626'
+                    color: stats.success ? 'var(--text-primary)' : 'var(--red-accent)'
                   }}>
                     {stats.success ? `${stats.count} annonces` : `Erreur`}
                   </div>
@@ -451,14 +441,13 @@ export default function ExpertVehicleSearchPage() {
         {/* Erreur */}
         {error && (
           <div style={{
-            background: 'white',
-            padding: '20px',
-            borderRadius: '12px',
-            marginBottom: '24px',
+            background: 'var(--white)',
+            padding: 'var(--space-5)',
+                        marginBottom: 'var(--space-6)',
             border: '2px solid #DC2626'
           }}>
-            <h3 style={{ color: '#DC2626', margin: '0 0 8px 0' }}>❌ Erreur</h3>
-            <p style={{ color: '#666666', margin: 0 }}>{error}</p>
+            <h3 style={{ color: 'var(--red-accent)', margin: '0 0 8px 0' }}>❌ Erreur</h3>
+            <p style={{ color: 'var(--text-secondary)', margin: 0 }}>{error}</p>
           </div>
         )}
 
@@ -480,15 +469,14 @@ export default function ExpertVehicleSearchPage() {
         {/* État vide */}
         {!loading && !error && results.length === 0 && searchStats && (
           <div style={{
-            background: 'white',
+            background: 'var(--white)',
             padding: '60px 20px',
-            borderRadius: '12px',
-            textAlign: 'center',
+                        textAlign: 'center',
             border: '1px solid #EEEEEE'
           }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
-            <h3 style={{ color: '#222222', margin: '0 0 8px 0' }}>Aucun véhicule trouvé</h3>
-            <p style={{ color: '#666666', margin: 0 }}>Essayez de modifier les critères de recherche</p>
+            <div style={{ fontSize: 'var(--space-12)', marginBottom: 'var(--space-4)' }}></div>
+            <h3 style={{ color: 'var(--text-primary)', margin: '0 0 8px 0' }}>Aucun véhicule trouvé</h3>
+            <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Essayez de modifier les critères de recherche</p>
           </div>
         )}
       </div>

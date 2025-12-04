@@ -157,8 +157,8 @@ export default function EnhancedVehiclePage() {
   if (loading) {
     return (
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 20px', textAlign: 'center' }}>
-        <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔄</div>
-        <p style={{ color: '#666666', fontSize: '18px' }}>Chargement du véhicule...</p>
+        <div style={{ fontSize: 'var(--space-12)', marginBottom: 'var(--space-4)' }}></div>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '18px' }}>Chargement du véhicule...</p>
       </div>
     )
   }
@@ -167,22 +167,21 @@ export default function EnhancedVehiclePage() {
   if (error && !vehicle) {
     return (
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 20px', textAlign: 'center' }}>
-        <div style={{ fontSize: '64px', marginBottom: '20px' }}>⚠️</div>
-        <h3 style={{ fontSize: '24px', color: '#222222', marginBottom: '12px' }}>
+        <div style={{ fontSize: 'var(--space-16)', marginBottom: 'var(--space-5)' }}></div>
+        <h3 style={{ fontSize: 'var(--space-6)', color: 'var(--text-primary)', marginBottom: 'var(--space-3)' }}>
           {error}
         </h3>
         <button
           onClick={() => navigate('/')}
           style={{
             padding: '12px 24px',
-            background: '#DC2626',
-            color: 'white',
+            background: 'var(--red-accent)',
+            color: 'var(--white)',
             border: 'none',
-            borderRadius: '8px',
-            fontSize: '16px',
+                        fontSize: 'var(--space-4)',
             fontWeight: 600,
             cursor: 'pointer',
-            marginTop: '20px'
+            marginTop: 'var(--space-5)'
           }}
         >
           Retour à l'accueil
@@ -202,10 +201,10 @@ export default function EnhancedVehiclePage() {
     : ['https://via.placeholder.com/800x600/EEEEEE/222222?text=Pas+d\'image']
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: 'var(--space-5)' }}>
       {/* Breadcrumb */}
-      <div style={{ marginBottom: '20px', fontSize: '14px', color: '#666666' }}>
-        <a href="/" style={{ color: '#DC2626', textDecoration: 'none' }}>Accueil</a>
+      <div style={{ marginBottom: 'var(--space-5)', fontSize: '14px', color: 'var(--text-secondary)' }}>
+        <a href="/" style={{ color: 'var(--red-accent)', textDecoration: 'none' }}>Accueil</a>
         {' > '}
         <span>{vehicle.title || 'Véhicule'}</span>
       </div>
@@ -215,60 +214,57 @@ export default function EnhancedVehiclePage() {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: '24px',
-        gap: '20px',
+        marginBottom: 'var(--space-6)',
+        gap: 'var(--space-5)',
         flexWrap: 'wrap'
       }}>
         <div style={{ flex: 1 }}>
-          <h1 style={{ margin: '0 0 12px 0', fontSize: '32px', fontWeight: 700 }}>
+          <h1 style={{ margin: '0 0 12px 0', fontSize: 'var(--space-8)', fontWeight: 700 }}>
             {vehicle.title}
           </h1>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '14px', color: '#666666' }}>
-              📍 {vehicle.location}
+          <div style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'center', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+               {vehicle.location}
             </span>
             {vehicle.seller_type === 'PRO' && (
               <span style={{
-                background: '#DC2626',
-                color: 'white',
+                background: 'var(--red-accent)',
+                color: 'var(--white)',
                 padding: '4px 12px',
-                borderRadius: '4px',
-                fontSize: '12px',
+                                fontSize: 'var(--space-3)',
                 fontWeight: 600
               }}>
-                🏢 Professionnel
+                 Professionnel
               </span>
             )}
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap' }}>
           <button
             onClick={() => setIsFavorite(!isFavorite)}
             style={{
               padding: '12px 20px',
-              background: isFavorite ? '#DC2626' : 'white',
-              border: `1px solid ${isFavorite ? '#DC2626' : '#EEEEEE'}`,
-              color: isFavorite ? 'white' : '#222222',
-              borderRadius: '8px',
-              fontSize: '14px',
+              background: isFavorite ? 'var(--red-accent)' : 'var(--white)',
+              border: `1px solid ${isFavorite ? 'var(--red-accent)' : 'var(--border-light)'}`,
+              color: isFavorite ? 'var(--white)' : 'var(--text-primary)',
+                            fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.2s'
             }}
           >
-            {isFavorite ? '❤️ Ajouté' : '🤍 Ajouter'}
+            {isFavorite ? ' Ajouté' : '🤍 Ajouter'}
           </button>
 
           <button
             onClick={handleExportPDF}
             style={{
               padding: '12px 20px',
-              background: 'white',
+              background: 'var(--white)',
               border: '1px solid #EEEEEE',
-              color: '#222222',
-              borderRadius: '8px',
-              fontSize: '14px',
+              color: 'var(--text-primary)',
+                            fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.2s'
@@ -279,7 +275,7 @@ export default function EnhancedVehiclePage() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 'var(--space-6)' }}>
         {/* Colonne principale */}
         <div>
           <PhotoGallery
@@ -292,13 +288,13 @@ export default function EnhancedVehiclePage() {
 
           <PriceSection vehicle={vehicle} />
 
-          <Section title="📝 Description">
-            <p style={{ lineHeight: 1.8, color: '#222222', margin: 0 }}>
+          <Section title=" Description">
+            <p style={{ lineHeight: 1.8, color: 'var(--text-primary)', margin: 0 }}>
               {vehicle.description}
             </p>
           </Section>
 
-          <Section title="🔧 Caractéristiques techniques">
+          <Section title=" Caractéristiques techniques">
             <SpecsGrid specs={vehicle.technical_specs} />
           </Section>
 
@@ -306,15 +302,15 @@ export default function EnhancedVehiclePage() {
             <FeaturesList features={vehicle.features} />
           </Section>
 
-          <Section title="📊 Historique des prix">
+          <Section title=" Historique des prix">
             <PriceHistory history={vehicle.price_history} />
           </Section>
 
-          <Section title="⭐ Avis de nos experts">
+          <Section title=" Avis de nos experts">
             <ExpertOpinion opinion={vehicle.expert_opinion} />
           </Section>
 
-          <Section title="🔍 Véhicules similaires">
+          <Section title=" Véhicules similaires">
             <SimilarVehicles vehicles={vehicle.similar_vehicles} />
           </Section>
         </div>
@@ -353,17 +349,16 @@ export default function EnhancedVehiclePage() {
 function PhotoGallery({ images, currentIndex, onPrev, onNext, onImageClick }) {
   return (
     <div style={{
-      background: 'white',
-      borderRadius: '12px',
-      overflow: 'hidden',
+      background: 'var(--white)',
+            overflow: 'hidden',
       boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
       border: '1px solid #EEEEEE',
-      marginBottom: '24px'
+      marginBottom: 'var(--space-6)'
     }}>
       <div style={{
         position: 'relative',
         height: '500px',
-        background: '#FAFAFA',
+        background: 'var(--gray-50)',
         cursor: 'zoom-in'
       }}
       onClick={onImageClick}>
@@ -383,16 +378,16 @@ function PhotoGallery({ images, currentIndex, onPrev, onNext, onImageClick }) {
               onClick={(e) => { e.stopPropagation(); onPrev(); }}
               style={{
                 position: 'absolute',
-                left: '16px',
+                left: 'var(--space-4)',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 background: 'rgba(0,0,0,0.7)',
-                color: 'white',
+                color: 'var(--white)',
                 border: 'none',
                 borderRadius: '50%',
-                width: '48px',
-                height: '48px',
-                fontSize: '24px',
+                width: 'var(--space-12)',
+                height: 'var(--space-12)',
+                fontSize: 'var(--space-6)',
                 cursor: 'pointer'
               }}
             >
@@ -402,16 +397,16 @@ function PhotoGallery({ images, currentIndex, onPrev, onNext, onImageClick }) {
               onClick={(e) => { e.stopPropagation(); onNext(); }}
               style={{
                 position: 'absolute',
-                right: '16px',
+                right: 'var(--space-4)',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 background: 'rgba(0,0,0,0.7)',
-                color: 'white',
+                color: 'var(--white)',
                 border: 'none',
                 borderRadius: '50%',
-                width: '48px',
-                height: '48px',
-                fontSize: '24px',
+                width: 'var(--space-12)',
+                height: 'var(--space-12)',
+                fontSize: 'var(--space-6)',
                 cursor: 'pointer'
               }}
             >
@@ -420,13 +415,12 @@ function PhotoGallery({ images, currentIndex, onPrev, onNext, onImageClick }) {
 
             <div style={{
               position: 'absolute',
-              bottom: '16px',
-              right: '16px',
+              bottom: 'var(--space-4)',
+              right: 'var(--space-4)',
               background: 'rgba(0,0,0,0.7)',
-              color: 'white',
+              color: 'var(--white)',
               padding: '6px 12px',
-              borderRadius: '16px',
-              fontSize: '14px',
+                            fontSize: '14px',
               fontWeight: 600
             }}>
               {currentIndex + 1} / {images.length}
@@ -438,8 +432,8 @@ function PhotoGallery({ images, currentIndex, onPrev, onNext, onImageClick }) {
       {images.length > 1 && (
         <div style={{
           display: 'flex',
-          gap: '8px',
-          padding: '16px',
+          gap: 'var(--space-2)',
+          padding: 'var(--space-4)',
           overflowX: 'auto'
         }}>
           {images.map((img, idx) => (
@@ -447,10 +441,9 @@ function PhotoGallery({ images, currentIndex, onPrev, onNext, onImageClick }) {
               key={idx}
               onClick={() => onImageClick(idx)}
               style={{
-                width: '80px',
-                height: '60px',
-                borderRadius: '8px',
-                overflow: 'hidden',
+                width: 'var(--space-20)',
+                height: 'var(--space-16)',
+                                overflow: 'hidden',
                 cursor: 'pointer',
                 border: idx === currentIndex ? '2px solid #DC2626' : '2px solid #EEEEEE',
                 flexShrink: 0
@@ -476,18 +469,17 @@ function PhotoGallery({ images, currentIndex, onPrev, onNext, onImageClick }) {
 function PriceSection({ vehicle }) {
   return (
     <div style={{
-      background: 'white',
-      borderRadius: '12px',
-      padding: '24px',
+      background: 'var(--white)',
+            padding: 'var(--space-6)',
       boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
       border: '1px solid #EEEEEE',
-      marginBottom: '24px'
+      marginBottom: 'var(--space-6)'
     }}>
       <div style={{
-        fontSize: '40px',
+        fontSize: 'var(--space-10)',
         fontWeight: 700,
-        color: '#222222',
-        marginBottom: '20px'
+        color: 'var(--text-primary)',
+        marginBottom: 'var(--space-5)'
       }}>
         {vehicle.price ? vehicle.price.toLocaleString() : 'Prix non disponible'} €
       </div>
@@ -495,12 +487,12 @@ function PriceSection({ vehicle }) {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '16px'
+        gap: 'var(--space-4)'
       }}>
-        {vehicle.year && <InfoItem icon="📅" label="Année" value={vehicle.year} />}
-        {vehicle.mileage && <InfoItem icon="🛣️" label="Kilométrage" value={`${vehicle.mileage.toLocaleString()} km`} />}
-        {vehicle.fuel_type && <InfoItem icon="⛽" label="Carburant" value={vehicle.fuel_type} />}
-        {vehicle.transmission && <InfoItem icon="⚙️" label="Transmission" value={vehicle.transmission} />}
+        {vehicle.year && <InfoItem icon="" label="Année" value={vehicle.year} />}
+        {vehicle.mileage && <InfoItem icon="" label="Kilométrage" value={`${vehicle.mileage.toLocaleString()} km`} />}
+        {vehicle.fuel_type && <InfoItem icon="" label="Carburant" value={vehicle.fuel_type} />}
+        {vehicle.transmission && <InfoItem icon="" label="Transmission" value={vehicle.transmission} />}
         {vehicle.vin && <InfoItem icon="🔢" label="VIN" value={vehicle.vin.slice(0, 10) + '...'} />}
       </div>
     </div>
@@ -511,17 +503,17 @@ function InfoItem({ icon, label, value }) {
   return (
     <div>
       <div style={{
-        fontSize: '12px',
-        color: '#666666',
-        marginBottom: '4px',
+        fontSize: 'var(--space-3)',
+        color: 'var(--text-secondary)',
+        marginBottom: 'var(--space-1)',
         fontWeight: 500
       }}>
         {icon} {label}
       </div>
       <div style={{
-        fontSize: '16px',
+        fontSize: 'var(--space-4)',
         fontWeight: 600,
-        color: '#222222'
+        color: 'var(--text-primary)'
       }}>
         {value}
       </div>
@@ -532,16 +524,15 @@ function InfoItem({ icon, label, value }) {
 function Section({ title, children }) {
   return (
     <div style={{
-      background: 'white',
-      borderRadius: '12px',
-      padding: '24px',
+      background: 'var(--white)',
+            padding: 'var(--space-6)',
       boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
       border: '1px solid #EEEEEE',
-      marginBottom: '24px'
+      marginBottom: 'var(--space-6)'
     }}>
       <h2 style={{
         margin: '0 0 20px 0',
-        fontSize: '20px',
+        fontSize: 'var(--space-5)',
         fontWeight: 600
       }}>
         {title}
@@ -553,26 +544,25 @@ function Section({ title, children }) {
 
 function SpecsGrid({ specs }) {
   if (!specs || Object.keys(specs).length === 0) {
-    return <p style={{ color: '#666666' }}>Informations techniques non disponibles</p>
+    return <p style={{ color: 'var(--text-secondary)' }}>Informations techniques non disponibles</p>
   }
 
   return (
     <div style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-      gap: '16px'
+      gap: 'var(--space-4)'
     }}>
       {Object.entries(specs).map(([key, value]) => (
         <div key={key} style={{
-          background: '#FAFAFA',
-          padding: '12px',
-          borderRadius: '8px',
-          border: '1px solid #EEEEEE'
+          background: 'var(--gray-50)',
+          padding: 'var(--space-3)',
+                    border: '1px solid #EEEEEE'
         }}>
           <div style={{
-            fontSize: '12px',
-            color: '#666666',
-            marginBottom: '4px',
+            fontSize: 'var(--space-3)',
+            color: 'var(--text-secondary)',
+            marginBottom: 'var(--space-1)',
             textTransform: 'capitalize'
           }}>
             {key.replace('_', ' ')}
@@ -580,7 +570,7 @@ function SpecsGrid({ specs }) {
           <div style={{
             fontSize: '15px',
             fontWeight: 600,
-            color: '#222222'
+            color: 'var(--text-primary)'
           }}>
             {value}
           </div>
@@ -592,27 +582,26 @@ function SpecsGrid({ specs }) {
 
 function FeaturesList({ features }) {
   if (!features || features.length === 0) {
-    return <p style={{ color: '#666666' }}>Équipements non disponibles</p>
+    return <p style={{ color: 'var(--text-secondary)' }}>Équipements non disponibles</p>
   }
 
   return (
     <div style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-      gap: '12px'
+      gap: 'var(--space-3)'
     }}>
       {features.map((feature, idx) => (
         <div key={idx} style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
+          gap: 'var(--space-2)',
           padding: '10px',
-          background: '#FAFAFA',
-          borderRadius: '8px',
-          border: '1px solid #EEEEEE'
+          background: 'var(--gray-50)',
+                    border: '1px solid #EEEEEE'
         }}>
           <span style={{ fontSize: '18px' }}>✓</span>
-          <span style={{ fontSize: '14px', color: '#222222' }}>{feature}</span>
+          <span style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{feature}</span>
         </div>
       ))}
     </div>
@@ -621,7 +610,7 @@ function FeaturesList({ features }) {
 
 function PriceHistory({ history }) {
   if (!history || history.length === 0) {
-    return <p style={{ color: '#666666' }}>Historique des prix non disponible</p>
+    return <p style={{ color: 'var(--text-secondary)' }}>Historique des prix non disponible</p>
   }
 
   const maxPrice = Math.max(...history.map(h => h.price))
@@ -636,43 +625,41 @@ function PriceHistory({ history }) {
           padding: '12px 0',
           borderBottom: idx < history.length - 1 ? '1px solid #EEEEEE' : 'none'
         }}>
-          <span style={{ fontSize: '14px', color: '#666666' }}>
+          <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
             {new Date(entry.date).toLocaleDateString('fr-FR')}
           </span>
           <div style={{ flex: 1, margin: '0 20px' }}>
             <div style={{
-              height: '8px',
-              background: '#EEEEEE',
-              borderRadius: '4px',
-              overflow: 'hidden'
+              height: 'var(--space-2)',
+              background: 'var(--border-light)',
+                            overflow: 'hidden'
             }}>
               <div style={{
                 width: `${(entry.price / maxPrice) * 100}%`,
                 height: '100%',
-                background: '#DC2626',
+                background: 'var(--red-accent)',
                 transition: 'width 0.5s ease'
               }} />
             </div>
           </div>
           <span style={{
-            fontSize: '16px',
+            fontSize: 'var(--space-4)',
             fontWeight: 600,
-            color: '#222222'
+            color: 'var(--text-primary)'
           }}>
             {entry.price.toLocaleString()} €
           </span>
         </div>
       ))}
       <div style={{
-        marginTop: '12px',
-        padding: '12px',
-        background: '#FAFAFA',
-        borderRadius: '8px',
-        border: '1px solid #EEEEEE',
+        marginTop: 'var(--space-3)',
+        padding: 'var(--space-3)',
+        background: 'var(--gray-50)',
+                border: '1px solid #EEEEEE',
         fontSize: '14px',
-        color: '#222222'
+        color: 'var(--text-primary)'
       }}>
-        💰 Baisse de {(history[0].price - history[history.length - 1].price).toLocaleString()} € depuis le début
+         Baisse de {(history[0].price - history[history.length - 1].price).toLocaleString()} € depuis le début
       </div>
     </div>
   )
@@ -680,7 +667,7 @@ function PriceHistory({ history }) {
 
 function ExpertOpinion({ opinion }) {
   if (!opinion) {
-    return <p style={{ color: '#666666' }}>Avis expert non disponible</p>
+    return <p style={{ color: 'var(--text-secondary)' }}>Avis expert non disponible</p>
   }
 
   return (
@@ -688,49 +675,47 @@ function ExpertOpinion({ opinion }) {
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '16px',
-        marginBottom: '20px',
-        padding: '16px',
-        background: '#FAFAFA',
-        borderRadius: '8px',
-        border: '1px solid #EEEEEE'
+        gap: 'var(--space-4)',
+        marginBottom: 'var(--space-5)',
+        padding: 'var(--space-4)',
+        background: 'var(--gray-50)',
+                border: '1px solid #EEEEEE'
       }}>
         <div style={{
-          fontSize: '48px',
+          fontSize: 'var(--space-12)',
           fontWeight: 700,
-          color: '#222222'
+          color: 'var(--text-primary)'
         }}>
           {opinion.score}/10
         </div>
         <div style={{ flex: 1 }}>
           <div style={{
             fontWeight: 600,
-            marginBottom: '4px',
-            color: '#222222'
+            marginBottom: 'var(--space-1)',
+            color: 'var(--text-primary)'
           }}>
             Note globale
           </div>
           <div style={{
-            height: '8px',
-            background: '#EEEEEE',
-            borderRadius: '4px',
-            overflow: 'hidden'
+            height: 'var(--space-2)',
+            background: 'var(--border-light)',
+                        overflow: 'hidden'
           }}>
             <div style={{
               width: `${opinion.score * 10}%`,
               height: '100%',
-              background: '#DC2626'
+              background: 'var(--red-accent)'
             }} />
           </div>
         </div>
       </div>
 
-      <div style={{ marginBottom: '20px' }}>
+      <div style={{ marginBottom: 'var(--space-5)' }}>
         <h4 style={{
           margin: '0 0 12px 0',
-          fontSize: '16px',
+          fontSize: 'var(--space-4)',
           fontWeight: 600,
-          color: '#222222'
+          color: 'var(--text-primary)'
         }}>
           ✓ Points forts
         </h4>
@@ -738,19 +723,19 @@ function ExpertOpinion({ opinion }) {
           <div key={idx} style={{
             padding: '8px 0',
             fontSize: '14px',
-            color: '#222222'
+            color: 'var(--text-primary)'
           }}>
             • {pro}
           </div>
         ))}
       </div>
 
-      <div style={{ marginBottom: '20px' }}>
+      <div style={{ marginBottom: 'var(--space-5)' }}>
         <h4 style={{
           margin: '0 0 12px 0',
-          fontSize: '16px',
+          fontSize: 'var(--space-4)',
           fontWeight: 600,
-          color: '#222222'
+          color: 'var(--text-primary)'
         }}>
           ✗ Points à considérer
         </h4>
@@ -758,7 +743,7 @@ function ExpertOpinion({ opinion }) {
           <div key={idx} style={{
             padding: '8px 0',
             fontSize: '14px',
-            color: '#666666'
+            color: 'var(--text-secondary)'
           }}>
             • {con}
           </div>
@@ -766,16 +751,15 @@ function ExpertOpinion({ opinion }) {
       </div>
 
       <div style={{
-        padding: '16px',
-        background: '#FAFAFA',
-        borderRadius: '8px',
-        border: '1px solid #EEEEEE',
+        padding: 'var(--space-4)',
+        background: 'var(--gray-50)',
+                border: '1px solid #EEEEEE',
         borderLeft: '4px solid #DC2626'
       }}>
-        <strong style={{ display: 'block', marginBottom: '8px', color: '#222222' }}>
+        <strong style={{ display: 'block', marginBottom: 'var(--space-2)', color: 'var(--text-primary)' }}>
           Verdict de l'expert :
         </strong>
-        <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#666666' }}>
+        <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
           {opinion.verdict}
         </p>
       </div>
@@ -785,14 +769,14 @@ function ExpertOpinion({ opinion }) {
 
 function SimilarVehicles({ vehicles }) {
   if (!vehicles || vehicles.length === 0) {
-    return <p style={{ color: '#666666' }}>Véhicules similaires non disponibles</p>
+    return <p style={{ color: 'var(--text-secondary)' }}>Véhicules similaires non disponibles</p>
   }
 
   return (
     <div style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-      gap: '16px'
+      gap: 'var(--space-4)'
     }}>
       {vehicles.map(v => (
         <a
@@ -800,21 +784,20 @@ function SimilarVehicles({ vehicles }) {
           href={`/vehicle/${v.id}`}
           style={{
             display: 'block',
-            background: '#FAFAFA',
-            borderRadius: '8px',
-            padding: '16px',
+            background: 'var(--gray-50)',
+                        padding: 'var(--space-4)',
             textDecoration: 'none',
             color: 'inherit',
             border: '1px solid #EEEEEE',
             transition: 'all 0.2s'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#DC2626'
+            e.currentTarget.style.borderColor = 'var(--red-accent)'
             e.currentTarget.style.transform = 'translateY(-4px)'
             e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = '#EEEEEE'
+            e.currentTarget.style.borderColor = 'var(--border-light)'
             e.currentTarget.style.transform = 'translateY(0)'
             e.currentTarget.style.boxShadow = 'none'
           }}
@@ -822,22 +805,22 @@ function SimilarVehicles({ vehicles }) {
           <div style={{
             fontWeight: 600,
             fontSize: '14px',
-            marginBottom: '8px',
-            color: '#222222'
+            marginBottom: 'var(--space-2)',
+            color: 'var(--text-primary)'
           }}>
             {v.title}
           </div>
           <div style={{
-            fontSize: '16px',
+            fontSize: 'var(--space-4)',
             fontWeight: 700,
-            color: '#222222',
-            marginBottom: '4px'
+            color: 'var(--text-primary)',
+            marginBottom: 'var(--space-1)'
           }}>
             {v.price.toLocaleString()} €
           </div>
           <div style={{
-            fontSize: '12px',
-            color: '#666666'
+            fontSize: 'var(--space-3)',
+            color: 'var(--text-secondary)'
           }}>
             {v.year} • {v.mileage.toLocaleString()} km
           </div>
@@ -854,50 +837,49 @@ function ContactCard({ seller, onContact }) {
 
   return (
     <div style={{
-      background: 'white',
-      borderRadius: '12px',
-      padding: '24px',
+      background: 'var(--white)',
+            padding: 'var(--space-6)',
       boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
       border: '1px solid #EEEEEE',
-      marginBottom: '24px',
+      marginBottom: 'var(--space-6)',
       position: 'sticky',
-      top: '20px'
+      top: 'var(--space-5)'
     }}>
       <h3 style={{
         margin: '0 0 16px 0',
         fontSize: '18px',
         fontWeight: 600,
-        color: '#222222'
+        color: 'var(--text-primary)'
       }}>
-        {seller.is_pro ? '🏢 Vendeur professionnel' : '👤 Particulier'}
+        {seller.is_pro ? ' Vendeur professionnel' : ' Particulier'}
       </h3>
 
       <div style={{
-        marginBottom: '16px',
-        paddingBottom: '16px',
+        marginBottom: 'var(--space-4)',
+        paddingBottom: 'var(--space-4)',
         borderBottom: '1px solid #EEEEEE'
       }}>
         <div style={{
           fontWeight: 600,
-          marginBottom: '8px',
-          fontSize: '16px',
-          color: '#222222'
+          marginBottom: 'var(--space-2)',
+          fontSize: 'var(--space-4)',
+          color: 'var(--text-primary)'
         }}>
           {seller.name || 'Vendeur'}
         </div>
         {seller.email && (
           <div style={{
             fontSize: '14px',
-            color: '#666666',
-            marginBottom: '4px'
+            color: 'var(--text-secondary)',
+            marginBottom: 'var(--space-1)'
           }}>
-            📧 {seller.email}
+             {seller.email}
           </div>
         )}
         {seller.phone && (
           <div style={{
             fontSize: '14px',
-            color: '#666666'
+            color: 'var(--text-secondary)'
           }}>
             📞 {seller.phone}
           </div>
@@ -909,37 +891,35 @@ function ContactCard({ seller, onContact }) {
         style={{
           width: '100%',
           padding: '14px',
-          background: '#DC2626',
-          color: 'white',
+          background: 'var(--red-accent)',
+          color: 'var(--white)',
           border: 'none',
-          borderRadius: '8px',
-          fontSize: '16px',
+                    fontSize: 'var(--space-4)',
           fontWeight: 600,
           cursor: 'pointer',
-          marginBottom: '12px',
+          marginBottom: 'var(--space-3)',
           transition: 'all 0.2s'
         }}
         onMouseEnter={(e) => {
-          e.target.style.background = '#B91C1C'
+          e.target.style.background = 'var(--red-accent)'
           e.target.style.transform = 'translateY(-2px)'
         }}
         onMouseLeave={(e) => {
-          e.target.style.background = '#DC2626'
+          e.target.style.background = 'var(--red-accent)'
           e.target.style.transform = 'translateY(0)'
         }}
       >
-        💬 Contacter le vendeur
+         Contacter le vendeur
       </button>
 
       <button
         style={{
           width: '100%',
           padding: '14px',
-          background: 'white',
+          background: 'var(--white)',
           border: '1px solid #EEEEEE',
-          color: '#222222',
-          borderRadius: '8px',
-          fontSize: '14px',
+          color: 'var(--text-primary)',
+                    fontSize: '14px',
           fontWeight: 600,
           cursor: 'pointer'
         }}
@@ -953,25 +933,24 @@ function ContactCard({ seller, onContact }) {
 function LegalInfo({ vehicle }) {
   return (
     <div style={{
-      background: 'white',
-      borderRadius: '12px',
-      padding: '20px',
+      background: 'var(--white)',
+            padding: 'var(--space-5)',
       boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
       border: '1px solid #EEEEEE',
       fontSize: '13px',
-      color: '#666666',
+      color: 'var(--text-secondary)',
       lineHeight: 1.6
     }}>
       <h4 style={{
         margin: '0 0 12px 0',
         fontSize: '14px',
         fontWeight: 600,
-        color: '#222222'
+        color: 'var(--text-primary)'
       }}>
         ℹ️ Informations légales
       </h4>
       <p style={{ margin: '0 0 12px 0' }}>
-        <strong style={{ color: '#222222' }}>VIN:</strong> {vehicle.vin}
+        <strong style={{ color: 'var(--text-primary)' }}>VIN:</strong> {vehicle.vin}
       </p>
       <p style={{ margin: '0 0 12px 0' }}>
         Annonce publiée le {new Date(vehicle.created_at).toLocaleDateString('fr-FR')}
@@ -997,7 +976,7 @@ function Lightbox({ images, currentIndex, onClose, onPrev, onNext }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '20px'
+        padding: 'var(--space-5)'
       }}
       onClick={onClose}
     >
@@ -1016,15 +995,15 @@ function Lightbox({ images, currentIndex, onClose, onPrev, onNext }) {
         onClick={onClose}
         style={{
           position: 'absolute',
-          top: '20px',
-          right: '20px',
+          top: 'var(--space-5)',
+          right: 'var(--space-5)',
           background: 'rgba(255,255,255,0.2)',
           border: 'none',
-          color: 'white',
-          width: '48px',
-          height: '48px',
+          color: 'var(--white)',
+          width: 'var(--space-12)',
+          height: 'var(--space-12)',
           borderRadius: '50%',
-          fontSize: '24px',
+          fontSize: 'var(--space-6)',
           cursor: 'pointer',
           transition: 'background 0.2s'
         }}
@@ -1040,14 +1019,14 @@ function Lightbox({ images, currentIndex, onClose, onPrev, onNext }) {
             onClick={(e) => { e.stopPropagation(); onPrev(); }}
             style={{
               position: 'absolute',
-              left: '20px',
+              left: 'var(--space-5)',
               background: 'rgba(255,255,255,0.2)',
               border: 'none',
-              color: 'white',
+              color: 'var(--white)',
               width: '56px',
               height: '56px',
               borderRadius: '50%',
-              fontSize: '32px',
+              fontSize: 'var(--space-8)',
               cursor: 'pointer',
               transition: 'background 0.2s'
             }}
@@ -1060,14 +1039,14 @@ function Lightbox({ images, currentIndex, onClose, onPrev, onNext }) {
             onClick={(e) => { e.stopPropagation(); onNext(); }}
             style={{
               position: 'absolute',
-              right: '20px',
+              right: 'var(--space-5)',
               background: 'rgba(255,255,255,0.2)',
               border: 'none',
-              color: 'white',
+              color: 'var(--white)',
               width: '56px',
               height: '56px',
               borderRadius: '50%',
-              fontSize: '32px',
+              fontSize: 'var(--space-8)',
               cursor: 'pointer',
               transition: 'background 0.2s'
             }}
@@ -1105,15 +1084,14 @@ function ContactModal({ seller, vehicle, onClose }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '20px'
+        padding: 'var(--space-5)'
       }}
       onClick={onClose}
     >
       <div
         style={{
-          background: 'white',
-          borderRadius: '12px',
-          padding: '24px',
+          background: 'var(--white)',
+                    padding: 'var(--space-6)',
           maxWidth: '500px',
           width: '100%',
           boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
@@ -1121,48 +1099,48 @@ function ContactModal({ seller, vehicle, onClose }) {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ margin: 0, fontSize: '24px', color: '#222222' }}>Contacter le vendeur</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-5)' }}>
+          <h2 style={{ margin: 0, fontSize: 'var(--space-6)', color: 'var(--text-primary)' }}>Contacter le vendeur</h2>
           <button
             onClick={onClose}
             style={{
               background: 'none',
               border: 'none',
-              fontSize: '28px',
+              fontSize: 'var(--space-7)',
               cursor: 'pointer',
-              color: '#666666',
+              color: 'var(--text-secondary)',
               padding: '0',
-              width: '32px',
-              height: '32px'
+              width: 'var(--space-8)',
+              height: 'var(--space-8)'
             }}
           >
             ✕
           </button>
         </div>
 
-        <div style={{ marginBottom: '20px', padding: '16px', background: '#FAFAFA', borderRadius: '8px', border: '1px solid #EEEEEE' }}>
-          <p style={{ margin: '0 0 8px 0', fontWeight: 600, color: '#222222' }}>{seller.name}</p>
+        <div style={{ marginBottom: 'var(--space-5)', padding: 'var(--space-4)', background: 'var(--gray-50)',  border: '1px solid #EEEEEE' }}>
+          <p style={{ margin: '0 0 8px 0', fontWeight: 600, color: 'var(--text-primary)' }}>{seller.name}</p>
           {seller.phone && (
-            <p style={{ margin: '4px 0', fontSize: '14px', color: '#666666' }}>
+            <p style={{ margin: '4px 0', fontSize: '14px', color: 'var(--text-secondary)' }}>
               📞 {seller.phone}
             </p>
           )}
           {seller.email && (
-            <p style={{ margin: '4px 0', fontSize: '14px', color: '#666666' }}>
-              ✉️ {seller.email}
+            <p style={{ margin: '4px 0', fontSize: '14px', color: 'var(--text-secondary)' }}>
+               {seller.email}
             </p>
           )}
         </div>
 
-        <div style={{ marginBottom: '20px', padding: '12px', background: '#FAFAFA', borderRadius: '8px', border: '1px solid #EEEEEE' }}>
-          <p style={{ margin: 0, fontSize: '14px', color: '#222222' }}>
+        <div style={{ marginBottom: 'var(--space-5)', padding: 'var(--space-3)', background: 'var(--gray-50)',  border: '1px solid #EEEEEE' }}>
+          <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-primary)' }}>
             <strong>Véhicule concerné :</strong> {vehicle.title}
           </p>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500, color: '#222222' }}>
+          <div style={{ marginBottom: 'var(--space-4)' }}>
+            <label style={{ display: 'block', marginBottom: 'var(--space-2)', fontWeight: 500, color: 'var(--text-primary)' }}>
               Votre message
             </label>
             <textarea
@@ -1173,9 +1151,8 @@ function ContactModal({ seller, vehicle, onClose }) {
               rows={6}
               style={{
                 width: '100%',
-                padding: '12px',
-                borderRadius: '8px',
-                border: '1px solid #EEEEEE',
+                padding: 'var(--space-3)',
+                                border: '1px solid #EEEEEE',
                 fontSize: '14px',
                 fontFamily: 'inherit',
                 resize: 'vertical'
@@ -1183,19 +1160,18 @@ function ContactModal({ seller, vehicle, onClose }) {
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+          <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'flex-end' }}>
             <button
               type="button"
               onClick={onClose}
               style={{
                 padding: '10px 20px',
-                background: 'white',
+                background: 'var(--white)',
                 border: '1px solid #EEEEEE',
-                borderRadius: '8px',
-                cursor: 'pointer',
+                                cursor: 'pointer',
                 fontSize: '14px',
                 fontWeight: 500,
-                color: '#222222'
+                color: 'var(--text-primary)'
               }}
             >
               Annuler
@@ -1204,11 +1180,10 @@ function ContactModal({ seller, vehicle, onClose }) {
               type="submit"
               style={{
                 padding: '10px 20px',
-                background: '#DC2626',
-                color: 'white',
+                background: 'var(--red-accent)',
+                color: 'var(--white)',
                 border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
+                                cursor: 'pointer',
                 fontSize: '14px',
                 fontWeight: 500
               }}

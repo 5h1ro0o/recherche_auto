@@ -17,20 +17,19 @@ export default function MessagesPage() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: '#F9FAFB',
+        background: 'var(--gray-50)',
         padding: '80px 20px',
       }}>
         <div style={{
           maxWidth: '600px',
           margin: '0 auto',
           textAlign: 'center',
-          background: 'white',
-          borderRadius: '16px',
-          padding: '40px',
+          background: 'var(--white)',
+                    padding: 'var(--space-10)',
           boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
         }}>
-          <div style={{ fontSize: '64px', marginBottom: '20px' }}>⚠️</div>
-          <h3 style={{ fontSize: '24px', color: '#222222', marginBottom: '12px' }}>
+          <div style={{ fontSize: 'var(--space-16)', marginBottom: 'var(--space-5)' }}></div>
+          <h3 style={{ fontSize: 'var(--space-6)', color: 'var(--text-primary)', marginBottom: 'var(--space-3)' }}>
             Erreur de chargement
           </h3>
           <p style={{ color: '#6B7280' }}>
@@ -45,7 +44,7 @@ export default function MessagesPage() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: '#F9FAFB',
+        background: 'var(--gray-50)',
         padding: '80px 20px',
       }}>
         <div style={{
@@ -53,7 +52,7 @@ export default function MessagesPage() {
           margin: '0 auto',
           textAlign: 'center',
         }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔄</div>
+          <div style={{ fontSize: 'var(--space-12)', marginBottom: 'var(--space-4)' }}></div>
           <p style={{ color: '#6B7280', fontSize: '18px' }}>Chargement de vos conversations...</p>
         </div>
       </div>
@@ -72,17 +71,17 @@ export default function MessagesPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#F9FAFB',
-      padding: isExpert ? '20px' : '0',
-      paddingBottom: isExpert ? '20px' : '60px',
+      background: 'var(--gray-50)',
+      padding: isExpert ? 'var(--space-5)' : '0',
+      paddingBottom: isExpert ? 'var(--space-5)' : 'var(--space-16)',
     }}>
       {/* Header Section - Only for non-experts */}
       {!isExpert && (
         <div style={{
-          background: '#DC2626',
-          color: 'white',
+          background: 'var(--red-accent)',
+          color: 'var(--white)',
           padding: '60px 20px',
-          marginBottom: '40px',
+          marginBottom: 'var(--space-10)',
         }}>
           <div style={{
             maxWidth: '900px',
@@ -91,7 +90,7 @@ export default function MessagesPage() {
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
-            gap: '16px',
+            gap: 'var(--space-4)',
           }}>
             <h1 style={{
               fontSize: '42px',
@@ -99,15 +98,14 @@ export default function MessagesPage() {
               margin: 0,
               lineHeight: 1.2,
             }}>
-              💬 Mes Conversations
+               Mes Conversations
             </h1>
             {totalUnread > 0 && (
               <div style={{
-                background: 'white',
-                color: '#DC2626',
+                background: 'var(--white)',
+                color: 'var(--red-accent)',
                 padding: '8px 20px',
-                borderRadius: '20px',
-                fontSize: '16px',
+                                fontSize: 'var(--space-4)',
                 fontWeight: 600,
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
               }}>
@@ -126,30 +124,29 @@ export default function MessagesPage() {
         {/* Filters */}
         <div style={{
           display: 'flex',
-          gap: '12px',
-          marginBottom: '24px',
+          gap: 'var(--space-3)',
+          marginBottom: 'var(--space-6)',
         }}>
           <button
             onClick={() => setSelectedFilter('all')}
             style={{
               padding: '12px 24px',
-              background: selectedFilter === 'all' ? '#DC2626' : 'white',
-              color: selectedFilter === 'all' ? 'white' : '#222222',
+              background: selectedFilter === 'all' ? 'var(--red-accent)' : 'var(--white)',
+              color: selectedFilter === 'all' ? 'var(--white)' : 'var(--text-primary)',
               border: selectedFilter === 'all' ? 'none' : '2px solid #E5E7EB',
-              borderRadius: '12px',
-              fontSize: '15px',
+                            fontSize: '15px',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
               if (selectedFilter !== 'all') {
-                e.target.style.borderColor = '#DC2626'
+                e.target.style.borderColor = 'var(--red-accent)'
               }
             }}
             onMouseLeave={(e) => {
               if (selectedFilter !== 'all') {
-                e.target.style.borderColor = '#E5E7EB'
+                e.target.style.borderColor = 'var(--border-light)'
               }
             }}
           >
@@ -159,23 +156,22 @@ export default function MessagesPage() {
             onClick={() => setSelectedFilter('unread')}
             style={{
               padding: '12px 24px',
-              background: selectedFilter === 'unread' ? '#DC2626' : 'white',
-              color: selectedFilter === 'unread' ? 'white' : '#222222',
+              background: selectedFilter === 'unread' ? 'var(--red-accent)' : 'var(--white)',
+              color: selectedFilter === 'unread' ? 'var(--white)' : 'var(--text-primary)',
               border: selectedFilter === 'unread' ? 'none' : '2px solid #E5E7EB',
-              borderRadius: '12px',
-              fontSize: '15px',
+                            fontSize: '15px',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
               if (selectedFilter !== 'unread') {
-                e.target.style.borderColor = '#DC2626'
+                e.target.style.borderColor = 'var(--red-accent)'
               }
             }}
             onMouseLeave={(e) => {
               if (selectedFilter !== 'unread') {
-                e.target.style.borderColor = '#E5E7EB'
+                e.target.style.borderColor = 'var(--border-light)'
               }
             }}
           >
@@ -185,23 +181,22 @@ export default function MessagesPage() {
 
         {filteredConversations.length === 0 ? (
           <div style={{
-            background: 'white',
-            borderRadius: '16px',
-            padding: '60px 40px',
+            background: 'var(--white)',
+                        padding: '60px 40px',
             textAlign: 'center',
             boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
           }}>
-            <div style={{ fontSize: '80px', marginBottom: '24px' }}>📭</div>
+            <div style={{ fontSize: 'var(--space-20)', marginBottom: 'var(--space-6)' }}></div>
             <h3 style={{
-              fontSize: '28px',
+              fontSize: 'var(--space-7)',
               fontWeight: 700,
-              color: '#222222',
+              color: 'var(--text-primary)',
               margin: '0 0 12px 0',
             }}>
               Aucune conversation
             </h3>
             <p style={{
-              fontSize: '16px',
+              fontSize: 'var(--space-4)',
               color: '#6B7280',
               margin: 0,
             }}>
@@ -215,7 +210,7 @@ export default function MessagesPage() {
           <div style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '12px',
+            gap: 'var(--space-3)',
           }}>
             {filteredConversations.map(conv => (
               <ConversationCard
@@ -245,10 +240,9 @@ function ConversationCard({ conversation, currentUserId, onClick }) {
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '16px',
-        background: 'white',
-        borderRadius: '12px',
-        padding: '20px',
+        gap: 'var(--space-4)',
+        background: 'var(--white)',
+                padding: 'var(--space-5)',
         cursor: 'pointer',
         transition: 'all 0.2s',
         boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
@@ -268,13 +262,13 @@ function ConversationCard({ conversation, currentUserId, onClick }) {
         width: '56px',
         height: '56px',
         borderRadius: '50%',
-        background: '#DC2626',
+        background: 'var(--red-accent)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: '20px',
+        fontSize: 'var(--space-5)',
         fontWeight: 700,
-        color: 'white',
+        color: 'var(--white)',
         flexShrink: 0,
       }}>
         {getInitials(other_user.full_name || other_user.email)}
@@ -287,19 +281,19 @@ function ConversationCard({ conversation, currentUserId, onClick }) {
           justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: '6px',
-          gap: '12px',
+          gap: 'var(--space-3)',
         }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            gap: 'var(--space-2)',
             flex: 1,
             minWidth: 0,
           }}>
             <div style={{
-              fontSize: '16px',
+              fontSize: 'var(--space-4)',
               fontWeight: 600,
-              color: '#222222',
+              color: 'var(--text-primary)',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -319,7 +313,7 @@ function ConversationCard({ conversation, currentUserId, onClick }) {
 
         <div style={{
           fontSize: '14px',
-          color: isUnread ? '#222222' : '#6B7280',
+          color: isUnread ? 'var(--text-primary)' : '#6B7280',
           fontWeight: isUnread ? 600 : 400,
           overflow: 'hidden',
           textOverflow: 'ellipsis',
@@ -334,11 +328,11 @@ function ConversationCard({ conversation, currentUserId, onClick }) {
       {/* Unread Badge */}
       {unread_count > 0 && (
         <div style={{
-          minWidth: '28px',
-          height: '28px',
+          minWidth: 'var(--space-7)',
+          height: 'var(--space-7)',
           borderRadius: '50%',
-          background: '#EF4444',
-          color: 'white',
+          background: 'var(--red-accent)',
+          color: 'var(--white)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -366,38 +360,35 @@ function getRoleBadge(role) {
   const badges = {
     'PRO': (
       <span style={{
-        background: '#DC2626',
-        color: 'white',
+        background: 'var(--red-accent)',
+        color: 'var(--white)',
         padding: '2px 8px',
-        borderRadius: '12px',
-        fontSize: '11px',
+                fontSize: '11px',
         fontWeight: 600,
       }}>
-        🏢 Pro
+         Pro
       </span>
     ),
     'EXPERT': (
       <span style={{
         background: '#F59E0B',
-        color: 'white',
+        color: 'var(--white)',
         padding: '2px 8px',
-        borderRadius: '12px',
-        fontSize: '11px',
+                fontSize: '11px',
         fontWeight: 600,
       }}>
-        ⭐ Expert
+         Expert
       </span>
     ),
     'ADMIN': (
       <span style={{
-        background: '#222222',
-        color: 'white',
+        background: 'var(--text-primary)',
+        color: 'var(--white)',
         padding: '2px 8px',
-        borderRadius: '12px',
-        fontSize: '11px',
+                fontSize: '11px',
         fontWeight: 600,
       }}>
-        🔧 Admin
+         Admin
       </span>
     )
   }

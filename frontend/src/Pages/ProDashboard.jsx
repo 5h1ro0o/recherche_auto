@@ -44,7 +44,7 @@ export default function ProDashboard() {
     <div className="pro-dashboard">
       <div className="dashboard-header">
         <div>
-          <h1>🏢 Espace Professionnel</h1>
+          <h1> Espace Professionnel</h1>
           <p className="subtitle">Gérez votre stock et suivez vos performances</p>
         </div>
         <button onClick={() => setShowAddModal(true)} className="btn-add-vehicle">
@@ -56,27 +56,27 @@ export default function ProDashboard() {
       {stats && (
         <div className="kpi-grid">
           <KPICard
-            icon="🚗"
+            icon=""
             label="Véhicules actifs"
             value={stats.active_vehicles}
             subtext={`${stats.inactive_vehicles} inactifs`}
             color="blue"
           />
           <KPICard
-            icon="📈"
+            icon=""
             label="Ajouts ce mois"
             value={stats.recent_additions}
             trend={stats.recent_additions > 0 ? '+' + stats.recent_additions : '0'}
             color="green"
           />
           <KPICard
-            icon="❤️"
+            icon=""
             label="Favoris total"
             value={stats.total_favorites}
             color="red"
           />
           <KPICard
-            icon="💬"
+            icon=""
             label="Messages (30j)"
             value={stats.messages_received_30d}
             color="purple"
@@ -88,7 +88,7 @@ export default function ProDashboard() {
       {stats?.most_popular_vehicle && (
         <div className="popular-vehicle-banner">
           <div className="banner-content">
-            <span className="banner-icon">🏆</span>
+            <span className="banner-icon"></span>
             <div>
               <strong>Véhicule le plus populaire :</strong>{' '}
               {stats.most_popular_vehicle.title} ({stats.most_popular_vehicle.favorites} favoris)
@@ -109,13 +109,13 @@ export default function ProDashboard() {
           className={`tab ${activeTab === 'stats' ? 'active' : ''}`}
           onClick={() => setActiveTab('stats')}
         >
-          📊 Statistiques
+           Statistiques
         </button>
         <button
           className={`tab ${activeTab === 'messages' ? 'active' : ''}`}
           onClick={() => setActiveTab('messages')}
         >
-          💬 Messages
+           Messages
         </button>
       </div>
 
@@ -228,7 +228,7 @@ function StockTab({ stock, searchTerm, setSearchTerm, statusFilter, setStatusFil
       <div className="stock-filters">
         <input
           type="text"
-          placeholder="🔍 Rechercher un véhicule..."
+          placeholder=" Rechercher un véhicule..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
@@ -240,12 +240,12 @@ function StockTab({ stock, searchTerm, setSearchTerm, statusFilter, setStatusFil
           className="status-filter"
         >
           <option value="all">Tous les statuts</option>
-          <option value="active">✅ Actifs uniquement</option>
+          <option value="active"> Actifs uniquement</option>
           <option value="inactive">⏸️ Inactifs uniquement</option>
         </select>
 
         <button onClick={onRefresh} className="btn-refresh">
-          🔄 Actualiser
+           Actualiser
         </button>
       </div>
 
@@ -283,7 +283,7 @@ function StockTab({ stock, searchTerm, setSearchTerm, statusFilter, setStatusFil
                   <td>{v.fuel_type || '—'}</td>
                   <td>
                     <span className={`status-badge ${v.is_active ? 'active' : 'inactive'}`}>
-                      {v.is_active ? '✅ Actif' : '⏸️ Inactif'}
+                      {v.is_active ? ' Actif' : '⏸️ Inactif'}
                     </span>
                   </td>
                   <td>
@@ -300,14 +300,14 @@ function StockTab({ stock, searchTerm, setSearchTerm, statusFilter, setStatusFil
                         title="Modifier"
                         className="btn-icon"
                       >
-                        ✏️
+                        
                       </button>
                       <button 
                         onClick={() => onDelete(v.id)} 
                         title="Supprimer"
                         className="btn-icon danger"
                       >
-                        🗑️
+                        
                       </button>
                     </div>
                   </td>
@@ -324,7 +324,7 @@ function StockTab({ stock, searchTerm, setSearchTerm, statusFilter, setStatusFil
 function StatsTab({ stats, monthlyData, priceData }) {
   return (
     <div className="stats-tab">
-      <h2>📊 Statistiques détaillées</h2>
+      <h2> Statistiques détaillées</h2>
       
       <div className="charts-grid">
         {/* Graphique mensuel */}
@@ -398,7 +398,7 @@ function MessagesTab() {
   
   return (
     <div className="messages-tab">
-      <h2>💬 Vos conversations</h2>
+      <h2> Vos conversations</h2>
       <p>Gérez vos échanges avec les clients intéressés par vos véhicules.</p>
       <button onClick={() => navigate('/messages')} className="btn-primary">
         Accéder à la messagerie

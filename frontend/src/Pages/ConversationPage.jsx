@@ -199,17 +199,16 @@ export default function ConversationPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#F9FAFB',
+        background: 'var(--gray-50)',
       }}>
         <div style={{
-          background: 'white',
-          borderRadius: '12px',
-          padding: '40px',
+          background: 'var(--white)',
+                    padding: 'var(--space-10)',
           textAlign: 'center',
           boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
         }}>
-          <div style={{ fontSize: '64px', marginBottom: '20px' }}>⚠️</div>
-          <div style={{ fontSize: '18px', color: '#222222' }}>Erreur lors du chargement</div>
+          <div style={{ fontSize: 'var(--space-16)', marginBottom: 'var(--space-5)' }}></div>
+          <div style={{ fontSize: '18px', color: 'var(--text-primary)' }}>Erreur lors du chargement</div>
         </div>
       </div>
     )
@@ -222,9 +221,9 @@ export default function ConversationPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#F9FAFB',
+        background: 'var(--gray-50)',
       }}>
-        <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔄</div>
+        <div style={{ fontSize: 'var(--space-12)', marginBottom: 'var(--space-4)' }}></div>
         <div style={{ fontSize: '18px', color: '#6B7280' }}>Chargement...</div>
       </div>
     )
@@ -235,37 +234,36 @@ export default function ConversationPage() {
       display: 'flex',
       flexDirection: 'column',
       height: '100vh',
-      background: '#F9FAFB',
+      background: 'var(--gray-50)',
     }}>
       {/* Header */}
       <div style={{
-        background: 'white',
+        background: 'var(--white)',
         borderBottom: '1px solid #E5E7EB',
         padding: '16px 20px',
         display: 'flex',
         alignItems: 'center',
-        gap: '16px',
+        gap: 'var(--space-4)',
       }}>
         <button
           onClick={() => navigate('/messages')}
           style={{
             padding: '8px 16px',
-            background: 'white',
+            background: 'var(--white)',
             border: '2px solid #E5E7EB',
-            borderRadius: '8px',
-            fontSize: '14px',
+                        fontSize: '14px',
             fontWeight: 600,
-            color: '#222222',
+            color: 'var(--text-primary)',
             cursor: 'pointer',
             transition: 'all 0.2s',
           }}
           onMouseEnter={(e) => {
-            e.target.style.borderColor = '#DC2626'
-            e.target.style.color = '#DC2626'
+            e.target.style.borderColor = 'var(--red-accent)'
+            e.target.style.color = 'var(--red-accent)'
           }}
           onMouseLeave={(e) => {
-            e.target.style.borderColor = '#E5E7EB'
-            e.target.style.color = '#222222'
+            e.target.style.borderColor = 'var(--border-light)'
+            e.target.style.color = 'var(--text-primary)'
           }}
         >
           ← Retour
@@ -275,19 +273,19 @@ export default function ConversationPage() {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
+            gap: 'var(--space-3)',
           }}>
             <div style={{
-              width: '40px',
-              height: '40px',
+              width: 'var(--space-10)',
+              height: 'var(--space-10)',
               borderRadius: '50%',
-              background: '#DC2626',
+              background: 'var(--red-accent)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: '18px',
               fontWeight: 700,
-              color: 'white',
+              color: 'var(--white)',
             }}>
               {otherUser.full_name?.[0] || '?'}
             </div>
@@ -296,14 +294,14 @@ export default function ConversationPage() {
                 margin: 0,
                 fontSize: '18px',
                 fontWeight: 600,
-                color: '#222222',
+                color: 'var(--text-primary)',
               }}>
                 {otherUser.full_name || otherUser.email || 'Utilisateur'}
               </h2>
               {otherUserTyping && (
                 <span style={{
                   fontSize: '13px',
-                  color: '#DC2626',
+                  color: 'var(--red-accent)',
                   fontStyle: 'italic',
                 }}>
                   En train d'écrire...
@@ -318,18 +316,18 @@ export default function ConversationPage() {
       <div style={{
         flex: 1,
         overflowY: 'auto',
-        padding: '20px',
+        padding: 'var(--space-5)',
         display: 'flex',
         flexDirection: 'column',
-        gap: '12px',
+        gap: 'var(--space-3)',
       }}>
         {messages.length === 0 ? (
           <div style={{
             textAlign: 'center',
             padding: '60px 20px',
           }}>
-            <div style={{ fontSize: '64px', marginBottom: '16px' }}>💬</div>
-            <p style={{ fontSize: '18px', color: '#222222', marginBottom: '8px' }}>
+            <div style={{ fontSize: 'var(--space-16)', marginBottom: 'var(--space-4)' }}></div>
+            <p style={{ fontSize: '18px', color: 'var(--text-primary)', marginBottom: 'var(--space-2)' }}>
               Aucun message dans cette conversation
             </p>
             <p style={{ fontSize: '14px', color: '#6B7280', margin: 0 }}>
@@ -353,29 +351,28 @@ export default function ConversationPage() {
             justifyContent: 'flex-start',
           }}>
             <div style={{
-              background: '#E5E7EB',
-              borderRadius: '18px',
-              padding: '12px 16px',
+              background: 'var(--border-light)',
+                            padding: '12px 16px',
               display: 'inline-flex',
-              gap: '4px',
+              gap: 'var(--space-1)',
             }}>
               <span style={{
-                width: '8px',
-                height: '8px',
+                width: 'var(--space-2)',
+                height: 'var(--space-2)',
                 borderRadius: '50%',
                 background: '#6B7280',
                 animation: 'bounce 1.4s infinite ease-in-out',
               }} />
               <span style={{
-                width: '8px',
-                height: '8px',
+                width: 'var(--space-2)',
+                height: 'var(--space-2)',
                 borderRadius: '50%',
                 background: '#6B7280',
                 animation: 'bounce 1.4s infinite ease-in-out 0.2s',
               }} />
               <span style={{
-                width: '8px',
-                height: '8px',
+                width: 'var(--space-2)',
+                height: 'var(--space-2)',
                 borderRadius: '50%',
                 background: '#6B7280',
                 animation: 'bounce 1.4s infinite ease-in-out 0.4s',
@@ -389,7 +386,7 @@ export default function ConversationPage() {
 
       {/* Input Form */}
       <form onSubmit={handleSend} style={{
-        background: 'white',
+        background: 'var(--white)',
         borderTop: '1px solid #E5E7EB',
         padding: '16px 20px',
       }}>
@@ -398,17 +395,16 @@ export default function ConversationPage() {
           <div style={{
             position: 'absolute',
             bottom: '100%',
-            left: '20px',
-            right: '20px',
-            background: 'white',
-            borderRadius: '12px',
-            boxShadow: '0 -4px 24px rgba(0, 0, 0, 0.15)',
-            marginBottom: '8px',
+            left: 'var(--space-5)',
+            right: 'var(--space-5)',
+            background: 'var(--white)',
+                        boxShadow: '0 -4px 24px rgba(0, 0, 0, 0.15)',
+            marginBottom: 'var(--space-2)',
             maxHeight: '300px',
             overflowY: 'auto',
           }}>
             <div style={{
-              padding: '16px',
+              padding: 'var(--space-4)',
               borderBottom: '1px solid #E5E7EB',
               display: 'flex',
               justifyContent: 'space-between',
@@ -416,11 +412,11 @@ export default function ConversationPage() {
             }}>
               <h4 style={{
                 margin: 0,
-                fontSize: '16px',
+                fontSize: 'var(--space-4)',
                 fontWeight: 600,
-                color: '#222222',
+                color: 'var(--text-primary)',
               }}>
-                💬 Messages rapides
+                 Messages rapides
               </h4>
               <button
                 type="button"
@@ -428,7 +424,7 @@ export default function ConversationPage() {
                 style={{
                   background: 'none',
                   border: 'none',
-                  fontSize: '20px',
+                  fontSize: 'var(--space-5)',
                   cursor: 'pointer',
                   color: '#6B7280',
                 }}
@@ -436,7 +432,7 @@ export default function ConversationPage() {
                 ✕
               </button>
             </div>
-            <div style={{ padding: '8px' }}>
+            <div style={{ padding: 'var(--space-2)' }}>
               {Object.entries(templates).map(([key, template]) => (
                 <button
                   key={key}
@@ -444,25 +440,24 @@ export default function ConversationPage() {
                   onClick={() => useTemplate(key)}
                   style={{
                     width: '100%',
-                    padding: '12px',
-                    background: 'white',
+                    padding: 'var(--space-3)',
+                    background: 'var(--white)',
                     border: '1px solid #E5E7EB',
-                    borderRadius: '8px',
-                    marginBottom: '8px',
+                                        marginBottom: 'var(--space-2)',
                     textAlign: 'left',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.borderColor = '#DC2626'
+                    e.target.style.borderColor = 'var(--red-accent)'
                     e.target.style.background = '#FEE2E2'
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.borderColor = '#E5E7EB'
-                    e.target.style.background = 'white'
+                    e.target.style.borderColor = 'var(--border-light)'
+                    e.target.style.background = 'var(--white)'
                   }}
                 >
-                  <strong style={{ display: 'block', marginBottom: '4px', color: '#222222' }}>
+                  <strong style={{ display: 'block', marginBottom: 'var(--space-1)', color: 'var(--text-primary)' }}>
                     {template.label}
                   </strong>
                   <p style={{ margin: 0, fontSize: '13px', color: '#6B7280' }}>
@@ -478,8 +473,8 @@ export default function ConversationPage() {
         {selectedFiles.length > 0 && (
           <div style={{
             display: 'flex',
-            gap: '8px',
-            marginBottom: '12px',
+            gap: 'var(--space-2)',
+            marginBottom: 'var(--space-3)',
             flexWrap: 'wrap',
           }}>
             {selectedFiles.map((file, idx) => (
@@ -487,10 +482,9 @@ export default function ConversationPage() {
                 key={idx}
                 style={{
                   position: 'relative',
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '8px',
-                  overflow: 'hidden',
+                  width: 'var(--space-20)',
+                  height: 'var(--space-20)',
+                                    overflow: 'hidden',
                   border: '2px solid #E5E7EB',
                 }}
               >
@@ -508,15 +502,15 @@ export default function ConversationPage() {
                   onClick={() => setSelectedFiles(prev => prev.filter((_, i) => i !== idx))}
                   style={{
                     position: 'absolute',
-                    top: '4px',
-                    right: '4px',
-                    width: '20px',
-                    height: '20px',
+                    top: 'var(--space-1)',
+                    right: 'var(--space-1)',
+                    width: 'var(--space-5)',
+                    height: 'var(--space-5)',
                     borderRadius: '50%',
-                    background: '#DC2626',
-                    color: 'white',
+                    background: 'var(--red-accent)',
+                    color: 'var(--white)',
                     border: 'none',
-                    fontSize: '12px',
+                    fontSize: 'var(--space-3)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
@@ -533,7 +527,7 @@ export default function ConversationPage() {
         {/* Input principal */}
         <div style={{
           display: 'flex',
-          gap: '12px',
+          gap: 'var(--space-3)',
           alignItems: 'flex-end',
         }}>
           <button
@@ -542,21 +536,20 @@ export default function ConversationPage() {
             title="Messages rapides"
             style={{
               padding: '10px',
-              background: 'white',
+              background: 'var(--white)',
               border: '2px solid #E5E7EB',
-              borderRadius: '8px',
-              fontSize: '20px',
+                            fontSize: 'var(--space-5)',
               cursor: 'pointer',
               transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
-              e.target.style.borderColor = '#DC2626'
+              e.target.style.borderColor = 'var(--red-accent)'
             }}
             onMouseLeave={(e) => {
-              e.target.style.borderColor = '#E5E7EB'
+              e.target.style.borderColor = 'var(--border-light)'
             }}
           >
-            💬
+            
           </button>
 
           <textarea
@@ -569,19 +562,18 @@ export default function ConversationPage() {
               flex: 1,
               padding: '12px 16px',
               border: '2px solid #E5E7EB',
-              borderRadius: '12px',
-              fontSize: '15px',
+                            fontSize: '15px',
               fontFamily: 'inherit',
               resize: 'none',
               outline: 'none',
               transition: 'all 0.2s',
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = '#DC2626'
+              e.target.style.borderColor = 'var(--red-accent)'
               e.target.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)'
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = '#E5E7EB'
+              e.target.style.borderColor = 'var(--border-light)'
               e.target.style.boxShadow = 'none'
             }}
             onKeyPress={(e) => {
@@ -592,7 +584,7 @@ export default function ConversationPage() {
             }}
           />
 
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
             <input
               ref={fileInputRef}
               type="file"
@@ -609,22 +601,21 @@ export default function ConversationPage() {
               title="Joindre une image"
               style={{
                 padding: '10px',
-                background: 'white',
+                background: 'var(--white)',
                 border: '2px solid #E5E7EB',
-                borderRadius: '8px',
-                fontSize: '20px',
+                                fontSize: 'var(--space-5)',
                 cursor: uploading ? 'not-allowed' : 'pointer',
                 transition: 'all 0.2s',
                 opacity: uploading ? 0.5 : 1,
               }}
               onMouseEnter={(e) => {
-                if (!uploading) e.target.style.borderColor = '#DC2626'
+                if (!uploading) e.target.style.borderColor = 'var(--red-accent)'
               }}
               onMouseLeave={(e) => {
-                e.target.style.borderColor = '#E5E7EB'
+                e.target.style.borderColor = 'var(--border-light)'
               }}
             >
-              {uploading ? '⏳' : '📎'}
+              {uploading ? '' : ''}
             </button>
 
             <button
@@ -632,11 +623,10 @@ export default function ConversationPage() {
               disabled={sending || uploading || (!inputValue.trim() && selectedFiles.length === 0)}
               style={{
                 padding: '10px 20px',
-                background: '#DC2626',
-                color: 'white',
+                background: 'var(--red-accent)',
+                color: 'var(--white)',
                 border: 'none',
-                borderRadius: '8px',
-                fontSize: '16px',
+                                fontSize: 'var(--space-4)',
                 fontWeight: 600,
                 cursor: (sending || uploading || (!inputValue.trim() && selectedFiles.length === 0)) ? 'not-allowed' : 'pointer',
                 transition: 'all 0.2s',
@@ -644,14 +634,14 @@ export default function ConversationPage() {
               }}
               onMouseEnter={(e) => {
                 if (!sending && !uploading && (inputValue.trim() || selectedFiles.length > 0)) {
-                  e.target.style.background = '#B91C1C'
+                  e.target.style.background = 'var(--red-accent)'
                 }
               }}
               onMouseLeave={(e) => {
-                e.target.style.background = '#DC2626'
+                e.target.style.background = 'var(--red-accent)'
               }}
             >
-              {sending ? '⏳' : '📤'}
+              {sending ? '' : ''}
             </button>
           </div>
         </div>
@@ -668,10 +658,9 @@ function MessageBubble({ message, isOwn, showTime }) {
     }}>
       <div style={{
         maxWidth: '70%',
-        background: isOwn ? '#DC2626' : 'white',
-        color: isOwn ? 'white' : '#222222',
-        borderRadius: '18px',
-        padding: '12px 16px',
+        background: isOwn ? 'var(--red-accent)' : 'var(--white)',
+        color: isOwn ? 'var(--white)' : 'var(--text-primary)',
+                padding: '12px 16px',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
       }}>
         <div style={{
@@ -685,10 +674,10 @@ function MessageBubble({ message, isOwn, showTime }) {
         {/* Afficher les images jointes */}
         {message.attachments && message.attachments.length > 0 && (
           <div style={{
-            marginTop: '8px',
+            marginTop: 'var(--space-2)',
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-            gap: '8px',
+            gap: 'var(--space-2)',
           }}>
             {message.attachments.map((url, idx) => (
               <img
@@ -699,8 +688,7 @@ function MessageBubble({ message, isOwn, showTime }) {
                   width: '100%',
                   height: '150px',
                   objectFit: 'cover',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
+                                    cursor: 'pointer',
                 }}
                 onClick={() => window.open(url, '_blank')}
               />
@@ -715,7 +703,7 @@ function MessageBubble({ message, isOwn, showTime }) {
             opacity: 0.7,
             display: 'flex',
             alignItems: 'center',
-            gap: '4px',
+            gap: 'var(--space-1)',
           }}>
             {new Date(message.created_at).toLocaleTimeString('fr-FR', {
               hour: '2-digit',
